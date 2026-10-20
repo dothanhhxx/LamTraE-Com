@@ -266,6 +266,9 @@ export default function Footer() {
               <Link href="/chinh-sach#dieu-khoan" className="lt-foot-link" style={{ fontSize: 12 }}>
                 Điều khoản
               </Link>
+              <Link href="/quan-tri" className="lt-foot-link" style={{ fontSize: 12, opacity: 0.75 }}>
+                ⚙️ Quản trị
+              </Link>
             </span>
           </div>
 

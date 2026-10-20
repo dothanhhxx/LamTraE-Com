@@ -29,7 +29,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: ADMIN_SECRET_KEY
-        generateValue: true # Render sẽ tự động sinh mã ngẫu nhiên an toàn nếu chưa điền
+        value: "LamTra@TanCuong2026"
       - key: BACKEND_INTERNAL_PORT
         value: "4000"
       - key: CORS_ORIGIN
