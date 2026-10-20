@@ -1,54 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState, type MouseEvent } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button, Icon, IconButton, OptionPicker, Price, ProductImage, Rating } from "@/components/ds";
+import { useCart } from "@/lib/cart";
+import { DEFAULT_GRADE, DEFAULT_SIZE, GRADE_OPTIONS, PRODUCTS as TEAS, SIZE_OPTIONS, photo, priceOf, variantLabel } from "@/lib/products";
 
-const photo = (k: string) => `/assets/photos/${k}.jpg`;
-
-type Tea = {
-  id: string;
-  name: string;
-  kind: string;
-  note: string;
-  base: number;
-  fixed?: boolean;
-  rating: number;
-  reviews: number;
-  origin: string;
-  ph: string;
-  desc: string;
-};
-
-const TEAS: Tea[] = [
-  { id: "dinh-sen", name: "Trà Đinh Sen", kind: "Trà sen", note: "Hương sen dịu, hậu ngọt kéo dài", base: 320000, rating: 4.9, reviews: 88, origin: "Tân Cương · Thái Nguyên", ph: "sen",
-    desc: "Búp Đinh non ướp cùng gạo sen Tây Hồ theo lối xưa, mỗi cân trà cần hơn nghìn bông sen. Nước vàng sánh, thơm thanh, hợp tiếp khách và biếu tặng." },
-  { id: "moc-cau", name: "Trà Móc Câu", kind: "Trà xanh", note: "Hương cốm non, chát dịu", base: 150000, rating: 4.7, reviews: 142, origin: "Tân Cương · Thái Nguyên", ph: "moccau",
-    desc: "Cánh trà xoăn nhỏ như móc câu, sao tay trên chảo gang. Nước xanh vàng, vị chát dịu rồi ngọt, hợp uống hằng ngày." },
-  { id: "non-tom", name: "Trà Nõn Tôm", kind: "Trà xanh", note: "Nước xanh trong, vị thanh", base: 220000, rating: 4.8, reviews: 64, origin: "Tân Cương · Thái Nguyên", ph: "nontom",
-    desc: "Chỉ hái một tôm một lá vào sáng sớm. Cánh trà nhỏ, đều, nước xanh trong và hậu ngọt rõ." },
-  { id: "dinh-th", name: "Đinh Thượng Hạng", kind: "Thượng hạng", note: "Búp nhỏ nhất, vị sâu", base: 480000, rating: 5.0, reviews: 31, origin: "Đồi chè Tân Cương", ph: "dinhth",
-    desc: "Phần búp nhỏ nhất của cây chè, cánh nhọn như đinh. Dành cho người sành trà và những dịp đặc biệt." },
-  { id: "hop-qua", name: "Hộp quà Trao Gửi", kind: "Quà tặng", note: "Gói sẵn, kèm thiệp viết tay", base: 650000, fixed: true, rating: 4.9, reviews: 53, origin: "Bộ quà tặng", ph: "hopqua",
-    desc: "Đinh Sen 150g, Nõn Tôm 150g và kẹo lạc trà xanh trong hộp sơn mài. Miễn phí gói quà cho đơn từ 500.000₫." },
-];
-const SIZE: Record<string, number> = { "150": 1, "300": 1.9, "500": 3 };
-const GRADE: Record<string, number> = { "1": 1, "2": 0.75 };
-const SIZE_OPTIONS = ["150", "300", "500"].map((s) => ({ value: s, label: s + "g" }));
-const GRADE_OPTIONS = [
-  { value: "1", label: "Hạng 1", sub: "Hương đậm" },
-  { value: "2", label: "Hạng 2", sub: "Hằng ngày" },
-];
 const pad = (n: number) => String(n).padStart(2, "0");
 
 export default function Landing() {
+  const router = useRouter();
+  const { add } = useCart();
   const [idx, setIdx] = useState(0);
-  const [size, setSize] = useState("150");
-  const [grade, setGrade] = useState("1");
-  const [cart, setCart] = useState(0);
+  const [size, setSize] = useState(DEFAULT_SIZE);
+  const [grade, setGrade] = useState(DEFAULT_GRADE);
   const [added, setAdded] = useState(false);
   const [fading, setFading] = useState(false);
-  const [menu, setMenu] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [w, setW] = useState(1280);
   const stageRef = useRef<HTMLElement>(null);
@@ -57,11 +25,8 @@ export default function Landing() {
 
   useEffect(() => {
     const onResize = () => setW(window.innerWidth);
-    const onScroll = () => setScrolled(window.scrollY > 24);
     onResize();
-    onScroll();
     window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", onScroll, { passive: true });
     const t0 = setTimeout(() => setLoaded(true), 60);
     TEAS.forEach((t) => {
       const i = new Image();
@@ -69,7 +34,6 @@ export default function Landing() {
     });
     return () => {
       window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", onScroll);
       [t0, t1.current, t2.current].forEach(clearTimeout);
     };
   }, []);
@@ -94,115 +58,34 @@ export default function Landing() {
 
   const go = (i: number | null) => (e?: MouseEvent) => {
     e?.preventDefault();
-    setMenu(false);
     if (i != null) pick(i);
     scrollToStage();
   };
 
   const addToCart = () => {
     clearTimeout(t2.current);
-    setCart((c) => c + 1);
+    add(tea.slug, size, grade);
     setAdded(true);
     t2.current = setTimeout(() => setAdded(false), 2200);
   };
   const buyNow = () => {
-    setCart((c) => c + 1);
-    setAdded(true);
+    add(tea.slug, size, grade);
+    router.push("/gio-hang");
   };
 
   const tea = TEAS[idx];
   const isDesktop = w >= 1000;
   const mobile = w < 720;
-  const solid = scrolled || menu;
-  const headerInk = solid ? "var(--text-strong)" : "var(--logo-cream)";
-  const price = tea.fixed ? tea.base : Math.round((tea.base * SIZE[size] * GRADE[grade]) / 1000) * 1000;
+  const price = priceOf(tea, size, grade);
 
-  const navItems = [
-    { label: "Trà xanh", onClick: go(1) },
-    { label: "Trà sen", onClick: go(0) },
-    { label: "Thượng hạng", onClick: go(3) },
-    { label: "Quà tặng", onClick: go(4) },
-    { label: "Câu chuyện", onClick: (e: MouseEvent) => e.preventDefault() },
-  ];
   const trust = [
     { icon: "leaf", a: "Búp chè Tân Cương", b: "hái tay sáng sớm", divider: true },
     { icon: "scale", a: "Rõ khối lượng", b: "và phân hạng", divider: !mobile },
     { icon: "qr-code", a: "Thanh toán VietQR", b: "hoặc COD", divider: false },
   ];
 
-  const roundBtn = {
-    width: 44, height: 44, border: 0, borderRadius: 999, background: "transparent", color: "inherit",
-    display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-  } as const;
-
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-page)", color: "var(--text-body)", fontFamily: "var(--font-ui)" }}>
-      <header
-        style={{
-          position: "fixed", top: 0, left: 0, right: 0, zIndex: 30,
-          background: solid ? "rgba(247,240,227,.94)" : "transparent",
-          backdropFilter: solid ? "blur(10px)" : "none",
-          WebkitBackdropFilter: solid ? "blur(10px)" : "none",
-          borderBottom: "1px solid " + (solid ? "var(--border-hairline)" : "transparent"),
-          transition: "background 200ms cubic-bezier(.2,.7,.2,1),border-color 200ms",
-        }}
-      >
-        <div style={{ maxWidth: 1240, margin: "0 auto", height: 68, padding: "0 clamp(12px,3vw,40px)", display: "flex", alignItems: "center", gap: 24 }}>
-          <a href="#" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: headerInk, flexShrink: 0 }}>
-            <span style={{ width: 42, height: 42, borderRadius: 6, background: "var(--logo-green)", border: "1px solid rgba(188,154,108,.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/lam-tra-emblem.svg" alt="Lam Trà" style={{ height: 30 }} />
-            </span>
-            <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
-              <span style={{ fontSize: 17, fontWeight: 500, letterSpacing: "-.01em" }}>Lam Trà</span>
-              <span style={{ fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: solid ? "var(--tra-500)" : "var(--tra-300)" }}>Tea &amp; beyond</span>
-            </span>
-          </a>
-          {isDesktop && (
-            <nav style={{ display: "flex", gap: 30, flex: 1, justifyContent: "center" }}>
-              {navItems.map((n) => (
-                <a key={n.label} href="#" onClick={n.onClick} className="lt-nav-link" style={{ fontSize: 14, color: headerInk, padding: "6px 0" }}>
-                  {n.label}
-                </a>
-              ))}
-            </nav>
-          )}
-          <div style={{ display: "flex", alignItems: "center", gap: 2, marginLeft: "auto", color: headerInk }}>
-            <button type="button" aria-label="Tìm kiếm" className="lt-head-btn" style={roundBtn}>
-              <Icon name="search" size={22} />
-            </button>
-            <button type="button" aria-label="Giỏ hàng" className="lt-head-btn" style={{ ...roundBtn, position: "relative" }}>
-              <Icon name="shopping-bag" size={22} />
-              {cart > 0 && (
-                <span style={{ position: "absolute", top: 5, right: 4, minWidth: 17, height: 17, padding: "0 4px", borderRadius: 999, background: "var(--tra-400)", color: "var(--logo-green)", fontSize: 10.5, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", fontVariantNumeric: "tabular-nums" }}>
-                  {cart}
-                </span>
-              )}
-            </button>
-            {isDesktop ? (
-              <Button variant="accent" size="sm" iconRight="arrow-right" onClick={go(null)} style={{ marginLeft: 10 }}>
-                Mua ngay
-              </Button>
-            ) : (
-              <button type="button" aria-label="Danh mục" onClick={() => setMenu((m) => !m)} style={roundBtn}>
-                <Icon name={menu ? "x" : "menu"} size={22} />
-              </button>
-            )}
-          </div>
-        </div>
-        {!isDesktop && menu && (
-          <nav style={{ display: "flex", flexDirection: "column", padding: "4px 20px 20px", background: "var(--bg-page)", borderTop: "1px solid var(--border-hairline)" }}>
-            {navItems.map((n) => (
-              <a key={n.label} href="#" onClick={n.onClick} style={{ fontSize: 16, color: "var(--text-strong)", textDecoration: "none", padding: "15px 0", borderBottom: "1px solid var(--border-hairline)" }}>
-                {n.label}
-              </a>
-            ))}
-            <Button size="lg" fullWidth onClick={go(null)} style={{ marginTop: 16 }}>
-              Mua ngay
-            </Button>
-          </nav>
-        )}
-      </header>
+    <div>
 
       <section
         style={{
@@ -248,7 +131,7 @@ export default function Landing() {
               <Button variant="accent" size="lg" iconRight="arrow-right" onClick={go(null)}>
                 Mua ngay
               </Button>
-              <a href="#" onClick={go(4)} className="lt-gift-link">
+              <a href="#tra-noi-bat" onClick={go(TEAS.findIndex((t) => t.category === "qua-tang"))} className="lt-gift-link">
                 <Icon name="gift" size={18} />
                 Xem hộp quà biếu
               </a>
@@ -271,14 +154,14 @@ export default function Landing() {
         </div>
       </section>
 
-      <section ref={stageRef} style={{ position: "relative", zIndex: 2, padding: "0 clamp(12px,3vw,40px) clamp(48px,7vw,96px)", marginTop: mobile ? -96 : -150 }}>
+      <section id="tra-noi-bat" aria-label="Trà nổi bật" ref={stageRef} style={{ position: "relative", zIndex: 2, padding: "0 clamp(12px,3vw,40px) clamp(48px,7vw,96px)", marginTop: mobile ? -96 : -150 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", background: "var(--surface-card)", border: "1px solid var(--border-hairline)", borderRadius: 10, boxShadow: "var(--shadow-lg)", overflow: "hidden", display: "flex", flexWrap: "wrap" }}>
           {isDesktop ? (
             <div style={{ flex: "0 0 232px", padding: "20px 14px", background: "var(--logo-green)", display: "flex", flexDirection: "column", gap: 6 }}>
               <div style={{ fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--tra-300)", padding: "4px 10px 12px" }}>Trà nổi bật</div>
               {TEAS.map((t, i) => (
                 <button
-                  key={t.id}
+                  key={t.slug}
                   type="button"
                   onClick={() => pick(i)}
                   className={i === idx ? "lt-tea-item" : "lt-tea-item lt-tea-idle"}
@@ -302,7 +185,7 @@ export default function Landing() {
             <div style={{ flex: "1 1 100%", display: "flex", gap: 8, overflowX: "auto", padding: 12, background: "var(--logo-green)", scrollbarWidth: "none" }}>
               {TEAS.map((t, i) => (
                 <button
-                  key={t.id}
+                  key={t.slug}
                   type="button"
                   onClick={() => pick(i)}
                   style={{
@@ -337,7 +220,9 @@ export default function Landing() {
               <div style={{ fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", fontWeight: 500, color: "var(--accent)", fontVariantNumeric: "tabular-nums" }}>
                 {pad(idx + 1)} / {pad(TEAS.length)} · {tea.kind}
               </div>
-              <h2 style={{ margin: 0, fontSize: "clamp(26px,2.6vw,34px)", lineHeight: 1.2, fontWeight: 500, letterSpacing: "-.01em", color: "var(--text-strong)" }}>{tea.name}</h2>
+              <h2 style={{ margin: 0, fontSize: "clamp(26px,2.6vw,34px)", lineHeight: 1.2, fontWeight: 500, letterSpacing: "-.01em", color: "var(--text-strong)" }}>
+                <Link href={`/san-pham/${tea.slug}`} className="lt-card-name" style={{ color: "inherit", textDecoration: "none" }}>{tea.name}</Link>
+              </h2>
               <div style={{ fontSize: 15, color: "var(--tra-500)" }}>{tea.note}</div>
               <Rating value={tea.rating} count={tea.reviews} />
             </div>
@@ -353,8 +238,8 @@ export default function Landing() {
               </div>
             )}
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, paddingTop: 16, borderTop: "1px solid var(--border-hairline)", marginTop: "auto" }}>
-              <Price value={price} size="lg" />
-              <span style={{ fontSize: 13, color: "var(--text-muted)" }}>{tea.fixed ? "Hộp 3 món" : `${size}g · Hạng ${grade}`}</span>
+              <Price value={price} compareAt={tea.compareAt && size === DEFAULT_SIZE && grade === DEFAULT_GRADE ? tea.compareAt : undefined} size="lg" />
+              <span style={{ fontSize: 13, color: "var(--text-muted)" }}>{variantLabel(tea, size, grade)}</span>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
               <div style={{ flex: "1 1 150px", minWidth: 0 }}>

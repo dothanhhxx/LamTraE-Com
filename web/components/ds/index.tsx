@@ -1,8 +1,12 @@
 "use client";
 
 // Lam Trà design system components, ported from _ds_bundle.js.
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useId, useState, type CSSProperties, type InputHTMLAttributes, type ReactNode } from "react";
+import Link from "next/link";
 import { ICON_PATHS } from "./icon-paths";
+import { WishButton } from "./more";
+
+export * from "./more";
 
 export function formatVND(n: number) {
   return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫";
@@ -60,6 +64,9 @@ export function Button({
   children,
   style,
   onClick,
+  type = "button",
+  disabled,
+  href,
 }: {
   variant?: keyof typeof VARIANTS;
   size?: keyof typeof SIZES;
@@ -69,48 +76,67 @@ export function Button({
   children?: ReactNode;
   style?: CSSProperties;
   onClick?: () => void;
+  type?: "button" | "submit";
+  disabled?: boolean;
+  /** Khi có href, nút được render thành link (Next.js) */
+  href?: string;
 }) {
   const [hover, setHover] = useState(false);
   const [press, setPress] = useState(false);
   const s = SIZES[size];
   const v = VARIANTS[variant];
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => {
-        setHover(false);
-        setPress(false);
-      }}
-      onMouseDown={() => setPress(true)}
-      onMouseUp={() => setPress(false)}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: s.gap,
-        height: s.height,
-        padding: s.padding,
-        width: fullWidth ? "100%" : undefined,
-        fontFamily: "var(--font-ui)",
-        fontSize: s.fontSize,
-        fontWeight: 500,
-        letterSpacing: ".02em",
-        color: v.fg,
-        background: hover ? v.hbg : v.bg,
-        border: "1px solid " + (hover ? v.hbd : v.bd),
-        borderRadius: "var(--radius-button)",
-        cursor: "pointer",
-        transform: press ? "translateY(1px)" : "none",
-        transition: "background var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), transform var(--dur-fast)",
-        whiteSpace: "nowrap",
-        ...style,
-      }}
-    >
+  const events = {
+    onClick,
+    onMouseEnter: () => setHover(true),
+    onMouseLeave: () => {
+      setHover(false);
+      setPress(false);
+    },
+    onMouseDown: () => setPress(true),
+    onMouseUp: () => setPress(false),
+  };
+  const css: CSSProperties = {
+    display: fullWidth ? "flex" : "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxSizing: "border-box",
+    gap: s.gap,
+    height: s.height,
+    padding: s.padding,
+    width: fullWidth ? "100%" : undefined,
+    fontFamily: "var(--font-ui)",
+    fontSize: s.fontSize,
+    fontWeight: 500,
+    letterSpacing: ".02em",
+    textDecoration: "none",
+    color: v.fg,
+    background: hover && !disabled ? v.hbg : v.bg,
+    border: "1px solid " + (hover && !disabled ? v.hbd : v.bd),
+    borderRadius: "var(--radius-button)",
+    cursor: disabled ? "not-allowed" : "pointer",
+    opacity: disabled ? 0.5 : 1,
+    transform: press ? "translateY(1px)" : "none",
+    transition: "background var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), transform var(--dur-fast)",
+    whiteSpace: "nowrap",
+    ...style,
+  };
+  const inner = (
+    <>
       {iconLeft && <Icon name={iconLeft} size={s.icon} />}
       {children}
       {iconRight && <Icon name={iconRight} size={s.icon} />}
+    </>
+  );
+  if (href && !disabled) {
+    return (
+      <Link href={href} {...events} style={{ ...css, color: v.fg }}>
+        {inner}
+      </Link>
+    );
+  }
+  return (
+    <button type={type} disabled={disabled} {...events} style={css}>
+      {inner}
     </button>
   );
 }
@@ -272,11 +298,207 @@ export function OptionPicker({
   );
 }
 
-export function Price({ value, size = "md" }: { value: number; size?: "sm" | "md" | "lg" }) {
+export function Price({ value, compareAt, size = "md" }: { value: number; compareAt?: number; size?: "sm" | "md" | "lg" }) {
   const fs = size === "lg" ? "var(--fs-price-lg)" : size === "sm" ? "14px" : "var(--fs-price)";
+  const onSale = compareAt != null && compareAt > value;
   return (
-    <span style={{ display: "inline-flex", alignItems: "baseline", fontFamily: "var(--font-ui)", fontVariantNumeric: "tabular-nums" }}>
-      <span style={{ fontSize: fs, fontWeight: 700, color: "var(--text-price)" }}>{formatVND(value)}</span>
+    <span style={{ display: "inline-flex", alignItems: "baseline", flexWrap: "wrap", gap: "2px 8px", fontFamily: "var(--font-ui)", fontVariantNumeric: "tabular-nums" }}>
+      <span style={{ fontSize: fs, fontWeight: 700, color: onSale ? "var(--sale)" : "var(--text-price)" }}>{formatVND(value)}</span>
+      {onSale && (
+        <span style={{ fontSize: size === "lg" ? 15 : 13, color: "var(--text-price-old)", textDecoration: "line-through" }}>
+          <span className="lt-sr">Giá cũ </span>
+          {formatVND(compareAt)}
+        </span>
+      )}
     </span>
+  );
+}
+
+const BADGE_TONES = {
+  neutral: { bg: "var(--bg-sunken)", fg: "var(--text-body)" },
+  accent: { bg: "var(--accent-soft)", fg: "var(--tra-700)" },
+  sale: { bg: "var(--danger-soft)", fg: "var(--danger)" },
+  success: { bg: "var(--success-soft)", fg: "var(--success)" },
+  new: { bg: "var(--primary-soft)", fg: "var(--primary)" },
+};
+
+export function Badge({ tone = "neutral", children }: { tone?: keyof typeof BADGE_TONES; children: ReactNode }) {
+  const t = BADGE_TONES[tone];
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", height: 22, padding: "0 8px", borderRadius: "var(--radius-xs)", background: t.bg, color: t.fg, fontSize: 11.5, fontWeight: 500, letterSpacing: ".01em", whiteSpace: "nowrap", fontFamily: "var(--font-ui)" }}>
+      {children}
+    </span>
+  );
+}
+
+export function Input({
+  label,
+  hint,
+  error,
+  textarea,
+  rows = 4,
+  style,
+  ...rest
+}: {
+  label?: string;
+  hint?: string;
+  error?: string;
+  textarea?: boolean;
+  rows?: number;
+} & InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>) {
+  const id = useId();
+  const field: CSSProperties = {
+    width: "100%", boxSizing: "border-box", minHeight: 48, padding: textarea ? "12px 14px" : "0 14px",
+    fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-strong)", background: "var(--surface-raised)",
+    border: "1px solid " + (error ? "var(--danger)" : "var(--border-strong)"), borderRadius: "var(--radius-input)",
+    outline: "none", resize: "vertical", ...style,
+  };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, fontFamily: "var(--font-ui)" }}>
+      {label && (
+        <label htmlFor={id} style={{ fontSize: 13, fontWeight: 500, color: "var(--text-strong)" }}>
+          {label}
+          {rest.required && <span style={{ color: "var(--danger)" }}> *</span>}
+        </label>
+      )}
+      {textarea ? (
+        <textarea id={id} rows={rows} className="lt-field" style={field} aria-invalid={!!error} {...rest} />
+      ) : (
+        <input id={id} className="lt-field" style={field} aria-invalid={!!error} {...rest} />
+      )}
+      {(error || hint) && <span style={{ fontSize: 12, color: error ? "var(--danger)" : "var(--text-muted)" }}>{error || hint}</span>}
+    </div>
+  );
+}
+
+export function QuantityStepper({ value, onChange, min = 1, max = 99, size = "md" }: { value: number; onChange: (v: number) => void; min?: number; max?: number; size?: "sm" | "md" }) {
+  const h = size === "sm" ? 36 : 44;
+  const btn: CSSProperties = { width: h, height: h, border: 0, background: "transparent", color: "var(--text-strong)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 };
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-input)", background: "var(--surface-raised)", fontFamily: "var(--font-ui)" }}>
+      <button type="button" aria-label="Giảm số lượng" disabled={value <= min} onClick={() => onChange(value - 1)} style={{ ...btn, opacity: value <= min ? 0.35 : 1 }}>
+        <Icon name="minus" size={16} />
+      </button>
+      <span aria-live="polite" style={{ minWidth: 28, textAlign: "center", fontSize: 15, fontWeight: 500, color: "var(--text-strong)", fontVariantNumeric: "tabular-nums" }}>{value}</span>
+      <button type="button" aria-label="Tăng số lượng" disabled={value >= max} onClick={() => onChange(value + 1)} style={{ ...btn, opacity: value >= max ? 0.35 : 1 }}>
+        <Icon name="plus" size={16} />
+      </button>
+    </div>
+  );
+}
+
+export function Toast({ message, onClose, action }: { message: string | null; onClose?: () => void; action?: { label: string; href: string } }) {
+  return (
+    <div aria-live="polite" style={{ position: "fixed", left: 0, right: 0, bottom: "calc(var(--tabbar-space, 0px) + 16px)", zIndex: 50, display: "flex", justifyContent: "center", pointerEvents: "none", padding: "0 16px" }}>
+      {message && (
+        <div className="lt-rise" style={{ pointerEvents: "auto", display: "flex", alignItems: "center", gap: 12, maxWidth: 440, width: "100%", padding: "12px 12px 12px 16px", borderRadius: "var(--radius-md)", background: "var(--surface-inverse)", color: "var(--text-on-inverse)", boxShadow: "var(--shadow-lg)", fontFamily: "var(--font-ui)", fontSize: 14 }}>
+          <Icon name="circle-check" size={20} color="var(--tra-300)" />
+          <span style={{ flex: 1, minWidth: 0 }}>{message}</span>
+          {action && (
+            <Link href={action.href} onClick={onClose} style={{ color: "var(--tra-300)", fontWeight: 500, textDecoration: "none", whiteSpace: "nowrap" }}>
+              {action.label}
+            </Link>
+          )}
+          {onClose && (
+            <button type="button" aria-label="Đóng" onClick={onClose} style={{ border: 0, background: "transparent", color: "inherit", cursor: "pointer", padding: 4, display: "flex" }}>
+              <Icon name="x" size={18} />
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function Dialog({ open, onClose, title, children, sheet }: { open: boolean; onClose: () => void; title?: string; children: ReactNode; sheet?: boolean }) {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open, onClose]);
+  if (!open) return null;
+  return (
+    <div role="dialog" aria-modal aria-label={title} style={{ position: "fixed", inset: 0, zIndex: 40, display: "flex", alignItems: sheet ? "flex-end" : "flex-start", justifyContent: "center", padding: sheet ? 0 : "10vh 16px 16px" }}>
+      <div onClick={onClose} className="lt-fade" style={{ position: "absolute", inset: 0, background: "var(--overlay-scrim)" }} />
+      <div className="lt-rise" style={{ position: "relative", width: "100%", maxWidth: sheet ? "100%" : 560, maxHeight: sheet ? "85vh" : "80vh", overflow: "auto", background: "var(--surface-card)", borderRadius: sheet ? "var(--radius-sheet) var(--radius-sheet) 0 0" : "var(--radius-lg)", boxShadow: "var(--shadow-lg)", fontFamily: "var(--font-ui)" }}>
+        {title && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "14px 12px 14px 20px", borderBottom: "1px solid var(--border-hairline)" }}>
+            <span style={{ fontSize: 17, fontWeight: 500, color: "var(--text-strong)" }}>{title}</span>
+            <IconButton icon="x" label="Đóng" onClick={onClose} />
+          </div>
+        )}
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export function ProductCard({
+  href,
+  name,
+  note,
+  image,
+  price,
+  compareAt,
+  rating,
+  reviews,
+  badge,
+  onQuickAdd,
+  wished,
+  onWish,
+}: {
+  href: string;
+  name: string;
+  note?: string;
+  image: string;
+  price: number;
+  compareAt?: number;
+  rating?: number;
+  reviews?: number;
+  badge?: { label: string; tone?: keyof typeof BADGE_TONES };
+  onQuickAdd?: () => void;
+  wished?: boolean;
+  onWish?: () => void;
+}) {
+  // DS rule: product cards have no box — the photo is the container.
+  return (
+    <article className="lt-card" style={{ display: "flex", flexDirection: "column", gap: 10, fontFamily: "var(--font-ui)", minWidth: 0 }}>
+      <div style={{ position: "relative" }}>
+        <Link href={href} aria-label={name} className="lt-card-photo" style={{ display: "block", borderRadius: "var(--radius-card)", overflow: "hidden" }}>
+          <ProductImage src={image} alt={name} />
+        </Link>
+        {badge && (
+          <span style={{ position: "absolute", left: 10, top: 10 }}>
+            <Badge tone={badge.tone}>{badge.label}</Badge>
+          </span>
+        )}
+        {onWish && (
+          <span style={{ position: "absolute", right: 10, top: 10 }}>
+            <WishButton on={!!wished} name={name} onClick={onWish} size={36} />
+          </span>
+        )}
+        {onQuickAdd && (
+          <span style={{ position: "absolute", right: 10, bottom: 10 }}>
+            <IconButton icon="plus" label={`Thêm nhanh ${name} vào giỏ`} variant="surface" size={40} onClick={onQuickAdd} />
+          </span>
+        )}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <Link href={href} className="lt-card-name" style={{ fontSize: 15, fontWeight: 500, lineHeight: 1.3, color: "var(--text-strong)", textDecoration: "none" }}>
+          {name}
+        </Link>
+        {note && <span style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.4 }}>{note}</span>}
+        {rating != null && <Rating value={rating} count={reviews} size={12} />}
+        <div style={{ marginTop: 2 }}>
+          <Price value={price} compareAt={compareAt} />
+        </div>
+      </div>
+    </article>
   );
 }
