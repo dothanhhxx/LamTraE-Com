@@ -143,4 +143,11 @@ export class ProductService {
     }
     return { ok: true, product: updated };
   }
+
+  /** Đồng bộ danh mục sản phẩm chuẩn vào hệ thống */
+  static async syncDefaults(forceReset = false): Promise<{ ok: boolean; count: number; products: Product[] }> {
+    const products = await ProductRepository.syncDefaults(forceReset);
+    return { ok: true, count: products.length, products };
+  }
 }
+

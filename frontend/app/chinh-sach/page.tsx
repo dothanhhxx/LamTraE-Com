@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button, Icon } from "@/components/ds";
 import { PageHeader } from "@/components/shell/PageHeader";
+import { PolicyToc } from "@/components/info/PolicyToc";
 import { formatVND } from "@/lib/format";
 import {
   EXPRESS_FEE,
@@ -53,96 +54,14 @@ export default async function PolicyPage() {
       />
 
       <div
-        className="lt-container"
+        className="lt-container lt-policy-container"
         style={{
           paddingTop: 32,
           paddingBottom: 96,
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 40,
-          alignItems: "flex-start",
         }}
       >
-        {/* Mục lục bên cạnh (Desktop: Sticky, Mobile: gọn gàng) */}
-        <aside
-          aria-label="Mục lục chính sách"
-          style={{
-            flex: "0 0 260px",
-            position: "sticky",
-            top: 100,
-            background: "var(--surface-card)",
-            padding: "20px 16px",
-            borderRadius: "var(--radius-card, 8px)",
-            border: "1px solid var(--border-hairline)",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: ".12em",
-              color: "var(--tra-700)",
-              marginBottom: 12,
-              paddingBottom: 8,
-              borderBottom: "1px solid var(--border-hairline)",
-            }}
-          >
-            Nội dung chính sách
-          </div>
-          <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            {TOC.map((t) => (
-              <a
-                key={t.id}
-                href={`#${t.id}`}
-                className="lt-toc-link"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: "8px 10px",
-                  borderRadius: 6,
-                  color: "var(--text-body)",
-                  textDecoration: "none",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  lineHeight: 1.4,
-                  transition: "background 0.15s, color 0.15s",
-                }}
-              >
-                <Icon name={t.icon} size={16} color="var(--tra-600)" />
-                <span>{t.label}</span>
-              </a>
-            ))}
-          </nav>
-
-          <div
-            style={{
-              marginTop: 20,
-              paddingTop: 16,
-              borderTop: "1px dashed var(--border-hairline)",
-              fontSize: 12,
-              lineHeight: 1.5,
-              color: "var(--text-muted)",
-            }}
-          >
-            Cần hỗ trợ trực tiếp?
-            <br />
-            <a
-              href={telLink()}
-              style={{
-                color: "var(--tra-700)",
-                fontWeight: 600,
-                textDecoration: "none",
-                display: "inline-block",
-                marginTop: 4,
-              }}
-            >
-              📞 Hotline: {SITE.phone}
-            </a>
-          </div>
-        </aside>
+        {/* Mục lục chính sách: Tự động dạng Sticky Sidebar trên Desktop và Tab trượt cạnh trái trên Mobile */}
+        <PolicyToc items={TOC} />
 
         {/* Nội dung chi tiết các chính sách */}
         <div className="lt-prose" style={{ flex: "1 1 540px", margin: 0, maxWidth: 840 }}>
@@ -172,14 +91,32 @@ export default async function PolicyPage() {
 
             <div
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 12.5,
+                color: "var(--tra-800)",
+                background: "rgba(188, 154, 108, 0.12)",
+                padding: "6px 12px",
+                borderRadius: 6,
+                marginBottom: 10,
+                width: "fit-content",
+              }}
+            >
+              <span>👆 <em>Gợi ý trên điện thoại: Vuốt ngang bảng để xem đủ các gói 150g, 300g, 500g</em></span>
+            </div>
+
+            <div
+              style={{
                 overflowX: "auto",
+                WebkitOverflowScrolling: "touch",
                 background: "var(--surface-card)",
                 borderRadius: 8,
                 border: "1px solid var(--border-hairline)",
                 marginBottom: 20,
               }}
             >
-              <table style={{ margin: 0, width: "100%", fontSize: 13 }}>
+              <table style={{ margin: 0, width: "100%", minWidth: 620, fontSize: 13 }}>
                 <thead>
                   <tr style={{ background: "rgba(22, 60, 42, 0.04)" }}>
                     <th style={{ padding: "12px 14px", textAlign: "left" }}>Tên sản phẩm</th>

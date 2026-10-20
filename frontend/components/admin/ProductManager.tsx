@@ -5,11 +5,13 @@ import Link from "next/link";
 import { formatVND, Icon, Dialog } from "@/components/ds";
 import { ProductEditModal } from "./ProductEditModal";
 import type { Product } from "@/shared";
-import { CATEGORIES, photo } from "@/lib/products";
+import { CATEGORIES, PRODUCTS, photo } from "@/lib/products";
 
 export function ProductManager() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isFallback, setIsFallback] = useState(false);
   const [savingSlug, setSavingSlug] = useState<string | null>(null);
   const [editPrice, setEditPrice] = useState<Record<string, { base: number; compareAt?: number }>>({});
 
@@ -24,23 +26,94 @@ export function ProductManager() {
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const populatePrices = (list: Product[]) => {
+    const prices: Record<string, { base: number; compareAt?: number }> = {};
+    for (const p of list) {
+      prices[p.slug] = { base: p.base, compareAt: p.compareAt };
+    }
+    setEditPrice((prev) => ({ ...prices, ...prev }));
+  };
+
   const fetchProducts = async () => {
     setLoading(true);
     try {
+      // 1. Thử gọi API quản trị đầy đủ
       const res = await fetch("/api/admin/products");
-      const data = await res.json();
-      if (data.ok) {
-        setProducts(data.products || []);
-        const prices: Record<string, { base: number; compareAt?: number }> = {};
-        for (const p of data.products || []) {
-          prices[p.slug] = { base: p.base, compareAt: p.compareAt };
+      const data = await res.json().catch(() => ({ ok: false }));
+
+      if (res.status === 401 || !data.ok) {
+        // Chưa đăng nhập hoặc cookie hết hạn -> Fallback sang API công khai để chủ shop vẫn xem được sản phẩm
+        const pubRes = await fetch("/api/products").catch(() => null);
+        if (pubRes && pubRes.ok) {
+          const pubData = await pubRes.json().catch(() => ({ ok: false }));
+          if (pubData.ok && Array.isArray(pubData.products) && pubData.products.length > 0) {
+            setProducts(pubData.products);
+            populatePrices(pubData.products);
+            setIsFallback(true);
+            return;
+          }
         }
-        setEditPrice(prices);
+        // Fallback danh mục tĩnh
+        setProducts(PRODUCTS);
+        populatePrices(PRODUCTS);
+        setIsFallback(true);
+        return;
+      }
+
+      if (data.ok) {
+        const list = Array.isArray(data.products) ? data.products : [];
+        if (list.length === 0) {
+          // Danh mục trống -> Tự động kích hoạt đồng bộ 6 sản phẩm mẫu
+          await handleSync(false, true);
+        } else {
+          setProducts(list);
+          populatePrices(list);
+          setIsFallback(false);
+        }
       }
     } catch (e) {
-      console.error("Lỗi lấy sản phẩm:", e);
+      console.error("Lỗi lấy sản phẩm, chuyển sang dữ liệu dự phòng:", e);
+      setProducts(PRODUCTS);
+      populatePrices(PRODUCTS);
+      setIsFallback(true);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSync = async (forceReset = false, silent = false) => {
+    setIsSyncing(true);
+    try {
+      const res = await fetch("/api/admin/products/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ forceReset }),
+      });
+      const data = await res.json().catch(() => ({ ok: false }));
+
+      if (data.ok && Array.isArray(data.products)) {
+        setProducts(data.products);
+        populatePrices(data.products);
+        setIsFallback(false);
+        if (!silent) {
+          alert(`Đã đồng bộ thành công ${data.count || data.products.length} sản phẩm trà vào hệ thống!`);
+        }
+      } else {
+        // Nếu API backend chưa sẵn sàng, nạp trực tiếp danh mục chuẩn vào giao diện
+        setProducts(PRODUCTS);
+        populatePrices(PRODUCTS);
+        if (!silent) {
+          alert(`Đã nạp ${PRODUCTS.length} sản phẩm danh mục chuẩn vào giao diện.`);
+        }
+      }
+    } catch {
+      setProducts(PRODUCTS);
+      populatePrices(PRODUCTS);
+      if (!silent) {
+        alert("Lỗi khi kết nối máy chủ. Đã nạp sản phẩm mặc định từ hệ thống.");
+      }
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -134,51 +207,122 @@ export function ProductManager() {
   const totalGift = products.filter((p) => p.category === "qua-tang").length;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 20, fontFamily: "var(--font-ui)" }}>
-      {/* Top Banner & Metrics */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
-        <div style={{ background: "#FFFFFF", padding: "16px 20px", borderRadius: 10, border: "1px solid #E5E7EB", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-          <div style={{ fontSize: 13, color: "#6B7280" }}>Tổng danh mục trà</div>
-          <div style={{ fontSize: 24, fontWeight: 700, color: "#111827", marginTop: 4 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16, fontFamily: "var(--font-ui)" }}>
+      {/* Cảnh báo chế độ dự phòng nếu chưa kết nối phiên quản trị */}
+      {isFallback && (
+        <div
+          style={{
+            background: "#FFFBEB",
+            border: "1px solid #FDE68A",
+            padding: "12px 16px",
+            borderRadius: 8,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 10,
+            fontSize: 13,
+            color: "#92400E",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Icon name="triangle-alert" size={16} />
+            <span>
+              <strong>Chế độ dự phòng:</strong> Đang hiển thị sản phẩm từ danh mục hệ thống (phiên quản trị chưa kích hoạt).
+            </span>
+          </div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <button
+              type="button"
+              disabled={isSyncing}
+              onClick={() => handleSync(false)}
+              style={{
+                padding: "6px 14px",
+                borderRadius: 6,
+                border: "1px solid #D97706",
+                background: "#FEF3C7",
+                color: "#92400E",
+                fontWeight: 600,
+                fontSize: 12.5,
+                cursor: "pointer",
+              }}
+            >
+              {isSyncing ? "Đang đồng bộ..." : "🔄 Đồng bộ dữ liệu"}
+            </button>
+            <Link
+              href="/quan-tri"
+              style={{
+                padding: "6px 14px",
+                borderRadius: 6,
+                border: "1px solid #0D2219",
+                background: "#0D2219",
+                color: "#FFFFFF",
+                fontWeight: 600,
+                fontSize: 12.5,
+                textDecoration: "none",
+              }}
+            >
+              Đăng nhập quản trị
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Top Banner & Metrics - 2x2 on Mobile */}
+      <div className="lt-admin-metrics-grid">
+        <div className="lt-admin-metric-card">
+          <div className="lt-metric-label" style={{ fontSize: 13, color: "#6B7280" }}>Tổng danh mục trà</div>
+          <div className="lt-metric-value" style={{ fontSize: 22, fontWeight: 700, color: "#111827", marginTop: 4 }}>
             {products.length} dòng
           </div>
-          <div style={{ fontSize: 12, color: "#6B7280", marginTop: 4 }}>Trên toàn hệ thống</div>
+          <div className="lt-metric-sub" style={{ fontSize: 12, color: "#6B7280", marginTop: 4 }}>Trên toàn hệ thống</div>
         </div>
 
-        <div style={{ background: "#FFFFFF", padding: "16px 20px", borderRadius: 10, border: "1px solid #E5E7EB", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-          <div style={{ fontSize: 13, color: "#6B7280" }}>Đang mở bán</div>
-          <div style={{ fontSize: 24, fontWeight: 700, color: "#047857", marginTop: 4 }}>
+        <div className="lt-admin-metric-card">
+          <div className="lt-metric-label" style={{ fontSize: 13, color: "#6B7280" }}>Đang mở bán</div>
+          <div className="lt-metric-value" style={{ fontSize: 22, fontWeight: 700, color: "#047857", marginTop: 4 }}>
             {totalActive}
           </div>
-          <div style={{ fontSize: 12, color: "#10B981", marginTop: 4 }}>Hiển thị ra Storefront</div>
+          <div className="lt-metric-sub" style={{ fontSize: 12, color: "#10B981", marginTop: 4 }}>Hiển thị ra Storefront</div>
         </div>
 
-        <div style={{ background: "#FFFFFF", padding: "16px 20px", borderRadius: 10, border: "1px solid #E5E7EB", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-          <div style={{ fontSize: 13, color: "#6B7280" }}>Tạm ẩn mở bán</div>
-          <div style={{ fontSize: 24, fontWeight: 700, color: "#DC2626", marginTop: 4 }}>
+        <div className="lt-admin-metric-card">
+          <div className="lt-metric-label" style={{ fontSize: 13, color: "#6B7280" }}>Tạm ẩn mở bán</div>
+          <div className="lt-metric-value" style={{ fontSize: 22, fontWeight: 700, color: "#DC2626", marginTop: 4 }}>
             {totalInactive}
           </div>
-          <div style={{ fontSize: 12, color: "#6B7280", marginTop: 4 }}>Tạm hết hàng hoặc chuẩn bị ra mắt</div>
+          <div className="lt-metric-sub" style={{ fontSize: 12, color: "#6B7280", marginTop: 4 }}>Hết hàng / sắp ra mắt</div>
         </div>
 
-        <div style={{ background: "#FFFFFF", padding: "16px 20px", borderRadius: 10, border: "1px solid #E5E7EB", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-          <div style={{ fontSize: 13, color: "#6B7280" }}>Hộp quà biếu</div>
-          <div style={{ fontSize: 24, fontWeight: 700, color: "#92400E", marginTop: 4 }}>
+        <div className="lt-admin-metric-card">
+          <div className="lt-metric-label" style={{ fontSize: 13, color: "#6B7280" }}>Hộp quà biếu</div>
+          <div className="lt-metric-value" style={{ fontSize: 22, fontWeight: 700, color: "#92400E", marginTop: 4 }}>
             {totalGift}
           </div>
-          <div style={{ fontSize: 12, color: "#D97706", marginTop: 4 }}>Set quà Tết & Doanh nghiệp</div>
+          <div className="lt-metric-sub" style={{ fontSize: 12, color: "#D97706", marginTop: 4 }}>Set quà Doanh nghiệp</div>
         </div>
       </div>
 
       {/* Control Bar: Filter, Search & Add Button */}
-      <div style={{ background: "#FFFFFF", padding: "16px 20px", borderRadius: 10, border: "1px solid #E5E7EB", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
-        {/* Category Filter Tabs */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+      <div
+        style={{
+          background: "#FFFFFF",
+          padding: "14px 16px",
+          borderRadius: 10,
+          border: "1px solid #E5E7EB",
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
+        {/* Category Filter Tabs (Horizontal Scrollable Chips on Mobile) */}
+        <div className="lt-admin-tabs-scroll">
           <button
             type="button"
             onClick={() => setCategoryFilter("")}
+            className="lt-admin-tab-chip"
             style={{
-              padding: "6px 14px",
+              padding: "7px 14px",
               borderRadius: 6,
               border: `1px solid ${categoryFilter === "" ? "#0D2219" : "#E5E7EB"}`,
               background: categoryFilter === "" ? "#0D2219" : "#FFFFFF",
@@ -197,8 +341,9 @@ export function ProductManager() {
                 key={c.slug}
                 type="button"
                 onClick={() => setCategoryFilter(c.slug)}
+                className="lt-admin-tab-chip"
                 style={{
-                  padding: "6px 14px",
+                  padding: "7px 14px",
                   borderRadius: 6,
                   border: `1px solid ${active ? "#0D2219" : "#E5E7EB"}`,
                   background: active ? "#0D2219" : "#FFFFFF",
@@ -215,311 +360,591 @@ export function ProductManager() {
         </div>
 
         {/* Actions: Status Filter, Search, + Thêm sản phẩm */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            style={{
-              height: 38,
-              padding: "0 10px",
-              borderRadius: 6,
-              border: "1px solid #D1D5DB",
-              background: "#FAF8F5",
-              fontSize: 13,
-            }}
-          >
-            <option value="">Tất cả trạng thái</option>
-            <option value="active">Đang mở bán</option>
-            <option value="inactive">Tạm ẩn</option>
-          </select>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "1 1 280px" }}>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              style={{
+                height: 40,
+                padding: "0 10px",
+                borderRadius: 6,
+                border: "1px solid #D1D5DB",
+                background: "#FAF8F5",
+                fontSize: 13,
+                flexShrink: 0,
+              }}
+            >
+              <option value="">Tất cả</option>
+              <option value="active">Đang mở bán</option>
+              <option value="inactive">Tạm ẩn</option>
+            </select>
 
-          <input
-            type="text"
-            placeholder="Tìm tên trà, vùng, ghi chú..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{
-              height: 38,
-              padding: "0 12px",
-              borderRadius: 6,
-              border: "1px solid #D1D5DB",
-              background: "#FAF8F5",
-              fontSize: 13,
-              width: 200,
-            }}
-          />
+            <input
+              type="text"
+              placeholder="Tìm tên trà, vùng, ghi chú..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                height: 40,
+                padding: "0 12px",
+                borderRadius: 6,
+                border: "1px solid #D1D5DB",
+                background: "#FAF8F5",
+                fontSize: 13,
+                flex: 1,
+                minWidth: 0,
+              }}
+            />
+          </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              setEditingProduct(null);
-              setIsModalOpen(true);
-            }}
-            style={{
-              height: 38,
-              padding: "0 16px",
-              borderRadius: 6,
-              border: 0,
-              background: "linear-gradient(135deg, #0D2219, #1B4332)",
-              color: "#F7F0E3",
-              fontSize: 13.5,
-              fontWeight: 600,
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              cursor: "pointer",
-              boxShadow: "0 2px 6px rgba(13,34,25,0.25)",
-            }}
-          >
-            <span style={{ fontSize: 16 }}>+</span>
-            <span>Thêm sản phẩm mới</span>
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <button
+              type="button"
+              disabled={isSyncing}
+              onClick={() => handleSync(false)}
+              style={{
+                height: 40,
+                padding: "0 14px",
+                borderRadius: 6,
+                border: "1px solid #D1D5DB",
+                background: "#FFFFFF",
+                color: "#374151",
+                fontSize: 13,
+                fontWeight: 600,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                cursor: isSyncing ? "default" : "pointer",
+                opacity: isSyncing ? 0.7 : 1,
+              }}
+              title="Đồng bộ danh mục trà chuẩn vào trang quản trị"
+            >
+              <Icon name="rotate-ccw" size={14} />
+              <span>{isSyncing ? "Đang đồng bộ..." : "Đồng bộ sản phẩm"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setEditingProduct(null);
+                setIsModalOpen(true);
+              }}
+              style={{
+                height: 40,
+                padding: "0 16px",
+                borderRadius: 6,
+                border: 0,
+                background: "linear-gradient(135deg, #0D2219, #1B4332)",
+                color: "#F7F0E3",
+                fontSize: 13.5,
+                fontWeight: 600,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                cursor: "pointer",
+                boxShadow: "0 2px 6px rgba(13,34,25,0.25)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <span style={{ fontSize: 16 }}>+</span>
+              <span>Thêm sản phẩm mới</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Products Table */}
-      <div style={{ background: "#FFFFFF", borderRadius: 10, border: "1px solid #E5E7EB", overflow: "hidden" }}>
-        {loading ? (
-          <div style={{ padding: "40px", textAlign: "center", color: "#6B7280" }}>Đang tải danh sách sản phẩm...</div>
-        ) : filteredProducts.length === 0 ? (
-          <div style={{ padding: "50px 20px", textAlign: "center", color: "#6B7280" }}>
-            <div style={{ fontSize: 16, fontWeight: 500, color: "#374151" }}>Không tìm thấy sản phẩm nào</div>
-            <div style={{ fontSize: 13, marginTop: 4 }}>Bạn có thể thêm sản phẩm mới bằng nút ở góc trên bên phải.</div>
+      {/* Products Content */}
+      {loading ? (
+        <div style={{ background: "#FFFFFF", padding: "40px", borderRadius: 10, border: "1px solid #E5E7EB", textAlign: "center", color: "#6B7280" }}>
+          Đang tải danh sách sản phẩm...
+        </div>
+      ) : filteredProducts.length === 0 ? (
+        <div style={{ background: "#FFFFFF", padding: "50px 20px", borderRadius: 10, border: "1px solid #E5E7EB", textAlign: "center", color: "#6B7280" }}>
+          <div style={{ fontSize: 16, fontWeight: 600, color: "#111827" }}>Không tìm thấy sản phẩm nào</div>
+          <p style={{ fontSize: 13, marginTop: 6, color: "#6B7280" }}>
+            {products.length === 0
+              ? "Hệ thống quản trị chưa có dữ liệu sản phẩm hoặc đang tải lại."
+              : "Không có sản phẩm nào khớp với bộ lọc hiện tại."}
+          </p>
+          <div style={{ marginTop: 16, display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              disabled={isSyncing}
+              onClick={() => handleSync(false)}
+              style={{
+                padding: "10px 18px",
+                borderRadius: 6,
+                border: 0,
+                background: "linear-gradient(135deg, #DFBE89, #BC9A6C)",
+                color: "#0D2219",
+                fontWeight: 700,
+                fontSize: 13.5,
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <Icon name="rotate-ccw" size={15} />
+              <span>{isSyncing ? "Đang đồng bộ..." : "🔄 Khôi phục & Đồng bộ 6 sản phẩm mẫu ngay"}</span>
+            </button>
+            {(categoryFilter || statusFilter || search) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCategoryFilter("");
+                  setStatusFilter("");
+                  setSearch("");
+                }}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 6,
+                  border: "1px solid #D1D5DB",
+                  background: "#FFFFFF",
+                  color: "#374151",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                Xóa tất cả bộ lọc
+              </button>
+            )}
           </div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13.5, textAlign: "left" }}>
-              <thead>
-                <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB", color: "#4B5563" }}>
-                  <th style={{ padding: "12px 16px" }}>Ảnh</th>
-                  <th style={{ padding: "12px 16px" }}>Sản phẩm</th>
-                  <th style={{ padding: "12px 16px" }}>Loại trà</th>
-                  <th style={{ padding: "12px 16px" }}>Giá bán cơ sở (VND)</th>
-                  <th style={{ padding: "12px 16px" }}>Giá niêm yết cũ (VND)</th>
-                  <th style={{ padding: "12px 16px", textAlign: "center" }}>Trạng thái</th>
-                  <th style={{ padding: "12px 16px", textAlign: "center" }}>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredProducts.map((p) => {
-                  const ep = editPrice[p.slug] || { base: p.base, compareAt: p.compareAt };
-                  const isSaving = savingSlug === p.slug;
-                  const isActive = p.active ?? true;
+        </div>
+      ) : (
+        <>
+          {/* ─── 1. DESKTOP VIEW: BẢNG SẢN PHẨM (≥ 768px) ─── */}
+          <div className="lt-admin-desktop-table" style={{ background: "#FFFFFF", borderRadius: 10, border: "1px solid #E5E7EB", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13.5, textAlign: "left" }}>
+                <thead>
+                  <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB", color: "#4B5563" }}>
+                    <th style={{ padding: "12px 16px" }}>Ảnh</th>
+                    <th style={{ padding: "12px 16px" }}>Sản phẩm</th>
+                    <th style={{ padding: "12px 16px" }}>Loại trà</th>
+                    <th style={{ padding: "12px 16px" }}>Giá bán cơ sở (VND)</th>
+                    <th style={{ padding: "12px 16px" }}>Giá niêm yết cũ (VND)</th>
+                    <th style={{ padding: "12px 16px", textAlign: "center" }}>Trạng thái</th>
+                    <th style={{ padding: "12px 16px", textAlign: "center" }}>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredProducts.map((p) => {
+                    const ep = editPrice[p.slug] || { base: p.base, compareAt: p.compareAt };
+                    const isSaving = savingSlug === p.slug;
+                    const isActive = p.active ?? true;
 
-                  return (
-                    <tr key={p.slug} style={{ borderBottom: "1px solid #F3F4F6", transition: "background 120ms ease" }}>
-                      {/* Image Thumbnail */}
-                      <td style={{ padding: "12px 16px", width: 64 }}>
-                        <div style={{ width: 48, height: 48, borderRadius: 6, overflow: "hidden", border: "1px solid #E5E7EB", background: "#FAF8F5" }}>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={photo(p.ph)}
-                            alt={p.name}
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                            onError={(e) => {
-                              (e.currentTarget as HTMLImageElement).src = "/assets/photos/moccau.jpg";
-                            }}
-                          />
-                        </div>
-                      </td>
+                    return (
+                      <tr key={p.slug} style={{ borderBottom: "1px solid #F3F4F6", transition: "background 120ms ease" }}>
+                        {/* Image Thumbnail */}
+                        <td style={{ padding: "12px 16px", width: 64 }}>
+                          <div style={{ width: 48, height: 48, borderRadius: 6, overflow: "hidden", border: "1px solid #E5E7EB", background: "#FAF8F5" }}>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={photo(p.ph)}
+                              alt={p.name}
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).src = "/assets/photos/moccau.jpg";
+                              }}
+                            />
+                          </div>
+                        </td>
 
-                      {/* Name & Slug */}
-                      <td style={{ padding: "14px 16px" }}>
-                        <div style={{ fontWeight: 600, color: "#111827", fontSize: 14 }}>{p.name}</div>
-                        <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>
-                          <code>/san-pham/{p.slug}</code>
-                        </div>
-                        {p.note && <div style={{ fontSize: 12, color: "#9CA3AF", marginTop: 2 }}>{p.note}</div>}
-                      </td>
+                        {/* Name & Slug */}
+                        <td style={{ padding: "14px 16px" }}>
+                          <div style={{ fontWeight: 600, color: "#111827", fontSize: 14 }}>{p.name}</div>
+                          <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>
+                            <code>/san-pham/{p.slug}</code>
+                          </div>
+                          {p.note && <div style={{ fontSize: 12, color: "#9CA3AF", marginTop: 2 }}>{p.note}</div>}
+                        </td>
 
-                      {/* Category & Kind */}
-                      <td style={{ padding: "14px 16px" }}>
-                        <span style={{ fontSize: 12.5, fontWeight: 500, color: "#374151", background: "#F3F4F6", padding: "3px 8px", borderRadius: 4 }}>
-                          {p.kind}
-                        </span>
-                        <div style={{ fontSize: 11.5, color: "#9CA3AF", marginTop: 3 }}>{p.origin}</div>
-                      </td>
+                        {/* Category & Kind */}
+                        <td style={{ padding: "14px 16px" }}>
+                          <span style={{ fontSize: 12.5, fontWeight: 500, color: "#374151", background: "#F3F4F6", padding: "3px 8px", borderRadius: 4 }}>
+                            {p.kind}
+                          </span>
+                          <div style={{ fontSize: 11.5, color: "#9CA3AF", marginTop: 3 }}>{p.origin}</div>
+                        </td>
 
-                      {/* Base Price inline */}
-                      <td style={{ padding: "14px 16px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        {/* Base Price inline */}
+                        <td style={{ padding: "14px 16px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <input
+                              type="number"
+                              step={1000}
+                              value={ep.base}
+                              onChange={(e) =>
+                                setEditPrice((prev) => ({
+                                  ...prev,
+                                  [p.slug]: { ...prev[p.slug], base: Number(e.target.value) },
+                                }))
+                              }
+                              style={{
+                                width: 120,
+                                height: 34,
+                                padding: "0 8px",
+                                borderRadius: 6,
+                                border: "1px solid #D1D5DB",
+                                background: "#FAF8F5",
+                                fontSize: 13.5,
+                                fontWeight: 600,
+                                color: "#0D2219",
+                              }}
+                            />
+                            <button
+                              type="button"
+                              disabled={isSaving}
+                              onClick={() => handleSavePrice(p.slug)}
+                              title="Lưu giá nhanh"
+                              style={{
+                                padding: "6px 10px",
+                                borderRadius: 6,
+                                border: 0,
+                                background: "#0D2219",
+                                color: "#FFFFFF",
+                                fontSize: 12,
+                                fontWeight: 600,
+                                cursor: "pointer",
+                              }}
+                            >
+                              {isSaving ? "..." : "Lưu"}
+                            </button>
+                          </div>
+                        </td>
+
+                        {/* Compare At inline */}
+                        <td style={{ padding: "14px 16px" }}>
                           <input
                             type="number"
                             step={1000}
-                            value={ep.base}
+                            placeholder="Không có"
+                            value={ep.compareAt || ""}
                             onChange={(e) =>
                               setEditPrice((prev) => ({
                                 ...prev,
-                                [p.slug]: { ...prev[p.slug], base: Number(e.target.value) },
+                                [p.slug]: { ...prev[p.slug], compareAt: e.target.value ? Number(e.target.value) : undefined },
                               }))
                             }
                             style={{
-                              width: 120,
+                              width: 110,
                               height: 34,
                               padding: "0 8px",
                               borderRadius: 6,
                               border: "1px solid #D1D5DB",
                               background: "#FAF8F5",
-                              fontSize: 13.5,
-                              fontWeight: 600,
-                              color: "#0D2219",
+                              fontSize: 13,
                             }}
                           />
-                          <button
-                            type="button"
-                            disabled={isSaving}
-                            onClick={() => handleSavePrice(p.slug)}
-                            title="Lưu giá nhanh"
+                        </td>
+
+                        {/* Active Status Badge */}
+                        <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                          <span
                             style={{
-                              padding: "6px 10px",
-                              borderRadius: 6,
-                              border: 0,
-                              background: "#0D2219",
-                              color: "#FFFFFF",
+                              display: "inline-block",
+                              padding: "3px 10px",
+                              borderRadius: 999,
                               fontSize: 12,
                               fontWeight: 600,
-                              cursor: "pointer",
+                              background: isActive ? "#ECFDF5" : "#FEF2F2",
+                              color: isActive ? "#047857" : "#B91C1C",
+                              border: `1px solid ${isActive ? "#A7F3D0" : "#FECACA"}`,
                             }}
                           >
-                            {isSaving ? "..." : "Lưu"}
-                          </button>
-                        </div>
-                      </td>
+                            {isActive ? "Đang bán" : "Tạm ẩn"}
+                          </span>
+                        </td>
 
-                      {/* Compare At inline */}
-                      <td style={{ padding: "14px 16px" }}>
-                        <input
-                          type="number"
-                          step={1000}
-                          placeholder="Không có"
-                          value={ep.compareAt || ""}
-                          onChange={(e) =>
-                            setEditPrice((prev) => ({
-                              ...prev,
-                              [p.slug]: { ...prev[p.slug], compareAt: e.target.value ? Number(e.target.value) : undefined },
-                            }))
-                          }
-                          style={{
-                            width: 110,
-                            height: 34,
-                            padding: "0 8px",
-                            borderRadius: 6,
-                            border: "1px solid #D1D5DB",
-                            background: "#FAF8F5",
-                            fontSize: 13,
-                          }}
-                        />
-                      </td>
+                        {/* Actions */}
+                        <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                          <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                            {/* Sửa chi tiết */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingProduct(p);
+                                setIsModalOpen(true);
+                              }}
+                              style={{
+                                padding: "6px 12px",
+                                borderRadius: 6,
+                                border: "1px solid #D1D5DB",
+                                background: "#FFFFFF",
+                                color: "#111827",
+                                fontSize: 12.5,
+                                fontWeight: 500,
+                                cursor: "pointer",
+                              }}
+                            >
+                              Sửa
+                            </button>
 
-                      {/* Active Status Badge */}
-                      <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                            {/* Ẩn / Hiện toggle */}
+                            <button
+                              type="button"
+                              disabled={isSaving}
+                              onClick={() => handleToggleActive(p.slug, isActive)}
+                              style={{
+                                padding: "6px 10px",
+                                borderRadius: 6,
+                                border: "1px solid #D1D5DB",
+                                background: "#FFFFFF",
+                                color: isActive ? "#DC2626" : "#047857",
+                                fontSize: 12.5,
+                                fontWeight: 500,
+                                cursor: "pointer",
+                              }}
+                            >
+                              {isActive ? "Ẩn" : "Hiện"}
+                            </button>
+
+                            {/* Xem trên web */}
+                            <Link
+                              href={`/san-pham/${p.slug}`}
+                              target="_blank"
+                              style={{
+                                padding: "6px 10px",
+                                borderRadius: 6,
+                                border: "1px solid #E5E7EB",
+                                background: "#F9FAFB",
+                                color: "#4B5563",
+                                fontSize: 12.5,
+                                textDecoration: "none",
+                                display: "inline-flex",
+                                alignItems: "center",
+                              }}
+                              title="Xem trang sản phẩm trên web"
+                            >
+                              <Icon name="arrow-right" size={13} />
+                            </Link>
+
+                            {/* Xóa sản phẩm */}
+                            <button
+                              type="button"
+                              onClick={() => setDeletingProduct(p)}
+                              style={{
+                                padding: "6px 10px",
+                                borderRadius: 6,
+                                border: "1px solid #FECACA",
+                                background: "#FEF2F2",
+                                color: "#DC2626",
+                                fontSize: 12.5,
+                                fontWeight: 500,
+                                cursor: "pointer",
+                              }}
+                              title="Xóa sản phẩm này"
+                            >
+                              <Icon name="trash-2" size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ─── 2. MOBILE VIEW: DANH SÁCH THẺ SẢN PHẨM (< 768px) ─── */}
+          <div className="lt-admin-mobile-cards">
+            {filteredProducts.map((p) => {
+              const ep = editPrice[p.slug] || { base: p.base, compareAt: p.compareAt };
+              const isSaving = savingSlug === p.slug;
+              const isActive = p.active ?? true;
+
+              return (
+                <div key={p.slug} className="lt-admin-card-item">
+                  {/* Top: Photo thumbnail, Name, Category & Status */}
+                  <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                    <div style={{ width: 56, height: 56, borderRadius: 8, overflow: "hidden", border: "1px solid #E5E7EB", background: "#FAF8F5", flexShrink: 0 }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={photo(p.ph)}
+                        alt={p.name}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = "/assets/photos/moccau.jpg";
+                        }}
+                      />
+                    </div>
+
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
+                        <span style={{ fontSize: 14.5, fontWeight: 700, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {p.name}
+                        </span>
                         <span
                           style={{
-                            display: "inline-block",
-                            padding: "3px 10px",
+                            padding: "2px 7px",
                             borderRadius: 999,
-                            fontSize: 12,
+                            fontSize: 11,
                             fontWeight: 600,
                             background: isActive ? "#ECFDF5" : "#FEF2F2",
                             color: isActive ? "#047857" : "#B91C1C",
                             border: `1px solid ${isActive ? "#A7F3D0" : "#FECACA"}`,
+                            flexShrink: 0,
                           }}
                         >
                           {isActive ? "Đang bán" : "Tạm ẩn"}
                         </span>
-                      </td>
+                      </div>
 
-                      {/* Actions */}
-                      <td style={{ padding: "14px 16px", textAlign: "center" }}>
-                        <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                          {/* Sửa chi tiết */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingProduct(p);
-                              setIsModalOpen(true);
-                            }}
-                            style={{
-                              padding: "6px 12px",
-                              borderRadius: 6,
-                              border: "1px solid #D1D5DB",
-                              background: "#FFFFFF",
-                              color: "#111827",
-                              fontSize: 12.5,
-                              fontWeight: 500,
-                              cursor: "pointer",
-                            }}
-                          >
-                            Sửa
-                          </button>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
+                        <span style={{ fontSize: 11.5, color: "#374151", background: "#F3F4F6", padding: "2px 6px", borderRadius: 4 }}>
+                          {p.kind}
+                        </span>
+                        <span style={{ fontSize: 11.5, color: "#9CA3AF" }}>{p.origin}</span>
+                      </div>
+                    </div>
+                  </div>
 
-                          {/* Ẩn / Hiện toggle */}
-                          <button
-                            type="button"
-                            disabled={isSaving}
-                            onClick={() => handleToggleActive(p.slug, isActive)}
-                            style={{
-                              padding: "6px 10px",
-                              borderRadius: 6,
-                              border: "1px solid #D1D5DB",
-                              background: "#FFFFFF",
-                              color: isActive ? "#DC2626" : "#047857",
-                              fontSize: 12.5,
-                              fontWeight: 500,
-                              cursor: "pointer",
-                            }}
-                          >
-                            {isActive ? "Ẩn" : "Hiện"}
-                          </button>
+                  {/* Inline Price Edit for Mobile */}
+                  <div style={{ background: "#FAF8F5", padding: "10px 12px", borderRadius: 8, border: "1px solid #EFE8DC", display: "flex", flexDirection: "column", gap: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: "#4B5563" }}>Giá cơ sở (150g):</span>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <input
+                          type="number"
+                          step={1000}
+                          value={ep.base}
+                          onChange={(e) =>
+                            setEditPrice((prev) => ({
+                              ...prev,
+                              [p.slug]: { ...prev[p.slug], base: Number(e.target.value) },
+                            }))
+                          }
+                          style={{
+                            width: 110,
+                            height: 36,
+                            padding: "0 8px",
+                            borderRadius: 6,
+                            border: "1px solid #D1D5DB",
+                            background: "#FFFFFF",
+                            fontSize: 13.5,
+                            fontWeight: 700,
+                            color: "#0D2219",
+                          }}
+                        />
+                        <button
+                          type="button"
+                          disabled={isSaving}
+                          onClick={() => handleSavePrice(p.slug)}
+                          style={{
+                            height: 36,
+                            padding: "0 10px",
+                            borderRadius: 6,
+                            border: 0,
+                            background: "#0D2219",
+                            color: "#FFFFFF",
+                            fontSize: 12,
+                            fontWeight: 600,
+                            cursor: "pointer",
+                          }}
+                        >
+                          {isSaving ? "..." : "Lưu"}
+                        </button>
+                      </div>
+                    </div>
 
-                          {/* Xem trên web */}
-                          <Link
-                            href={`/san-pham/${p.slug}`}
-                            target="_blank"
-                            style={{
-                              padding: "6px 10px",
-                              borderRadius: 6,
-                              border: "1px solid #E5E7EB",
-                              background: "#F9FAFB",
-                              color: "#4B5563",
-                              fontSize: 12.5,
-                              textDecoration: "none",
-                              display: "inline-flex",
-                              alignItems: "center",
-                            }}
-                            title="Xem trang sản phẩm trên web"
-                          >
-                            <Icon name="arrow-right" size={13} />
-                          </Link>
+                    {ep.compareAt && (
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12, color: "#6B7280" }}>
+                        <span>Giá niêm yết cũ:</span>
+                        <span style={{ textDecoration: "line-through" }}>{formatVND(ep.compareAt)}</span>
+                      </div>
+                    )}
+                  </div>
 
-                          {/* Xóa sản phẩm */}
-                          <button
-                            type="button"
-                            onClick={() => setDeletingProduct(p)}
-                            style={{
-                              padding: "6px 10px",
-                              borderRadius: 6,
-                              border: "1px solid #FECACA",
-                              background: "#FEF2F2",
-                              color: "#DC2626",
-                              fontSize: 12.5,
-                              fontWeight: 500,
-                              cursor: "pointer",
-                            }}
-                            title="Xóa sản phẩm này"
-                          >
-                            <Icon name="trash-2" size={13} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  {/* Action buttons row */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto auto", gap: 6, paddingTop: 4 }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingProduct(p);
+                        setIsModalOpen(true);
+                      }}
+                      style={{
+                        height: 40,
+                        borderRadius: 6,
+                        border: "1px solid #D1D5DB",
+                        background: "#FFFFFF",
+                        color: "#111827",
+                        fontSize: 12.5,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Sửa chi tiết
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={isSaving}
+                      onClick={() => handleToggleActive(p.slug, isActive)}
+                      style={{
+                        height: 40,
+                        borderRadius: 6,
+                        border: "1px solid #D1D5DB",
+                        background: "#FFFFFF",
+                        color: isActive ? "#DC2626" : "#047857",
+                        fontSize: 12.5,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {isActive ? "Tạm ẩn" : "Mở bán"}
+                    </button>
+
+                    <Link
+                      href={`/san-pham/${p.slug}`}
+                      target="_blank"
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 6,
+                        border: "1px solid #E5E7EB",
+                        background: "#F9FAFB",
+                        color: "#4B5563",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textDecoration: "none",
+                      }}
+                      title="Xem trên website"
+                    >
+                      <Icon name="arrow-right" size={15} />
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => setDeletingProduct(p)}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 6,
+                        border: "1px solid #FECACA",
+                        background: "#FEF2F2",
+                        color: "#DC2626",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                      }}
+                      title="Xóa sản phẩm"
+                    >
+                      <Icon name="trash-2" size={15} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        )}
-      </div>
+        </>
+      )}
 
       {/* Product Edit / Create Modal */}
       <ProductEditModal

@@ -267,7 +267,7 @@ export function ProductEditModal({
 
   return (
     <Dialog open={open} onClose={onClose} title={isEditing ? `Sửa sản phẩm: ${product.name}` : "Thêm sản phẩm mới"} maxWidth={740}>
-      <form onSubmit={handleSubmit} style={{ padding: "20px 24px 24px", display: "flex", flexDirection: "column", gap: 18, fontFamily: "var(--font-ui)" }}>
+      <form onSubmit={handleSubmit} style={{ padding: "14px 16px 20px", display: "flex", flexDirection: "column", gap: 16, fontFamily: "var(--font-ui)", boxSizing: "border-box" }}>
         {error && (
           <div style={{ padding: "10px 14px", borderRadius: 6, background: "#FEF2F2", border: "1px solid #FECACA", color: "#B91C1C", fontSize: 13, fontWeight: 500 }}>
             ⚠️ {error}
@@ -666,11 +666,11 @@ export function ProductEditModal({
             zIndex: 10,
             display: "flex",
             justifyContent: "flex-end",
-            gap: 12,
-            padding: "14px 24px",
+            gap: 10,
+            padding: "12px 16px",
             background: "#FFFFFF",
             borderTop: "1px solid #E5E7EB",
-            margin: "12px -24px -24px",
+            margin: "12px -16px -20px",
             boxShadow: "0 -4px 12px rgba(0, 0, 0, 0.05)",
           }}
         >
@@ -679,7 +679,8 @@ export function ProductEditModal({
             onClick={onClose}
             disabled={saving}
             style={{
-              padding: "9px 20px",
+              height: 42,
+              padding: "0 18px",
               borderRadius: 6,
               border: "1px solid #D1D5DB",
               background: "#FFFFFF",
@@ -695,7 +696,8 @@ export function ProductEditModal({
             type="submit"
             disabled={saving}
             style={{
-              padding: "9px 24px",
+              height: 42,
+              padding: "0 22px",
               borderRadius: 6,
               border: 0,
               background: "#0D2219",

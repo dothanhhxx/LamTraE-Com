@@ -92,4 +92,18 @@ export const productsRoutes: FastifyPluginAsync = async (fastify) => {
     }
     return { ok: true };
   });
+
+  // Admin: Đồng bộ hoặc khôi phục danh mục sản phẩm chuẩn
+  fastify.post("/api/admin/products/sync", { preHandler: [adminAuthGuard] }, async (request) => {
+    const body = (request.body as { forceReset?: boolean }) || {};
+    const result = await ProductService.syncDefaults(!!body.forceReset);
+    return result;
+  });
+
+  fastify.get("/api/admin/products/sync", { preHandler: [adminAuthGuard] }, async (request) => {
+    const query = (request.query as { forceReset?: string }) || {};
+    const result = await ProductService.syncDefaults(query.forceReset === "true");
+    return result;
+  });
 };
+

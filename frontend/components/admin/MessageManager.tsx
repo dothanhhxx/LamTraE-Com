@@ -84,48 +84,58 @@ export function MessageManager() {
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 20, fontFamily: "var(--font-ui)" }}>
-      {/* Metrics Banner */}
+    <div style={{ display: "flex", flexDirection: "column", gap: 16, fontFamily: "var(--font-ui)" }}>
+      {/* Metrics Banner - 2x2 on Mobile */}
       {metrics && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
-          <div style={{ background: "#FFFFFF", padding: "16px 20px", borderRadius: 10, border: "1px solid #E5E7EB", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-            <div style={{ fontSize: 13, color: "#6B7280" }}>Chờ tư vấn phản hồi</div>
-            <div style={{ fontSize: 24, fontWeight: 700, color: "#D97706", marginTop: 4 }}>
+        <div className="lt-admin-metrics-grid">
+          <div className="lt-admin-metric-card">
+            <div className="lt-metric-label" style={{ fontSize: 13, color: "#6B7280" }}>Chờ tư vấn phản hồi</div>
+            <div className="lt-metric-value" style={{ fontSize: 22, fontWeight: 700, color: "#D97706", marginTop: 4 }}>
               {metrics.pendingCount}
             </div>
-            <div style={{ fontSize: 12, color: "#6B7280", marginTop: 4 }}>Khách đang đợi liên hệ</div>
+            <div className="lt-metric-sub" style={{ fontSize: 12, color: "#6B7280", marginTop: 4 }}>Khách đang đợi liên hệ</div>
           </div>
 
-          <div style={{ background: "#FFFFFF", padding: "16px 20px", borderRadius: 10, border: "1px solid #E5E7EB", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-            <div style={{ fontSize: 13, color: "#6B7280" }}>Yêu cầu báo giá quà</div>
-            <div style={{ fontSize: 24, fontWeight: 700, color: "#0D2219", marginTop: 4 }}>
+          <div className="lt-admin-metric-card">
+            <div className="lt-metric-label" style={{ fontSize: 13, color: "#6B7280" }}>Yêu cầu báo giá quà</div>
+            <div className="lt-metric-value" style={{ fontSize: 22, fontWeight: 700, color: "#0D2219", marginTop: 4 }}>
               {metrics.quoteCount}
             </div>
-            <div style={{ fontSize: 12, color: "#047857", marginTop: 4 }}>Quà doanh nghiệp & đoàn thể</div>
+            <div className="lt-metric-sub" style={{ fontSize: 12, color: "#047857", marginTop: 4 }}>Quà doanh nghiệp & đoàn thể</div>
           </div>
 
-          <div style={{ background: "#FFFFFF", padding: "16px 20px", borderRadius: 10, border: "1px solid #E5E7EB", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-            <div style={{ fontSize: 13, color: "#6B7280" }}>Đã tư vấn chăm sóc</div>
-            <div style={{ fontSize: 24, fontWeight: 700, color: "#2563EB", marginTop: 4 }}>
+          <div className="lt-admin-metric-card">
+            <div className="lt-metric-label" style={{ fontSize: 13, color: "#6B7280" }}>Đã tư vấn chăm sóc</div>
+            <div className="lt-metric-value" style={{ fontSize: 22, fontWeight: 700, color: "#2563EB", marginTop: 4 }}>
               {metrics.contactedCount}
             </div>
-            <div style={{ fontSize: 12, color: "#6B7280", marginTop: 4 }}>Đã phản hồi khách</div>
+            <div className="lt-metric-sub" style={{ fontSize: 12, color: "#6B7280", marginTop: 4 }}>Đã phản hồi khách</div>
           </div>
 
-          <div style={{ background: "#FFFFFF", padding: "16px 20px", borderRadius: 10, border: "1px solid #E5E7EB", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-            <div style={{ fontSize: 13, color: "#6B7280" }}>Tổng số lượt gửi</div>
-            <div style={{ fontSize: 24, fontWeight: 700, color: "#111827", marginTop: 4 }}>
+          <div className="lt-admin-metric-card">
+            <div className="lt-metric-label" style={{ fontSize: 13, color: "#6B7280" }}>Tổng số lượt gửi</div>
+            <div className="lt-metric-value" style={{ fontSize: 22, fontWeight: 700, color: "#111827", marginTop: 4 }}>
               {metrics.totalMessages}
             </div>
-            <div style={{ fontSize: 12, color: "#6B7280", marginTop: 4 }}>Form web & liên hệ</div>
+            <div className="lt-metric-sub" style={{ fontSize: 12, color: "#6B7280", marginTop: 4 }}>Form web & liên hệ</div>
           </div>
         </div>
       )}
 
       {/* Control Bar: Filter Tabs & Search */}
-      <div style={{ background: "#FFFFFF", padding: "16px 20px", borderRadius: 10, border: "1px solid #E5E7EB", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
-        {/* Type Filter */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+      <div
+        style={{
+          background: "#FFFFFF",
+          padding: "14px 16px",
+          borderRadius: 10,
+          border: "1px solid #E5E7EB",
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
+        {/* Type Filter (Horizontal Scrollable Chips on Mobile) */}
+        <div className="lt-admin-tabs-scroll">
           {typeTabs.map((tab) => {
             const active = typeFilter === tab.value;
             return (
@@ -133,8 +143,9 @@ export function MessageManager() {
                 key={tab.value}
                 type="button"
                 onClick={() => setTypeFilter(tab.value)}
+                className="lt-admin-tab-chip"
                 style={{
-                  padding: "6px 14px",
+                  padding: "7px 14px",
                   borderRadius: 6,
                   border: `1px solid ${active ? "var(--tra-500)" : "#E5E7EB"}`,
                   background: active ? "var(--tra-500)" : "#FFFFFF",
@@ -152,18 +163,19 @@ export function MessageManager() {
         </div>
 
         {/* Search & Status Filter */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "space-between" }}>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             style={{
-              height: 36,
+              height: 40,
               padding: "0 10px",
               borderRadius: 6,
               border: "1px solid #D1D5DB",
               background: "#FAF8F5",
               fontSize: 13,
               color: "#374151",
+              flexShrink: 0,
             }}
           >
             <option value="">Tất cả trạng thái</option>
@@ -171,27 +183,28 @@ export function MessageManager() {
             <option value="contacted">Đã liên hệ</option>
           </select>
 
-          <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: 6 }}>
+          <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: 6, flex: "1 1 240px", maxWidth: "100%" }}>
             <input
               type="text"
               placeholder="Tìm tên, SĐT, công ty..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{
-                height: 36,
+                height: 40,
                 padding: "0 12px",
                 borderRadius: 6,
                 border: "1px solid #D1D5DB",
                 background: "#FAF8F5",
                 fontSize: 13,
-                width: 220,
+                flex: 1,
+                minWidth: 0,
               }}
             />
             <button
               type="submit"
               style={{
-                height: 36,
-                padding: "0 14px",
+                height: 40,
+                padding: "0 16px",
                 borderRadius: 6,
                 border: 0,
                 background: "#0D2219",
@@ -199,6 +212,7 @@ export function MessageManager() {
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: "pointer",
+                flexShrink: 0,
               }}
             >
               Tìm
@@ -237,22 +251,23 @@ export function MessageManager() {
                 <div
                   key={m.id || m.createdAt}
                   style={{
-                    padding: "20px 24px",
+                    padding: "16px 16px",
                     borderBottom: "1px solid #F3F4F6",
                     display: "flex",
                     flexDirection: "column",
                     gap: 12,
                     background: isContacted ? "#FFFFFF" : "#FCFDFD",
+                    boxSizing: "border-box",
                   }}
                 >
-                  {/* Header Row */}
-                  <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  {/* Header Row: Sender name, badge, time, status */}
+                  <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                       <span
                         style={{
-                          padding: "3px 10px",
+                          padding: "3px 9px",
                           borderRadius: 999,
-                          fontSize: 12,
+                          fontSize: 11.5,
                           fontWeight: 600,
                           background: typeBadge.bg,
                           color: typeBadge.color,
@@ -262,15 +277,15 @@ export function MessageManager() {
                         {typeBadge.label}
                       </span>
 
-                      <span style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>{m.name}</span>
+                      <span style={{ fontSize: 15.5, fontWeight: 700, color: "#111827" }}>{m.name}</span>
 
                       {m.company && (
-                        <span style={{ fontSize: 13, color: "#6B7280", background: "#F3F4F6", padding: "2px 8px", borderRadius: 4 }}>
+                        <span style={{ fontSize: 12, color: "#6B7280", background: "#F3F4F6", padding: "2px 7px", borderRadius: 4 }}>
                           🏢 {m.company}
                         </span>
                       )}
 
-                      <span style={{ fontSize: 12.5, color: "#9CA3AF" }}>
+                      <span style={{ fontSize: 11.5, color: "#9CA3AF" }}>
                         {new Date(m.createdAt).toLocaleString("vi-VN", {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -281,93 +296,96 @@ export function MessageManager() {
                       </span>
                     </div>
 
-                    {/* Status & Actions */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span
-                        style={{
-                          padding: "4px 10px",
-                          borderRadius: 999,
-                          fontSize: 12,
-                          fontWeight: 600,
-                          background: isContacted ? "#ECFDF5" : "#FFFBEB",
-                          color: isContacted ? "#047857" : "#B45309",
-                          border: `1px solid ${isContacted ? "#A7F3D0" : "#FDE68A"}`,
-                        }}
-                      >
-                        {isContacted ? "✓ Đã liên hệ" : "⏳ Chờ phản hồi"}
-                      </span>
+                    <span
+                      style={{
+                        padding: "3px 9px",
+                        borderRadius: 999,
+                        fontSize: 11.5,
+                        fontWeight: 600,
+                        background: isContacted ? "#ECFDF5" : "#FFFBEB",
+                        color: isContacted ? "#047857" : "#B45309",
+                        border: `1px solid ${isContacted ? "#A7F3D0" : "#FDE68A"}`,
+                      }}
+                    >
+                      {isContacted ? "✓ Đã liên hệ" : "⏳ Chờ phản hồi"}
+                    </span>
+                  </div>
 
-                      <button
-                        type="button"
-                        disabled={isUpdating}
-                        onClick={() => handleUpdateStatus(m.id || "", isContacted ? "pending" : "contacted")}
+                  {/* Actions Row */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                    <button
+                      type="button"
+                      disabled={isUpdating}
+                      onClick={() => handleUpdateStatus(m.id || "", isContacted ? "pending" : "contacted")}
+                      style={{
+                        height: 38,
+                        padding: "0 12px",
+                        borderRadius: 6,
+                        border: "1px solid #D1D5DB",
+                        background: "#FFFFFF",
+                        fontSize: 12.5,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        color: isContacted ? "#4B5563" : "#047857",
+                      }}
+                    >
+                      {isContacted ? "Đánh dấu chưa xử lý" : "✓ Đánh dấu đã liên hệ"}
+                    </button>
+
+                    {/* Phone quick call */}
+                    {m.phone && (
+                      <a
+                        href={`tel:${m.phone}`}
                         style={{
-                          padding: "5px 12px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 5,
+                          height: 38,
+                          padding: "0 12px",
                           borderRadius: 6,
                           border: "1px solid #D1D5DB",
                           background: "#FFFFFF",
+                          color: "#0D2219",
                           fontSize: 12.5,
-                          fontWeight: 500,
-                          cursor: "pointer",
-                          color: isContacted ? "#4B5563" : "#047857",
+                          fontWeight: 600,
+                          textDecoration: "none",
                         }}
                       >
-                        {isContacted ? "Đánh dấu chưa xử lý" : "Đánh dấu đã liên hệ"}
-                      </button>
+                        <Icon name="phone" size={13} />
+                        <span>Gọi {m.phone}</span>
+                      </a>
+                    )}
 
-                      {/* Phone quick call */}
-                      {m.phone && (
-                        <a
-                          href={`tel:${m.phone}`}
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 5,
-                            padding: "5px 12px",
-                            borderRadius: 6,
-                            border: "1px solid #D1D5DB",
-                            background: "#FFFFFF",
-                            color: "#0D2219",
-                            fontSize: 12.5,
-                            fontWeight: 600,
-                            textDecoration: "none",
-                          }}
-                        >
-                          <Icon name="phone" size={13} />
-                          <span>Gọi {m.phone}</span>
-                        </a>
-                      )}
-
-                      {/* Zalo quick chat */}
-                      {m.phone && (
-                        <a
-                          href={`https://zalo.me/${m.phone}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 5,
-                            padding: "5px 12px",
-                            borderRadius: 6,
-                            border: "1px solid #0068FF",
-                            background: "rgba(0, 104, 255, 0.08)",
-                            color: "#0068FF",
-                            fontSize: 12.5,
-                            fontWeight: 600,
-                            textDecoration: "none",
-                          }}
-                        >
-                          <Icon name="arrow-right" size={13} />
-                          <span>Chat Zalo</span>
-                        </a>
-                      )}
-                    </div>
+                    {/* Zalo quick chat */}
+                    {m.phone && (
+                      <a
+                        href={`https://zalo.me/${m.phone}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 5,
+                          height: 38,
+                          padding: "0 12px",
+                          borderRadius: 6,
+                          border: "1px solid #0068FF",
+                          background: "rgba(0, 104, 255, 0.08)",
+                          color: "#0068FF",
+                          fontSize: 12.5,
+                          fontWeight: 600,
+                          textDecoration: "none",
+                        }}
+                      >
+                        <Icon name="arrow-right" size={13} />
+                        <span>Chat Zalo</span>
+                      </a>
+                    )}
                   </div>
 
                   {/* Quote Metadata Bar if exists */}
                   {(m.quantity || m.budget || m.date || m.product || m.stars) && (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 12, padding: "8px 12px", borderRadius: 6, background: "#FAF8F5", border: "1px solid #EFE8DC", fontSize: 13 }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 10, padding: "8px 12px", borderRadius: 6, background: "#FAF8F5", border: "1px solid #EFE8DC", fontSize: 12.5 }}>
                       {m.quantity && (
                         <div>
                           <span style={{ color: "#6B7280" }}>Số lượng: </span>
@@ -376,19 +394,19 @@ export function MessageManager() {
                       )}
                       {m.budget && (
                         <div>
-                          <span style={{ color: "#6B7280" }}>Ngân sách dự kiến: </span>
+                          <span style={{ color: "#6B7280" }}>Ngân sách: </span>
                           <strong style={{ color: "#0D2219" }}>{m.budget}</strong>
                         </div>
                       )}
                       {m.date && (
                         <div>
-                          <span style={{ color: "#6B7280" }}>Thời gian cần hàng: </span>
+                          <span style={{ color: "#6B7280" }}>Cần hàng: </span>
                           <strong style={{ color: "#0D2219" }}>{m.date}</strong>
                         </div>
                       )}
                       {m.product && (
                         <div>
-                          <span style={{ color: "#6B7280" }}>Sản phẩm quan tâm: </span>
+                          <span style={{ color: "#6B7280" }}>Sản phẩm: </span>
                           <strong style={{ color: "#0D2219" }}>{m.product}</strong>
                         </div>
                       )}
@@ -402,39 +420,39 @@ export function MessageManager() {
                   )}
 
                   {/* Message Content */}
-                  <div style={{ fontSize: 14, color: "#374151", lineHeight: 1.6, background: "#F9FAFB", padding: "12px 16px", borderRadius: 8, whiteSpace: "pre-wrap" }}>
+                  <div style={{ fontSize: 13.5, color: "#374151", lineHeight: 1.6, background: "#F9FAFB", padding: "10px 14px", borderRadius: 8, whiteSpace: "pre-wrap" }}>
                     {m.message}
                   </div>
 
                   {/* Customer Contact Details & Internal Admin Note */}
-                  <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 10, fontSize: 13 }}>
-                    <div style={{ display: "flex", gap: 16, color: "#6B7280" }}>
+                  <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 10, fontSize: 12.5 }}>
+                    <div style={{ display: "flex", gap: 14, color: "#6B7280", flexWrap: "wrap" }}>
                       {m.phone && <span>📞 SĐT: <strong style={{ color: "#111827" }}>{m.phone}</strong></span>}
                       {m.email && <span>✉️ Email: <strong style={{ color: "#111827" }}>{m.email}</strong></span>}
                     </div>
 
                     {/* Internal Note */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "1 1 260px", justifyContent: "flex-end" }}>
                       {isEditingThisNote ? (
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, width: "100%", maxWidth: 360 }}>
                           <input
                             type="text"
                             placeholder="Ghi chú nội bộ..."
                             value={tempNote}
                             onChange={(e) => setTempNote(e.target.value)}
-                            style={{ height: 32, padding: "0 10px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 12.5, width: 260 }}
+                            style={{ height: 34, padding: "0 10px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 12.5, flex: 1, minWidth: 0 }}
                           />
                           <button
                             type="button"
                             onClick={() => handleSaveNote(m.id || "")}
-                            style={{ height: 32, padding: "0 10px", borderRadius: 6, border: 0, background: "#0D2219", color: "#FFF", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+                            style={{ height: 34, padding: "0 12px", borderRadius: 6, border: 0, background: "#0D2219", color: "#FFF", fontSize: 12, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}
                           >
                             Lưu
                           </button>
                           <button
                             type="button"
                             onClick={() => setEditingNoteId(null)}
-                            style={{ height: 32, padding: "0 8px", borderRadius: 6, border: "1px solid #D1D5DB", background: "#FFF", fontSize: 12, cursor: "pointer" }}
+                            style={{ height: 34, padding: "0 10px", borderRadius: 6, border: "1px solid #D1D5DB", background: "#FFF", fontSize: 12, cursor: "pointer", flexShrink: 0 }}
                           >
                             Hủy
                           </button>
@@ -442,8 +460,8 @@ export function MessageManager() {
                       ) : (
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                           {m.adminNote ? (
-                            <span style={{ color: "#92400E", background: "#FEF3C7", padding: "3px 10px", borderRadius: 6, fontSize: 12 }}>
-                              📌 Ghi chú: {m.adminNote}
+                            <span style={{ fontSize: 12, color: "#92400E", background: "#FEF3C7", padding: "3px 8px", borderRadius: 4 }}>
+                              📌 {m.adminNote}
                             </span>
                           ) : null}
                           <button
@@ -452,7 +470,15 @@ export function MessageManager() {
                               setEditingNoteId(m.id || "");
                               setTempNote(m.adminNote || "");
                             }}
-                            style={{ border: 0, background: "transparent", color: "#2563EB", fontSize: 12.5, cursor: "pointer", textDecoration: "underline" }}
+                            style={{
+                              padding: "4px 8px",
+                              borderRadius: 4,
+                              border: "1px dashed #D1D5DB",
+                              background: "#FAF8F5",
+                              color: "#6B7280",
+                              fontSize: 11.5,
+                              cursor: "pointer",
+                            }}
                           >
                             {m.adminNote ? "Sửa ghi chú" : "+ Thêm ghi chú"}
                           </button>

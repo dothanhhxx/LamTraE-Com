@@ -1,11 +1,11 @@
 [
   {
     "slug": "tra-dinh-sen",
-    "name": "Trà Đinh Sen Hải",
+    "name": "Trà Đinh Sen",
     "category": "tra-sen",
     "kind": "Trà sen",
     "note": "Hương sen dịu, hậu ngọt kéo dài",
-    "base": 331000,
+    "base": 320000,
     "rating": 4.9,
     "reviews": 88,
     "sold": 410,
@@ -66,8 +66,7 @@
     },
     "active": true,
     "deleted": false,
-    "fixed": false,
-    "currentSlug": "tra-dinh-sen"
+    "fixed": false
   },
   {
     "slug": "tra-moc-cau",
@@ -388,7 +387,7 @@
       },
       {
         "label": "Bảo quản",
-        "value": "Giữ trong túi zip hoặc hũ kín, để nơi khô mát"
+        "value": "Giữ trong túi zip hoặc hũ kín, để nơi khô mát, tránh nắng và đồ có mùi mạnh."
       }
     ],
     "brew": {
