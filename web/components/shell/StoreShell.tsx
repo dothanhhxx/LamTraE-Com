@@ -54,13 +54,13 @@ function ShellToast() {
 export default function StoreShell({ children }: { children: React.ReactNode }) {
   return (
     <CartProvider>
-      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--bg-page)", color: "var(--text-body)", fontFamily: "var(--font-ui)" }}>
+      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#FFFFFF", color: "var(--text-body)", fontFamily: "var(--font-ui)" }}>
         <Header />
-        <main style={{ flex: 1 }}>{children}</main>
+        <main style={{ flex: 1, background: "#FFFFFF" }}>{children}</main>
         <Footer />
       </div>
       <a href={zaloLink()} target="_blank" rel="noopener noreferrer" className="lt-zalo" aria-label="Chat Zalo với Lam Trà">
-        <Icon name="message-circle" size={20} />
+        <Icon name="zalo" size={20} />
         Chat Zalo
       </a>
       <MobileTabBar />

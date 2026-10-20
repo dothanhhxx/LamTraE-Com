@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
-import { normalizePhone, quote, toItems, validateOrder, type Order, type OrderInput } from "@/lib/checkout";
+import { isOrderCode, newOrderCode, normalizePhone, quote, toItems, validateOrder, type Order, type OrderInput } from "@/lib/checkout";
 import { append, notify, readAll } from "@/lib/server/store";
 
-// Không có I, O, 0, 1 để khách đọc mã qua điện thoại không nhầm.
-const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-const newCode = () => "LT" + Array.from(crypto.getRandomValues(new Uint8Array(6)), (b) => ALPHABET[b % ALPHABET.length]).join("");
 
 const str = (v: unknown, max = 200) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
@@ -12,6 +9,7 @@ const str = (v: unknown, max = 200) => (typeof v === "string" ? v.trim().slice(0
 function sanitize(b: Record<string, any>): OrderInput {
   const lines = Array.isArray(b.lines) ? b.lines.slice(0, 50) : [];
   return {
+    code: str(b.code, 12).toUpperCase() || undefined,
     lines: lines.map((l: any) => ({ slug: str(l?.slug, 80), size: str(l?.size, 4), grade: str(l?.grade, 4), qty: Number(l?.qty) || 0 })),
     buyer: { name: str(b.buyer?.name, 80), phone: normalizePhone(str(b.buyer?.phone, 20)), email: str(b.buyer?.email, 120) || undefined },
     recipient: b.recipient ? { name: str(b.recipient.name, 80), phone: normalizePhone(str(b.recipient.phone, 20)) } : undefined,
@@ -40,7 +38,10 @@ export async function POST(req: Request) {
 
   const items = toItems(input.lines);
   const totals = quote({ items, coupon: input.coupon, province: input.province, express: input.express, giftWrap: input.gift?.wrap });
-  const order: Order = { ...input, coupon: totals.coupon, code: newCode(), createdAt: new Date().toISOString(), items, totals, status: 0 };
+  // Giữ mã khách đã thấy ở trang đặt hàng (đã ghi vào nội dung chuyển khoản), trừ khi sai định dạng hoặc trùng.
+  const taken = new Set((await readAll<Order>("orders")).map((o) => o.code));
+  const code = input.code && isOrderCode(input.code) && !taken.has(input.code) ? input.code : newOrderCode();
+  const order: Order = { ...input, lines: items.map(({ slug, size, grade, qty }) => ({ slug, size, grade, qty })), coupon: totals.coupon, code, createdAt: new Date().toISOString(), items, totals, status: 0 };
 
   await append("orders", order);
   await notify("order", order);

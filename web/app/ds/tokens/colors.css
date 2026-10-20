@@ -24,13 +24,13 @@
   --logo-green:#24341F;--logo-gold:#BC9A6C;--logo-cream:#FDEDD8;
 
   /* ---- Semantic aliases ---- */
-  --bg-page:var(--paper-100);
-  --bg-sunken:var(--paper-200);
-  --surface-card:var(--paper-50);
-  --surface-raised:#FFFFFF;
+  --bg-page:#FFFFFF;
+  --bg-sunken:#FAF6EE;
+  --surface-card:#FFFFFF;
+  --surface-raised:#FAF8F5;
   --surface-inverse:var(--reu-800);
   --surface-inverse-deep:var(--reu-900);
-  --surface-photo:var(--paper-200);
+  --surface-photo:#F5EFE6;
 
   --text-strong:var(--stone-900);
   --text-body:var(--stone-800);

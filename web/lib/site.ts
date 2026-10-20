@@ -11,8 +11,17 @@ export const SITE = {
   hours: "8:00 – 21:00 · Thứ 2 – Chủ nhật",
   facebook: "https://facebook.com/",
   tiktok: "https://tiktok.com/",
-  /** Tài khoản nhận chuyển khoản VietQR. bankId là mã ngân hàng theo danh sách của VietQR (VCB, TCB, MB, ACB…). */
-  bank: { bankId: "VCB", bankName: "Vietcombank", account: "0000000000", holder: "LAM TRA" },
+  /** Tài khoản nhận chuyển khoản. bankId là mã ngân hàng theo danh sách của VietQR (VCB, TCB, MB, ACB…). */
+  bank: {
+    bankId: "VCB",
+    bankName: "Vietcombank",
+    account: "0000000000",
+    holder: "LAM TRA",
+    /** Ảnh QR của chủ shop (tải từ app ngân hàng), đặt vào public/assets/. Nếu chưa có file, trang tự tạo mã VietQR từ số tài khoản. */
+    qrImage: "/assets/qr-thanh-toan.png",
+  },
+  /** Thời gian chủ shop đối soát chuyển khoản và xác nhận đơn */
+  confirmWithin: "30 phút",
   /** Thông tin bắt buộc với website thương mại điện tử tại Việt Nam (Nghị định 52/2013, 85/2021). */
   legal: {
     company: "Hộ kinh doanh Lam Trà",
@@ -28,12 +37,12 @@ export const zaloLink = () => `https://zalo.me/${SITE.zalo}`;
 export const telLink = () => `tel:${SITE.phone.replace(/\s/g, "")}`;
 
 export const NAV = [
-  { label: "Trà xanh", href: "/san-pham?danh-muc=tra-xanh" },
-  { label: "Trà sen", href: "/san-pham?danh-muc=tra-sen" },
-  { label: "Thượng hạng", href: "/san-pham?danh-muc=thuong-hang" },
+  { label: "Trang chủ", href: "/" },
+  { label: "Câu chuyện", href: "/cau-chuyen" },
+  { label: "Sản phẩm", href: "/san-pham" },
   { label: "Quà biếu", href: "/qua-bieu" },
   { label: "Trà đàm", href: "/tra-dam" },
-  { label: "Câu chuyện", href: "/cau-chuyen" },
+  { label: "Liên hệ", href: "/lien-he" },
 ];
 
 export function vietQrImage(amount: number, info: string) {

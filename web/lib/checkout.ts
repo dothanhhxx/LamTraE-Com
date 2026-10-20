@@ -1,4 +1,5 @@
 // Tính tiền, phí ship, mã giảm giá và kiểm tra đơn. Dùng chung cho trình duyệt và API (server tính lại, không tin số từ client).
+import { formatVND as fmt } from "./format";
 import { getProduct, isValidVariant, maxQtyOf, priceOf, variantLabel } from "./products";
 
 export type CartLine = { slug: string; size: string; grade: string; qty: number };
@@ -104,6 +105,8 @@ export function quote({ items, coupon, province, express, giftWrap }: QuoteInput
 export type Payment = "vietqr" | "cod";
 
 export type OrderInput = {
+  /** Mã đơn tạo sẵn ở trang đặt hàng để khách ghi vào nội dung chuyển khoản */
+  code?: string;
   lines: CartLine[];
   buyer: { name: string; phone: string; email?: string };
   /** Người nhận khác người mua (đơn quà tặng) */
@@ -116,6 +119,11 @@ export type OrderInput = {
   coupon?: string;
   note?: string;
 };
+
+// Không có I, O, 0, 1 để khách đọc mã qua điện thoại không nhầm.
+const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+export const newOrderCode = () => "LT" + Array.from(crypto.getRandomValues(new Uint8Array(6)), (b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join("");
+export const isOrderCode = (s: string) => /^LT[A-HJ-NP-Z2-9]{6}$/.test(s);
 
 export const ORDER_STEPS = ["Đã đặt hàng", "Đã xác nhận", "Đang giao", "Hoàn thành"] as const;
 
@@ -148,10 +156,20 @@ export function validateOrder(o: OrderInput): Record<string, string> {
   if ((o.gift?.message ?? "").length > 300) e["gift.message"] = "Lời nhắn tối đa 300 ký tự.";
   if ((o.note ?? "").length > 500) e.note = "Ghi chú tối đa 500 ký tự.";
   if (!toItems(o.lines ?? []).length) e.lines = "Giỏ hàng đang trống.";
+  else {
+    // Không âm thầm bỏ hoặc bớt sản phẩm: báo rõ món nào hết hàng / không đủ số lượng.
+    const short = (o.lines ?? []).flatMap((l) => {
+      const p = getProduct(l.slug);
+      if (!p || !isValidVariant(p, l.size, l.grade)) return ["một sản phẩm không còn bán"];
+      const max = maxQtyOf(p, l.size, l.grade);
+      if (max < 1) return [`${p.name} ${variantLabel(p, l.size, l.grade)} đã hết hàng`];
+      if (l.qty > max) return [`${p.name} ${variantLabel(p, l.size, l.grade)} chỉ còn ${max}`];
+      return [];
+    });
+    if (short.length) e.lines = `${short.join("; ")}. Bạn sửa lại giỏ hàng giúp Lam Trà nhé.`;
+  }
   return e;
 }
-
-const fmt = (n: number) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫";
 
 export const formatDateTime = (iso: string) => {
   const d = new Date(iso);

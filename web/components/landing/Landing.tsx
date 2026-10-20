@@ -69,8 +69,7 @@ export default function Landing() {
     t2.current = setTimeout(() => setAdded(false), 2200);
   };
   const buyNow = () => {
-    add(tea.slug, size, grade);
-    router.push("/gio-hang");
+    if (add(tea.slug, size, grade)) router.push("/gio-hang");
   };
 
   const tea = TEAS[idx];

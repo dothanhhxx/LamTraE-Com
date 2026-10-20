@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Analytics from "@/components/shell/Analytics";
 import StoreShell from "@/components/shell/StoreShell";
 import "./globals.css";
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="vi" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <StoreShell>{children}</StoreShell>
+        <Analytics />
       </body>
     </html>
   );

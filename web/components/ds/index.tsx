@@ -8,9 +8,9 @@ import { WishButton } from "./more";
 
 export * from "./more";
 
-export function formatVND(n: number) {
-  return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫";
-}
+import { formatVND } from "@/lib/format";
+
+export { formatVND };
 
 export function Icon({
   name,
@@ -349,8 +349,9 @@ export function Input({
   const id = useId();
   const field: CSSProperties = {
     width: "100%", boxSizing: "border-box", minHeight: 48, padding: textarea ? "12px 14px" : "0 14px",
-    fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-strong)", background: "var(--surface-raised)",
-    border: "1px solid " + (error ? "var(--danger)" : "var(--border-strong)"), borderRadius: "var(--radius-input)",
+    fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-strong)", background: "#FAF8F5",
+    border: "1.2px solid " + (error ? "var(--danger)" : "rgba(36, 52, 31, 0.22)"), borderRadius: "var(--radius-input)",
+    boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.03)",
     outline: "none", resize: "vertical", ...style,
   };
   return (
@@ -375,7 +376,7 @@ export function QuantityStepper({ value, onChange, min = 1, max = 99, size = "md
   const h = size === "sm" ? 36 : 44;
   const btn: CSSProperties = { width: h, height: h, border: 0, background: "transparent", color: "var(--text-strong)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 };
   return (
-    <div style={{ display: "inline-flex", alignItems: "center", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-input)", background: "var(--surface-raised)", fontFamily: "var(--font-ui)" }}>
+    <div style={{ display: "inline-flex", alignItems: "center", border: "1.2px solid rgba(36, 52, 31, 0.22)", borderRadius: "var(--radius-input)", background: "#FAF8F5", fontFamily: "var(--font-ui)", boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.02)" }}>
       <button type="button" aria-label="Giảm số lượng" disabled={value <= min} onClick={() => onChange(value - 1)} style={{ ...btn, opacity: value <= min ? 0.35 : 1 }}>
         <Icon name="minus" size={16} />
       </button>

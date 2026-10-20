@@ -54,8 +54,9 @@ export function Select({
           {...rest}
           style={{
             width: "100%", boxSizing: "border-box", height: 48, padding: "0 40px 0 14px", appearance: "none",
-            fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-strong)", background: "var(--surface-raised)",
-            border: "1px solid " + (error ? "var(--danger)" : "var(--border-strong)"), borderRadius: "var(--radius-input)", outline: "none", cursor: "pointer",
+            fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-strong)", background: "#FAF8F5",
+            border: "1.2px solid " + (error ? "var(--danger)" : "rgba(36, 52, 31, 0.22)"), borderRadius: "var(--radius-input)",
+            boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.03)", outline: "none", cursor: "pointer",
             ...rest.style,
           }}
         >
@@ -99,7 +100,9 @@ export function Choice({
     <label
       style={{
         display: "flex", alignItems: "flex-start", gap: 12, padding: "14px 16px", borderRadius: "var(--radius-md)", cursor: disabled ? "not-allowed" : "pointer",
-        border: checked ? "1.5px solid var(--text-strong)" : "1px solid var(--border-strong)", background: checked ? "var(--surface-raised)" : "transparent",
+        border: checked ? "1.5px solid var(--primary)" : "1.2px solid rgba(36, 52, 31, 0.22)",
+        background: checked ? "#F5EFE6" : "#FAF8F5",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
         opacity: disabled ? 0.5 : 1, fontFamily: "var(--font-ui)",
       }}
     >
