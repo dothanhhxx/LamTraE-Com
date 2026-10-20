@@ -1,0 +1,23 @@
+@import "./ds/tokens/fonts.css";
+@import "./ds/tokens/colors.css";
+@import "./ds/tokens/typography.css";
+@import "./ds/tokens/spacing.css";
+@import "./ds/tokens/base.css";
+
+html, body { margin: 0; background: var(--bg-page); }
+a { color: var(--text-link); }
+a:hover { color: var(--primary-hover); }
+@media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+
+/* Hover states from the design's style-hover attributes */
+.lt-nav-link { text-decoration: none; }
+.lt-nav-link:hover { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.lt-head-btn:hover { background: rgba(188,154,108,.16) !important; }
+.lt-tea-idle { background: transparent; }
+.lt-tea-idle:hover { background: rgba(253,237,216,.06); }
+.lt-gift-link {
+  display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 500;
+  color: var(--logo-cream); text-decoration: underline; text-underline-offset: 4px;
+  text-decoration-color: rgba(253,237,216,.4);
+}
+.lt-gift-link:hover { color: var(--logo-cream); text-decoration-color: var(--logo-cream); }

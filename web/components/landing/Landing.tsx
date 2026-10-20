@@ -1,0 +1,377 @@
+"use client";
+
+import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { Button, Icon, IconButton, OptionPicker, Price, ProductImage, Rating } from "@/components/ds";
+
+const photo = (k: string) => `/assets/photos/${k}.jpg`;
+
+type Tea = {
+  id: string;
+  name: string;
+  kind: string;
+  note: string;
+  base: number;
+  fixed?: boolean;
+  rating: number;
+  reviews: number;
+  origin: string;
+  ph: string;
+  desc: string;
+};
+
+const TEAS: Tea[] = [
+  { id: "dinh-sen", name: "Trà Đinh Sen", kind: "Trà sen", note: "Hương sen dịu, hậu ngọt kéo dài", base: 320000, rating: 4.9, reviews: 88, origin: "Tân Cương · Thái Nguyên", ph: "sen",
+    desc: "Búp Đinh non ướp cùng gạo sen Tây Hồ theo lối xưa, mỗi cân trà cần hơn nghìn bông sen. Nước vàng sánh, thơm thanh, hợp tiếp khách và biếu tặng." },
+  { id: "moc-cau", name: "Trà Móc Câu", kind: "Trà xanh", note: "Hương cốm non, chát dịu", base: 150000, rating: 4.7, reviews: 142, origin: "Tân Cương · Thái Nguyên", ph: "moccau",
+    desc: "Cánh trà xoăn nhỏ như móc câu, sao tay trên chảo gang. Nước xanh vàng, vị chát dịu rồi ngọt, hợp uống hằng ngày." },
+  { id: "non-tom", name: "Trà Nõn Tôm", kind: "Trà xanh", note: "Nước xanh trong, vị thanh", base: 220000, rating: 4.8, reviews: 64, origin: "Tân Cương · Thái Nguyên", ph: "nontom",
+    desc: "Chỉ hái một tôm một lá vào sáng sớm. Cánh trà nhỏ, đều, nước xanh trong và hậu ngọt rõ." },
+  { id: "dinh-th", name: "Đinh Thượng Hạng", kind: "Thượng hạng", note: "Búp nhỏ nhất, vị sâu", base: 480000, rating: 5.0, reviews: 31, origin: "Đồi chè Tân Cương", ph: "dinhth",
+    desc: "Phần búp nhỏ nhất của cây chè, cánh nhọn như đinh. Dành cho người sành trà và những dịp đặc biệt." },
+  { id: "hop-qua", name: "Hộp quà Trao Gửi", kind: "Quà tặng", note: "Gói sẵn, kèm thiệp viết tay", base: 650000, fixed: true, rating: 4.9, reviews: 53, origin: "Bộ quà tặng", ph: "hopqua",
+    desc: "Đinh Sen 150g, Nõn Tôm 150g và kẹo lạc trà xanh trong hộp sơn mài. Miễn phí gói quà cho đơn từ 500.000₫." },
+];
+const SIZE: Record<string, number> = { "150": 1, "300": 1.9, "500": 3 };
+const GRADE: Record<string, number> = { "1": 1, "2": 0.75 };
+const SIZE_OPTIONS = ["150", "300", "500"].map((s) => ({ value: s, label: s + "g" }));
+const GRADE_OPTIONS = [
+  { value: "1", label: "Hạng 1", sub: "Hương đậm" },
+  { value: "2", label: "Hạng 2", sub: "Hằng ngày" },
+];
+const pad = (n: number) => String(n).padStart(2, "0");
+
+export default function Landing() {
+  const [idx, setIdx] = useState(0);
+  const [size, setSize] = useState("150");
+  const [grade, setGrade] = useState("1");
+  const [cart, setCart] = useState(0);
+  const [added, setAdded] = useState(false);
+  const [fading, setFading] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [w, setW] = useState(1280);
+  const stageRef = useRef<HTMLElement>(null);
+  const t1 = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const t2 = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    const onResize = () => setW(window.innerWidth);
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onResize();
+    onScroll();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    const t0 = setTimeout(() => setLoaded(true), 60);
+    TEAS.forEach((t) => {
+      const i = new Image();
+      i.src = photo(t.ph);
+    });
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll);
+      [t0, t1.current, t2.current].forEach(clearTimeout);
+    };
+  }, []);
+
+  const scrollToStage = () => {
+    const el = stageRef.current;
+    if (!el) return;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 84, behavior: "smooth" });
+  };
+
+  const pick = (i: number) => {
+    const n = (i + TEAS.length) % TEAS.length;
+    if (n === idx) return;
+    clearTimeout(t1.current);
+    setFading(true);
+    setAdded(false);
+    t1.current = setTimeout(() => {
+      setIdx(n);
+      setFading(false);
+    }, 160);
+  };
+
+  const go = (i: number | null) => (e?: MouseEvent) => {
+    e?.preventDefault();
+    setMenu(false);
+    if (i != null) pick(i);
+    scrollToStage();
+  };
+
+  const addToCart = () => {
+    clearTimeout(t2.current);
+    setCart((c) => c + 1);
+    setAdded(true);
+    t2.current = setTimeout(() => setAdded(false), 2200);
+  };
+  const buyNow = () => {
+    setCart((c) => c + 1);
+    setAdded(true);
+  };
+
+  const tea = TEAS[idx];
+  const isDesktop = w >= 1000;
+  const mobile = w < 720;
+  const solid = scrolled || menu;
+  const headerInk = solid ? "var(--text-strong)" : "var(--logo-cream)";
+  const price = tea.fixed ? tea.base : Math.round((tea.base * SIZE[size] * GRADE[grade]) / 1000) * 1000;
+
+  const navItems = [
+    { label: "Trà xanh", onClick: go(1) },
+    { label: "Trà sen", onClick: go(0) },
+    { label: "Thượng hạng", onClick: go(3) },
+    { label: "Quà tặng", onClick: go(4) },
+    { label: "Câu chuyện", onClick: (e: MouseEvent) => e.preventDefault() },
+  ];
+  const trust = [
+    { icon: "leaf", a: "Búp chè Tân Cương", b: "hái tay sáng sớm", divider: true },
+    { icon: "scale", a: "Rõ khối lượng", b: "và phân hạng", divider: !mobile },
+    { icon: "qr-code", a: "Thanh toán VietQR", b: "hoặc COD", divider: false },
+  ];
+
+  const roundBtn = {
+    width: 44, height: 44, border: 0, borderRadius: 999, background: "transparent", color: "inherit",
+    display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+  } as const;
+
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--bg-page)", color: "var(--text-body)", fontFamily: "var(--font-ui)" }}>
+      <header
+        style={{
+          position: "fixed", top: 0, left: 0, right: 0, zIndex: 30,
+          background: solid ? "rgba(247,240,227,.94)" : "transparent",
+          backdropFilter: solid ? "blur(10px)" : "none",
+          WebkitBackdropFilter: solid ? "blur(10px)" : "none",
+          borderBottom: "1px solid " + (solid ? "var(--border-hairline)" : "transparent"),
+          transition: "background 200ms cubic-bezier(.2,.7,.2,1),border-color 200ms",
+        }}
+      >
+        <div style={{ maxWidth: 1240, margin: "0 auto", height: 68, padding: "0 clamp(12px,3vw,40px)", display: "flex", alignItems: "center", gap: 24 }}>
+          <a href="#" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: headerInk, flexShrink: 0 }}>
+            <span style={{ width: 42, height: 42, borderRadius: 6, background: "var(--logo-green)", border: "1px solid rgba(188,154,108,.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/assets/lam-tra-emblem.svg" alt="Lam Trà" style={{ height: 30 }} />
+            </span>
+            <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
+              <span style={{ fontSize: 17, fontWeight: 500, letterSpacing: "-.01em" }}>Lam Trà</span>
+              <span style={{ fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: solid ? "var(--tra-500)" : "var(--tra-300)" }}>Tea &amp; beyond</span>
+            </span>
+          </a>
+          {isDesktop && (
+            <nav style={{ display: "flex", gap: 30, flex: 1, justifyContent: "center" }}>
+              {navItems.map((n) => (
+                <a key={n.label} href="#" onClick={n.onClick} className="lt-nav-link" style={{ fontSize: 14, color: headerInk, padding: "6px 0" }}>
+                  {n.label}
+                </a>
+              ))}
+            </nav>
+          )}
+          <div style={{ display: "flex", alignItems: "center", gap: 2, marginLeft: "auto", color: headerInk }}>
+            <button type="button" aria-label="Tìm kiếm" className="lt-head-btn" style={roundBtn}>
+              <Icon name="search" size={22} />
+            </button>
+            <button type="button" aria-label="Giỏ hàng" className="lt-head-btn" style={{ ...roundBtn, position: "relative" }}>
+              <Icon name="shopping-bag" size={22} />
+              {cart > 0 && (
+                <span style={{ position: "absolute", top: 5, right: 4, minWidth: 17, height: 17, padding: "0 4px", borderRadius: 999, background: "var(--tra-400)", color: "var(--logo-green)", fontSize: 10.5, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", fontVariantNumeric: "tabular-nums" }}>
+                  {cart}
+                </span>
+              )}
+            </button>
+            {isDesktop ? (
+              <Button variant="accent" size="sm" iconRight="arrow-right" onClick={go(null)} style={{ marginLeft: 10 }}>
+                Mua ngay
+              </Button>
+            ) : (
+              <button type="button" aria-label="Danh mục" onClick={() => setMenu((m) => !m)} style={roundBtn}>
+                <Icon name={menu ? "x" : "menu"} size={22} />
+              </button>
+            )}
+          </div>
+        </div>
+        {!isDesktop && menu && (
+          <nav style={{ display: "flex", flexDirection: "column", padding: "4px 20px 20px", background: "var(--bg-page)", borderTop: "1px solid var(--border-hairline)" }}>
+            {navItems.map((n) => (
+              <a key={n.label} href="#" onClick={n.onClick} style={{ fontSize: 16, color: "var(--text-strong)", textDecoration: "none", padding: "15px 0", borderBottom: "1px solid var(--border-hairline)" }}>
+                {n.label}
+              </a>
+            ))}
+            <Button size="lg" fullWidth onClick={go(null)} style={{ marginTop: 16 }}>
+              Mua ngay
+            </Button>
+          </nav>
+        )}
+      </header>
+
+      <section
+        style={{
+          position: "relative", overflow: "hidden", background: "var(--reu-900)",
+          minHeight: mobile ? 760 : "min(940px, 100vh)", display: "flex", alignItems: mobile ? "flex-end" : "center",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute", inset: 0, backgroundImage: "url('/assets/photos/hero.jpg')", backgroundSize: "cover",
+            backgroundPosition: mobile ? "30% center" : "center", transform: `scale(${loaded ? 1 : 1.04})`,
+            transition: "transform 1600ms cubic-bezier(.2,.7,.2,1)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute", inset: 0,
+            background: mobile
+              ? "linear-gradient(0deg, rgba(25,36,26,.96) 0%, rgba(36,52,31,.82) 50%, rgba(36,52,31,.35) 100%)"
+              : "linear-gradient(90deg, rgba(25,36,26,.94) 0%, rgba(36,52,31,.82) 38%, rgba(36,52,31,.25) 72%, rgba(36,52,31,.1) 100%), linear-gradient(0deg, rgba(25,36,26,.6) 0%, transparent 30%)",
+          }}
+        />
+        <div style={{ position: "relative", width: "100%", maxWidth: 1240, margin: "0 auto", padding: mobile ? "120px 20px 150px" : "140px clamp(24px,3vw,40px) 220px" }}>
+          <div
+            style={{
+              maxWidth: 600, opacity: loaded ? 1 : 0, transform: `translateY(${loaded ? "0px" : "8px"})`,
+              transition: "opacity 600ms cubic-bezier(.2,.7,.2,1),transform 600ms cubic-bezier(.2,.7,.2,1)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 22 }}>
+              <span style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", fontWeight: 500, color: "var(--tra-300)", whiteSpace: "nowrap", flexShrink: 0 }}>Tân Cương · Thái Nguyên</span>
+              <span style={{ flex: "0 0 64px", height: 1, background: "var(--tra-400)", opacity: 0.7 }} />
+            </div>
+            <h1 style={{ margin: 0, fontSize: "clamp(38px,6.2vw,76px)", lineHeight: 1.12, fontWeight: 500, letterSpacing: "-.02em", color: "var(--logo-cream)", textWrap: "balance" }}>
+              Trọn vị trà Việt,
+              <br />
+              <span style={{ color: "var(--tra-300)" }}>trọn tấm lòng trao gửi.</span>
+            </h1>
+            <p style={{ margin: "24px 0 0", maxWidth: 500, fontSize: "clamp(16px,1.5vw,18px)", lineHeight: 1.65, color: "var(--reu-100)", textWrap: "pretty" }}>
+              Búp chè Tân Cương hái sáng sớm, sao tay trên chảo gang. Mỗi gói trà ghi rõ khối lượng và phân hạng, để bạn chọn đúng vị cho mình hay cho người thân.
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 28px", marginTop: 34 }}>
+              <Button variant="accent" size="lg" iconRight="arrow-right" onClick={go(null)}>
+                Mua ngay
+              </Button>
+              <a href="#" onClick={go(4)} className="lt-gift-link">
+                <Icon name="gift" size={18} />
+                Xem hộp quà biếu
+              </a>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "16px 0", marginTop: 48 }}>
+              {trust.map((t) => (
+                <div key={t.icon} style={{ display: "flex", alignItems: "center", gap: 12, paddingRight: 22, marginRight: 22, borderRight: t.divider ? "1px solid rgba(188,154,108,.3)" : 0 }}>
+                  <span style={{ width: 40, height: 40, flexShrink: 0, borderRadius: 999, border: "1px solid rgba(188,154,108,.6)", color: "var(--tra-300)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Icon name={t.icon} size={18} />
+                  </span>
+                  <span style={{ fontSize: 13, lineHeight: 1.4, color: "var(--logo-cream)" }}>
+                    {t.a}
+                    <br />
+                    <span style={{ color: "var(--reu-200)" }}>{t.b}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section ref={stageRef} style={{ position: "relative", zIndex: 2, padding: "0 clamp(12px,3vw,40px) clamp(48px,7vw,96px)", marginTop: mobile ? -96 : -150 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", background: "var(--surface-card)", border: "1px solid var(--border-hairline)", borderRadius: 10, boxShadow: "var(--shadow-lg)", overflow: "hidden", display: "flex", flexWrap: "wrap" }}>
+          {isDesktop ? (
+            <div style={{ flex: "0 0 232px", padding: "20px 14px", background: "var(--logo-green)", display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--tra-300)", padding: "4px 10px 12px" }}>Trà nổi bật</div>
+              {TEAS.map((t, i) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => pick(i)}
+                  className={i === idx ? "lt-tea-item" : "lt-tea-item lt-tea-idle"}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 12, padding: "8px 10px", borderRadius: 6,
+                    border: "1px solid " + (i === idx ? "rgba(188,154,108,.7)" : "rgba(253,237,216,.1)"),
+                    background: i === idx ? "rgba(188,154,108,.16)" : undefined,
+                    color: "var(--logo-cream)", textAlign: "left", cursor: "pointer", fontFamily: "inherit",
+                    transition: "background 200ms,border-color 200ms",
+                  }}
+                >
+                  <span style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 4, backgroundImage: `url('${photo(t.ph)}')`, backgroundSize: "cover", backgroundPosition: "center" }} />
+                  <span style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
+                    <span style={{ fontSize: 11, color: "var(--tra-300)", fontVariantNumeric: "tabular-nums" }}>{pad(i + 1)}</span>
+                    <span style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.25 }}>{t.name}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div style={{ flex: "1 1 100%", display: "flex", gap: 8, overflowX: "auto", padding: 12, background: "var(--logo-green)", scrollbarWidth: "none" }}>
+              {TEAS.map((t, i) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => pick(i)}
+                  style={{
+                    flexShrink: 0, display: "flex", alignItems: "center", gap: 8, height: 44, padding: "0 14px 0 6px", borderRadius: 999,
+                    border: "1px solid " + (i === idx ? "rgba(188,154,108,.7)" : "rgba(253,237,216,.1)"),
+                    background: i === idx ? "rgba(188,154,108,.16)" : "transparent",
+                    color: "var(--logo-cream)", fontFamily: "inherit", fontSize: 13, fontWeight: 500, whiteSpace: "nowrap", cursor: "pointer",
+                  }}
+                >
+                  <span style={{ width: 32, height: 32, borderRadius: 999, backgroundImage: `url('${photo(t.ph)}')`, backgroundSize: "cover", backgroundPosition: "center" }} />
+                  {t.name}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div style={{ flex: "999 1 420px", minWidth: 0, padding: "clamp(12px,1.6vw,20px)", display: "flex" }}>
+            <div style={{ position: "relative", flex: 1, alignSelf: "flex-start", opacity: fading ? 0 : 1, transition: "opacity 200ms cubic-bezier(.2,.7,.2,1)" }}>
+              <ProductImage src={photo(tea.ph)} alt={tea.name} ratio="4 / 5" radius="6px" />
+              <span style={{ position: "absolute", left: 14, top: 14, padding: "6px 12px", borderRadius: 999, background: "rgba(252,248,241,.88)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", fontSize: 12, color: "var(--text-strong)", whiteSpace: "nowrap" }}>
+                {tea.origin}
+              </span>
+              <div style={{ position: "absolute", right: 14, bottom: 14, display: "flex", gap: 8 }}>
+                <IconButton icon="chevron-left" label="Trà trước" variant="surface" onClick={() => pick(idx - 1)} />
+                <IconButton icon="chevron-right" label="Trà tiếp theo" variant="surface" onClick={() => pick(idx + 1)} />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ flex: "1 1 320px", minWidth: 0, padding: "clamp(20px,2.4vw,32px) clamp(20px,2.4vw,32px) clamp(20px,2.4vw,28px) clamp(20px,1vw,12px)", display: "flex", flexDirection: "column", gap: 18 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", fontWeight: 500, color: "var(--accent)", fontVariantNumeric: "tabular-nums" }}>
+                {pad(idx + 1)} / {pad(TEAS.length)} · {tea.kind}
+              </div>
+              <h2 style={{ margin: 0, fontSize: "clamp(26px,2.6vw,34px)", lineHeight: 1.2, fontWeight: 500, letterSpacing: "-.01em", color: "var(--text-strong)" }}>{tea.name}</h2>
+              <div style={{ fontSize: 15, color: "var(--tra-500)" }}>{tea.note}</div>
+              <Rating value={tea.rating} count={tea.reviews} />
+            </div>
+            <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: "var(--text-body)", textWrap: "pretty" }}>{tea.desc}</p>
+            {tea.fixed ? (
+              <div style={{ padding: "14px 16px", border: "1px solid var(--border-hairline)", borderRadius: 6, background: "var(--bg-page)", fontSize: 13, lineHeight: 1.55, color: "var(--text-body)" }}>
+                Bộ quà gói sẵn trong hộp sơn mài. Bạn ghi lời nhắn ở bước đặt hàng, Lam Trà sẽ viết tay vào thiệp.
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <OptionPicker label="Khối lượng" options={SIZE_OPTIONS} value={size} onChange={(v) => { setSize(v); setAdded(false); }} />
+                <OptionPicker label="Phân hạng" options={GRADE_OPTIONS} value={grade} onChange={(v) => { setGrade(v); setAdded(false); }} />
+              </div>
+            )}
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, paddingTop: 16, borderTop: "1px solid var(--border-hairline)", marginTop: "auto" }}>
+              <Price value={price} size="lg" />
+              <span style={{ fontSize: 13, color: "var(--text-muted)" }}>{tea.fixed ? "Hộp 3 món" : `${size}g · Hạng ${grade}`}</span>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+              <div style={{ flex: "1 1 150px", minWidth: 0 }}>
+                <Button variant="secondary" size="lg" fullWidth iconLeft={added ? "check" : "shopping-bag"} onClick={addToCart}>
+                  {added ? "Đã thêm" : "Thêm vào giỏ"}
+                </Button>
+              </div>
+              <div style={{ flex: "1 1 150px", minWidth: 0 }}>
+                <Button size="lg" fullWidth iconRight="arrow-right" onClick={buyNow}>
+                  Mua ngay
+                </Button>
+              </div>
+            </div>
+            <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Thanh toán VietQR hoặc COD · Lam Trà xác nhận qua Zalo trong 30 phút</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
