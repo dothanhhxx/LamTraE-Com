@@ -4,6 +4,7 @@ import { TeaGrid } from "@/components/catalog/TeaCard";
 import { POSTS, formatDate } from "@/lib/posts";
 import { CATEGORIES, PRODUCTS, getProduct, photo, type Product } from "@/lib/products";
 import { TESTIMONIALS } from "@/lib/reviews";
+import { PhotoBand, TeaSprig } from "@/components/shell/PhotoBand";
 
 const section = { paddingTop: "clamp(48px,7vw,80px)", paddingBottom: "clamp(48px,7vw,80px)" } as const;
 
@@ -19,7 +20,7 @@ export default function HomeSections({ products }: { products?: Product[] } = {}
         <SectionTitle id="danh-muc" eyebrow="Danh mục" title="Chọn theo gu trà" action={<Link href="/san-pham" style={{ fontSize: 14 }}>Xem tất cả</Link>} />
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 16 }}>
           {CATEGORIES.map((c) => (
-            <Link key={c.slug} href={c.slug === "qua-tang" ? "/qua-bieu" : `/san-pham?danh-muc=${c.slug}`} className="lt-card" style={{ position: "relative", display: "block", borderRadius: 6, overflow: "hidden", textDecoration: "none" }}>
+            <Link key={c.slug} href={`/san-pham?danh-muc=${c.slug}`} className="lt-card" style={{ position: "relative", display: "block", borderRadius: 6, overflow: "hidden", textDecoration: "none" }}>
               <span className="lt-card-photo" style={{ display: "block" }}>
                 <ProductImage src={photo(c.ph)} alt="" ratio="4 / 3" />
               </span>
@@ -33,38 +34,15 @@ export default function HomeSections({ products }: { products?: Product[] } = {}
         </div>
       </section>
 
-      <section aria-labelledby="ban-chay" className="lt-container" style={section}>
-        <SectionTitle id="ban-chay" eyebrow="Được mua nhiều" title="Trà bán chạy" action={<Link href="/san-pham?sap-xep=ban-chay" style={{ fontSize: 14 }}>Xem thêm</Link>} />
-        <TeaGrid products={sellers} />
-      </section>
-
-      <section aria-labelledby="qua-bieu" style={{ background: "var(--surface-inverse)", color: "var(--text-on-inverse)" }}>
-        <div className="lt-container" style={{ ...section, display: "flex", flexWrap: "wrap", gap: "32px clamp(32px,5vw,72px)", alignItems: "center" }}>
-          <div style={{ flex: "1 1 320px", maxWidth: 520, borderRadius: 6, overflow: "hidden" }}>
-            <ProductImage src={photo("hopqua")} alt="Hộp quà Trao Gửi" ratio="4 / 3" />
-          </div>
-          <div style={{ flex: "1 1 320px", display: "flex", flexDirection: "column", gap: 16 }}>
-            <span style={{ fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", fontWeight: 500, color: "var(--tra-300)" }}>Quà biếu</span>
-            <h2 id="qua-bieu" style={{ margin: 0, color: "var(--text-on-inverse)", fontSize: "clamp(26px,3vw,38px)", lineHeight: 1.2, fontWeight: 500 }}>
-              Gửi trà thay lời,
-              <br />
-              <span style={{ color: "var(--tra-300)" }}>Lam Trà viết tay giúp bạn.</span>
-            </h2>
-            <p style={{ margin: 0, fontSize: 15, lineHeight: 1.65, color: "var(--text-on-inverse-muted)", maxWidth: 460 }}>
-              Chọn quà theo dịp Tết, Trung thu, 20/10 hay tân gia. Gói giấy dó, thiệp viết tay, giao thẳng tới người nhận và không kèm hóa đơn nếu bạn muốn.
-            </p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "12px 24px", alignItems: "center", marginTop: 6 }}>
-              <Button href="/qua-bieu" variant="accent" iconRight="arrow-right">Chọn quà biếu</Button>
-              <Link href="/qua-bieu#doanh-nghiep" className="lt-gift-link">
-                <Icon name="building-2" size={18} />
-                Quà doanh nghiệp
-              </Link>
-            </div>
-          </div>
+      <section aria-labelledby="ban-chay" className="lt-bg-veil">
+        <div className="lt-container" style={section}>
+          <SectionTitle id="ban-chay" eyebrow="Được mua nhiều" title="Trà bán chạy" action={<Link href="/san-pham?sap-xep=ban-chay" style={{ fontSize: 14 }}>Xem thêm</Link>} />
+          <TeaGrid products={sellers} />
         </div>
       </section>
 
-      <section aria-labelledby="khach-noi" className="lt-container" style={section}>
+      <section aria-labelledby="khach-noi" className="lt-bg-ink">
+      <div className="lt-container" style={section}>
         <SectionTitle
           id="khach-noi"
           eyebrow="Khách nói về Lam Trà"
@@ -91,9 +69,11 @@ export default function HomeSections({ products }: { products?: Product[] } = {}
             );
           })}
         </div>
+      </div>
       </section>
 
-      <section aria-labelledby="tra-dam" className="lt-container" style={{ ...section, paddingTop: 0 }}>
+      <section aria-labelledby="tra-dam">
+      <div className="lt-container" style={{ ...section, paddingBottom: "clamp(96px,12vw,170px)" }}>
         <SectionTitle id="tra-dam" eyebrow="Trà đàm" title="Hiểu trà để thưởng trà" action={<Link href="/tra-dam" style={{ fontSize: 14 }}>Đọc thêm</Link>} />
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", gap: 24 }}>
           {POSTS.map((p) => (
@@ -108,7 +88,22 @@ export default function HomeSections({ products }: { products?: Product[] } = {}
             </Link>
           ))}
         </div>
+      </div>
       </section>
+
+      <TeaSprig side="right" />
+      <PhotoBand
+        id="ve-tan-cuong"
+        image="/assets/bg/tea-hills-mist.webp"
+        title="Từ đồi chè sương sớm đến chén trà nhà bạn."
+        desc="Búp chè Tân Cương hái tay khi còn đọng sương, sao trên chảo gang trong ngày. Lam Trà gửi đi khắp Việt Nam, xác nhận đơn qua Zalo trong 30 phút."
+        actions={
+          <>
+            <Button href="/san-pham" variant="accent" iconRight="arrow-right">Chọn trà</Button>
+            <Link href="/cau-chuyen" className="lt-gift-link">Đọc câu chuyện Lam Trà</Link>
+          </>
+        }
+      />
     </>
   );
 }

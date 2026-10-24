@@ -63,7 +63,7 @@ export default function StoreShell({ children }: { children: React.ReactNode }) 
     <CartProvider>
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#FFFFFF", color: "var(--text-body)", fontFamily: "var(--font-ui)" }}>
         <Header />
-        <main style={{ flex: 1, background: "#FFFFFF" }}>{children}</main>
+        <main className="lt-page-bg" style={{ flex: 1 }}>{children}</main>
         <Footer />
       </div>
       <a href={zaloLink()} target="_blank" rel="noopener noreferrer" className="lt-zalo" aria-label="Chat Zalo với Lam Trà">

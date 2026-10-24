@@ -5,7 +5,7 @@ import { SITE } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const u = (path: string) => SITE.url + path;
-  const pages = ["", "/san-pham", "/qua-bieu", "/tra-dam", "/cau-chuyen", "/hoi-dap", "/lien-he", "/chinh-sach"];
+  const pages = ["", "/san-pham", "/tra-dam", "/cau-chuyen", "/hoi-dap", "/lien-he", "/chinh-sach"];
   return [
     ...pages.map((p) => ({ url: u(p), changeFrequency: "weekly" as const, priority: p === "" ? 1 : 0.7 })),
     ...CATEGORIES.map((c) => ({ url: u(`/san-pham?danh-muc=${c.slug}`), changeFrequency: "weekly" as const, priority: 0.7 })),

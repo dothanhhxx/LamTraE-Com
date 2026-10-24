@@ -209,18 +209,8 @@ export default function Header() {
 
           {/* Left Brand Badge */}
           <Link href="/" aria-label="Lam Trà – Trang chủ" className="lt-header-logo-box">
-            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, borderRadius: 6, background: "rgba(188, 154, 108, 0.16)", border: "1px solid rgba(188, 154, 108, 0.3)" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/lam-tra-emblem.svg" alt="" style={{ height: 34, width: "auto" }} />
-            </span>
-            <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
-              <span style={{ fontSize: 18.5, fontWeight: 800, letterSpacing: "0.08em", color: "#F7F0E3", fontFamily: "var(--font-display, serif)" }}>
-                LAM TRÀ
-              </span>
-              <span style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--tra-300)", fontWeight: 600 }}>
-                Đệ nhất danh trà
-              </span>
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/assets/lam-tra-emblem.svg" alt="" width={70} height={63} />
           </Link>
 
           {/* Center Navigation Links */}

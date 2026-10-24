@@ -663,8 +663,8 @@ export default async function PolicyPage() {
             </ul>
             <p>
               Quý doanh nghiệp có thể gửi thông tin nhận báo giá nhanh qua trang{" "}
-              <Link href="/qua-bieu" style={{ fontWeight: 600 }}>
-                Quà biếu &amp; Doanh nghiệp
+              <Link href="/lien-he" style={{ fontWeight: 600 }}>
+                Liên hệ
               </Link>
               .
             </p>

@@ -14,6 +14,60 @@ a:hover { color: var(--primary-hover); }
 .lt-container { max-width: var(--content-max); margin: 0 auto; padding: 0 var(--gutter-mobile); box-sizing: border-box; }
 @media (min-width: 720px) { .lt-container { padding: 0 var(--gutter-desktop); } }
 
+/* ---------- Section backgrounds ----------
+   The page itself carries a tall ink-wash mountain backdrop (tiles vertically). Most light sections
+   stay transparent so it shows through; .lt-bg-veil tints a section without hiding it; dark sections
+   use gold wave lines; closing bands use a real tea-hill photo. The art lives in /assets/bg. */
+.lt-page-bg {
+  background: url("/assets/bg/mist-page.svg") center top / max(100%, 1200px) auto repeat-y, var(--paper-50);
+  overflow-x: clip;
+}
+.lt-bg-veil { background: rgba(238, 228, 210, 0.55); }
+
+.lt-bg-ink {
+  --text-strong: var(--logo-cream);
+  --text-body: var(--reu-100);
+  --text-muted: var(--reu-200);
+  --accent: var(--tra-300);
+  --text-link: var(--tra-300);
+  --surface-card: rgba(253, 237, 216, 0.05);
+  --border-hairline: rgba(217, 191, 148, 0.26);
+  --border-strong: rgba(217, 191, 148, 0.5);
+  background: url("/assets/bg/waves-gold.svg") center / cover no-repeat, #0F2A1E;
+  color: var(--text-body);
+}
+.lt-bg-ink a:hover { color: var(--logo-cream); }
+
+/* Tea sprig that overlaps the seam between two sections (decorative) */
+.lt-sprig { position: relative; z-index: 3; height: 0; pointer-events: none; }
+.lt-sprig img {
+  position: absolute;
+  top: 0;
+  width: clamp(96px, 15vw, 230px);
+  height: auto;
+  filter: drop-shadow(0 12px 18px rgba(25, 36, 26, 0.2));
+}
+.lt-sprig-right img { right: clamp(-56px, -3vw, -24px); transform: translateY(-62%) rotate(14deg); }
+.lt-sprig-left img { left: clamp(-56px, -3vw, -24px); transform: translateY(-62%) scaleX(-1) rotate(14deg); }
+
+/* Full-bleed photo band; --photo is set inline */
+.lt-band-photo {
+  position: relative;
+  background:
+    linear-gradient(90deg, rgba(10, 28, 19, 0.9) 0%, rgba(10, 28, 19, 0.66) 46%, rgba(10, 28, 19, 0.18) 100%),
+    var(--photo) center / cover no-repeat,
+    #0F2A1E;
+  color: var(--logo-cream);
+}
+@media (max-width: 719px) {
+  .lt-band-photo {
+    background:
+      linear-gradient(0deg, rgba(10, 28, 19, 0.92) 0%, rgba(10, 28, 19, 0.7) 100%),
+      var(--photo) center / cover no-repeat,
+      #0F2A1E;
+  }
+}
+
 @keyframes lt-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes lt-fade { from { opacity: 0; } to { opacity: 1; } }
 .lt-rise { animation: lt-rise var(--dur-slow) var(--ease-out) both; }
@@ -110,22 +164,62 @@ button:focus-visible, a:focus-visible { outline: none; box-shadow: var(--focus-r
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
 }
 
+/* Logo badge: tall plaque that breaks out of the header frame top and bottom */
 .lt-header-logo-box {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
-  gap: 12px;
-  text-decoration: none;
-  padding: 6px 14px 6px 8px;
-  border-radius: 8px;
-  border: 1.8px solid rgba(188, 154, 108, 0.65);
-  background: rgba(188, 154, 108, 0.1);
-  transition: all var(--dur-base) var(--ease-out);
+  justify-content: center;
   flex-shrink: 0;
+  width: 92px;
+  height: 104px;
+  margin: -8px 0;
+  border-radius: 8px;
+  border: 2px solid #DFBE89;
+  background: radial-gradient(120% 90% at 50% 30%, #1C4A35 0%, #0F2A1E 70%, #0B2117 100%);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  text-decoration: none;
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+/* Inner hairline for a double-frame look */
+.lt-header-logo-box::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(223, 190, 137, 0.45);
+  border-radius: 5px;
+  pointer-events: none;
+}
+/* Small ears on both sides that tie the badge into the frame line */
+.lt-header-logo-box::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -8px;
+  right: -8px;
+  height: 22px;
+  transform: translateY(-50%);
+  border-left: 2px solid #DFBE89;
+  border-right: 2px solid #DFBE89;
+  border-radius: 3px;
+  pointer-events: none;
+}
+.lt-header-logo-box img {
+  display: block;
+  width: 70px;
+  height: auto;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  transition: transform var(--dur-base) var(--ease-out);
 }
 .lt-header-logo-box:hover {
-  border-color: var(--tra-300);
-  background: rgba(188, 154, 108, 0.22);
-  box-shadow: 0 0 16px rgba(188, 154, 108, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 18px rgba(223, 190, 137, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.lt-header-logo-box:hover img { transform: scale(1.05); }
+.lt-header-logo-box:focus-visible { outline: 2px solid var(--tra-300); outline-offset: 3px; }
+@media (max-width: 999px) {
+  .lt-header-logo-box { width: 76px; height: 96px; margin: -4px 0; }
+  .lt-header-logo-box img { width: 58px; }
 }
 .lt-nav-link {
   color: #F5EEDB;
@@ -245,6 +339,63 @@ button:focus-visible, a:focus-visible { outline: none; box-shadow: var(--focus-r
   outline: 2px solid var(--tra-300);
   outline-offset: 2px;
 }
+.lt-foot-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  align-self: flex-start;
+  max-width: 300px;
+  padding: 4px 4px 4px 0;
+  border-radius: 10px;
+  color: var(--text-on-inverse);
+  text-decoration: none;
+}
+.lt-foot-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background: rgba(188, 154, 108, 0.12);
+  border: 1px solid rgba(188, 154, 108, 0.35);
+  transition: border-color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
+}
+.lt-foot-brand-mark img { display: block; height: 34px; width: auto; transition: transform var(--dur-base) var(--ease-out); }
+.lt-foot-brand-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.lt-foot-brand-name {
+  font-family: var(--font-display, serif);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #F7F0E3;
+}
+.lt-foot-brand-tagline {
+  position: relative;
+  padding-top: 7px;
+  font-family: var(--font-display, serif);
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--tra-300);
+  text-wrap: balance;
+}
+.lt-foot-brand-tagline::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 1px;
+  background: rgba(188, 154, 108, 0.55);
+  transition: width var(--dur-base) var(--ease-out);
+}
+.lt-foot-brand:hover .lt-foot-brand-mark { border-color: var(--tra-300); background: rgba(188, 154, 108, 0.2); }
+.lt-foot-brand:hover .lt-foot-brand-mark img { transform: scale(1.06); }
+.lt-foot-brand:hover .lt-foot-brand-tagline::before { width: 40px; }
 .lt-foot-link { color: var(--text-on-inverse-muted); text-decoration: none; font-size: 14px; line-height: 2; }
 .lt-foot-link:hover { color: var(--text-on-inverse); text-decoration: underline; text-underline-offset: 3px; }
 

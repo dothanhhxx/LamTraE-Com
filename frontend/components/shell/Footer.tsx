@@ -35,31 +35,14 @@ export default function Footer() {
         >
           {/* Cột 1: Nhận diện thương hiệu Lam Trà */}
           <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 220 }}>
-            <Link
-              href="/"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/lam-tra-emblem.svg" alt="Lam Trà Emblem" style={{ height: 42 }} />
-              <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
-                <span style={{ fontSize: 19, fontWeight: 600, letterSpacing: "-0.01em" }}>Lam Trà</span>
-                <span
-                  style={{
-                    fontSize: 10,
-                    letterSpacing: ".18em",
-                    textTransform: "uppercase",
-                    color: "var(--tra-300)",
-                    fontWeight: 500,
-                  }}
-                >
-                  Đệ nhất danh trà
-                </span>
+            <Link href="/" aria-label="Lam Trà – Trang chủ" className="lt-foot-brand">
+              <span className="lt-foot-brand-mark">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/assets/lam-tra-emblem.svg" alt="" width={34} height={34} />
+              </span>
+              <span className="lt-foot-brand-text">
+                <span className="lt-foot-brand-name">Lam Trà</span>
+                <span className="lt-foot-brand-tagline">Mở hộp trà, nghe chuyện đất chè Tân Cương</span>
               </span>
             </Link>
             <p
@@ -168,9 +151,6 @@ export default function Footer() {
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               <Link href="/cau-chuyen" className="lt-foot-link">
                 Câu chuyện Lam Trà
-              </Link>
-              <Link href="/qua-bieu" className="lt-foot-link">
-                Quà biếu &amp; Doanh nghiệp
               </Link>
               <Link href="/tra-dam" className="lt-foot-link">
                 Trà đàm &amp; Tin tức

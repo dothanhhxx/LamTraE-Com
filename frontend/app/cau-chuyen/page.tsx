@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Button, Icon } from "@/components/ds";
 import { PageHeader } from "@/components/shell/PageHeader";
+import { PhotoBand, TeaSprig } from "@/components/shell/PhotoBand";
 
 export const metadata: Metadata = {
   title: "Câu chuyện Lam Trà",
@@ -18,7 +20,7 @@ export default function StoryPage() {
   return (
     <>
       <PageHeader title="Câu chuyện Lam Trà" eyebrow="Tân Cương · Thái Nguyên" crumbs={[{ label: "Câu chuyện" }]} />
-      <div className="lt-container" style={{ paddingTop: 24, paddingBottom: 80 }}>
+      <div className="lt-container" style={{ paddingTop: 24, paddingBottom: "clamp(56px,8vw,96px)" }}>
         <div style={{ position: "relative", borderRadius: 10, overflow: "hidden", aspectRatio: "21 / 9", minHeight: 240, background: "var(--surface-photo)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/photos/hero.jpg" alt="Đồi chè Tân Cương lúc sáng sớm" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
@@ -34,8 +36,13 @@ export default function StoryPage() {
           <h2>Cái tên Lam Trà</h2>
           <p>“Lam” là màu xanh của đồi chè lúc sương tan, cũng là chữ “làm” bớt đi một dấu: làm trà bằng tay, bằng thời gian và bằng sự tỉ mỉ. Câu chúng tôi vẫn nói với nhau: trọn vị trà Việt, trọn tấm lòng trao gửi.</p>
         </div>
+      </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16, marginTop: 56 }}>
+      <TeaSprig side="right" />
+      <section aria-labelledby="gia-tri" className="lt-bg-ink">
+        <div className="lt-container" style={{ paddingTop: "clamp(56px,8vw,96px)", paddingBottom: "clamp(56px,8vw,96px)" }}>
+        <h2 id="gia-tri" style={{ margin: "0 0 28px", fontSize: "clamp(24px,2.6vw,32px)", lineHeight: 1.25, fontWeight: 500, color: "var(--text-strong)" }}>Điều Lam Trà giữ trong từng gói trà</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
           {VALUES.map((v) => (
             <div key={v.title} style={{ padding: 24, border: "1px solid var(--border-hairline)", borderRadius: 6, background: "var(--surface-card)", display: "flex", flexDirection: "column", gap: 10 }}>
               <span style={{ width: 44, height: 44, borderRadius: 999, border: "1px solid var(--border-strong)", color: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -46,12 +53,21 @@ export default function StoryPage() {
             </div>
           ))}
         </div>
-
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginTop: 48 }}>
-          <Button href="/san-pham" iconRight="arrow-right">Xem các loại trà</Button>
-          <Button href="/tra-dam" variant="secondary">Đọc Trà đàm</Button>
         </div>
-      </div>
+      </section>
+
+      <PhotoBand
+        id="moi-tra"
+        image="/assets/bg/tea-hill-thai-nguyen.webp"
+        title="Mời bạn một ấm trà Tân Cương."
+        desc="Chọn loại trà hợp vị, hoặc đọc thêm cách pha và bảo quản trong Trà đàm."
+        actions={
+          <>
+            <Button href="/san-pham" variant="accent" iconRight="arrow-right">Xem các loại trà</Button>
+            <Link href="/tra-dam" className="lt-gift-link">Đọc Trà đàm</Link>
+          </>
+        }
+      />
     </>
   );
 }
