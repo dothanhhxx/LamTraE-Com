@@ -21,7 +21,7 @@ export default function StoryPage() {
     <>
       <PageHeader title="Câu chuyện Lam Trà" eyebrow="Tân Cương · Thái Nguyên" crumbs={[{ label: "Câu chuyện" }]} />
       <div className="lt-container" style={{ paddingTop: 24, paddingBottom: "clamp(56px,8vw,96px)" }}>
-        <div style={{ position: "relative", borderRadius: 10, overflow: "hidden", aspectRatio: "21 / 9", minHeight: 240, background: "var(--surface-photo)" }}>
+        <div className="lt-story-hero" style={{ position: "relative", borderRadius: 10, overflow: "hidden", background: "var(--surface-photo)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/photos/hero.jpg" alt="Đồi chè Tân Cương lúc sáng sớm" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         </div>

@@ -47,5 +47,7 @@ export const NAV = [
 export function vietQrImage(amount: number, info: string) {
   const { bankId, account, holder } = SITE.bank;
   const q = new URLSearchParams({ amount: String(amount), addInfo: info, accountName: holder });
-  return `https://img.vietqr.io/image/${bankId}-${account}-compact2.png?${q}`;
+  // Gọi thẳng .svg: link .png bị chuyển hướng 301 sang .svg mà bước chuyển hướng không có header CORS,
+  // nên fetch() (dùng cho nút tải QR) sẽ bị chặn.
+  return `https://img.vietqr.io/image/${bankId}-${account}-compact2.svg?${q}`;
 }

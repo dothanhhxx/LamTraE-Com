@@ -188,11 +188,11 @@ export function Panel({ children, style, tone = "card" }: { children: ReactNode;
 export function SectionTitle({ eyebrow, title, action, id }: { eyebrow?: string; title: string; action?: ReactNode; id?: string }) {
   return (
     <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginBottom: 28, fontFamily: "var(--font-ui)" }}>
-      <div>
+      <div style={{ minWidth: 0 }}>
         {eyebrow && <div style={{ fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", fontWeight: 500, color: "var(--accent)", marginBottom: 8 }}>{eyebrow}</div>}
         <h2 id={id} style={{ margin: 0, fontSize: "clamp(24px,2.6vw,32px)", lineHeight: 1.25, fontWeight: 500, letterSpacing: "-.01em", color: "var(--text-strong)" }}>{title}</h2>
       </div>
-      {action}
+      {action && <span style={{ flexShrink: 0, whiteSpace: "nowrap", paddingBottom: 4 }}>{action}</span>}
     </div>
   );
 }

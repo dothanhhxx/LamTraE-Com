@@ -1,8 +1,79 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CopyButton, Icon, formatVND } from "@/components/ds";
 import { SITE, vietQrImage } from "@/lib/site";
+
+function triggerDownload(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/**
+ * Lưu ảnh QR về máy dưới dạng PNG. VietQR trả về SVG (app ngân hàng không đọc được SVG từ thư viện ảnh),
+ * nên SVG được vẽ lên canvas nền trắng rồi xuất PNG. Ảnh PNG/JPG của shop thì lưu nguyên bản.
+ */
+async function saveQrImage(src: string, filename: string) {
+  const res = await fetch(src, { mode: "cors" });
+  if (!res.ok) throw new Error(`QR ${res.status}`);
+  const blob = await res.blob();
+  if (/png|jpe?g|webp/.test(blob.type)) return triggerDownload(blob, filename);
+
+  const url = URL.createObjectURL(blob);
+  try {
+    const img = new Image();
+    img.src = url;
+    await img.decode();
+    const scale = 1200 / Math.max(img.naturalWidth || 1, img.naturalHeight || 1);
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round((img.naturalWidth || 1200) * scale);
+    canvas.height = Math.round((img.naturalHeight || 1200) * scale);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("canvas");
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const png = await new Promise<Blob | null>((ok) => canvas.toBlob(ok, "image/png"));
+    if (!png) throw new Error("toBlob");
+    triggerDownload(png, filename);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+function QrDownloadButton({ src, filename }: { src: string; filename: string }) {
+  const [state, setState] = useState<"idle" | "busy" | "done">("idle");
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  const onClick = async () => {
+    if (state === "busy") return;
+    setState("busy");
+    try {
+      await saveQrImage(src, filename);
+      setState("done");
+      timer.current = setTimeout(() => setState("idle"), 1800);
+    } catch {
+      // Không tải được (mạng, trình duyệt chặn): mở ảnh ở tab mới để khách tự lưu.
+      window.open(src, "_blank", "noopener");
+      setState("idle");
+    }
+  };
+
+  const label = state === "done" ? "Đã lưu mã QR" : "Tải mã QR về máy";
+  return (
+    <button type="button" className="lt-qr-save" data-state={state} onClick={onClick} aria-label={label} title={label} aria-busy={state === "busy"}>
+      <Icon name={state === "done" ? "check" : "download"} size={15} />
+      <span className="lt-sr" aria-live="polite">{state === "done" ? "Đã lưu mã QR" : ""}</span>
+    </button>
+  );
+}
 
 /**
  * QR + thông tin chuyển khoản. Ưu tiên ảnh QR của chủ shop (SITE.bank.qrImage);
@@ -29,16 +100,19 @@ export default function TransferInfo({ amount, code }: { amount: number; code?: 
       </h3>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 14, alignItems: "stretch" }}>
         <figure style={{ flex: "0 0 auto", width: 160, boxSizing: "border-box", margin: "0 auto", padding: 8, background: "var(--surface-raised)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border-hairline)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            key={src}
-            src={src}
-            alt={`Mã QR chuyển khoản tới ${SITE.bank.bankName} ${SITE.bank.account}`}
-            width={144}
-            height={144}
-            onError={() => setUseOwn(false)}
-            style={{ display: "block", width: 144, height: 144, objectFit: "contain" }}
-          />
+          <span style={{ position: "relative", display: "block" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              key={src}
+              src={src}
+              alt={`Mã QR chuyển khoản tới ${SITE.bank.bankName} ${SITE.bank.account}`}
+              width={144}
+              height={144}
+              onError={() => setUseOwn(false)}
+              style={{ display: "block", width: 144, height: 144, objectFit: "contain" }}
+            />
+            <QrDownloadButton src={src} filename={`lam-tra-qr-${code || "thanh-toan"}.png`} />
+          </span>
           <figcaption style={{ fontSize: 11, lineHeight: 1.35, textAlign: "center", color: "var(--text-muted)" }}>Quét bằng app ngân hàng</figcaption>
         </figure>
         <dl style={{ flex: "1 1 260px", minWidth: 0, margin: 0, padding: "4px 12px", background: "var(--surface-raised)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border-hairline)", fontSize: 13 }}>

@@ -25,16 +25,10 @@ export default function Footer() {
         borderTop: "1px solid rgba(188, 154, 108, 0.18)",
       }}
     >
-      <div className="lt-container" style={{ paddingTop: "56px", paddingBottom: "28px" }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-            gap: "36px 28px",
-          }}
-        >
+      <div className="lt-container" style={{ paddingTop: "clamp(40px,6vw,56px)", paddingBottom: "28px" }}>
+        <div className="lt-foot-grid">
           {/* Cột 1: Nhận diện thương hiệu Lam Trà */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 220 }}>
+          <div className="lt-foot-col-brand" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <Link href="/" aria-label="Lam Trà – Trang chủ" className="lt-foot-brand">
               <span className="lt-foot-brand-mark">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -165,7 +159,7 @@ export default function Footer() {
           </nav>
 
           {/* Cột 5: Xưởng trà & Liên hệ */}
-          <div>
+          <div className="lt-foot-col-wide">
             <h2 style={head}>Xưởng trà Tân Cương</h2>
             <div
               style={{
@@ -204,73 +198,59 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Thanh chân trang (Sub-footer) */}
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 16,
-            marginTop: 44,
-            paddingTop: 22,
-            borderTop: "1px solid rgba(188,154,108,.22)",
-            fontSize: 12,
-            color: "var(--text-on-inverse-muted)",
-          }}
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 5, maxWidth: 660, lineHeight: 1.6 }}>
-            <span>
-              © {year} {SITE.legal.company} · Mã số thuế {SITE.legal.taxCode}
+        {/* Thanh chân trang (Sub-footer): dải ấn trà, pháp lý + cam kết dịch vụ, liên kết chính sách */}
+        <div className="lt-subfoot">
+          <div className="lt-subfoot-seal" aria-hidden="true">
+            <span className="lt-subfoot-rule" />
+            <span className="lt-subfoot-mark">
+              <Icon name="leaf" size={16} />
             </span>
-            <span>{SITE.legal.license}</span>
-            <span style={{ display: "flex", flexWrap: "wrap", gap: "0 14px", marginTop: 2 }}>
-              <Link href="/chinh-sach#bang-gia" className="lt-foot-link" style={{ fontSize: 12 }}>
-                Bảng giá
-              </Link>
-              <Link href="/tra-cuu-don" className="lt-foot-link" style={{ fontSize: 12 }}>
-                Kiểm tra đơn
-              </Link>
-              <Link href="/chinh-sach#giao-hang-doi-tra" className="lt-foot-link" style={{ fontSize: 12 }}>
-                Giao hàng &amp; Đổi trả
-              </Link>
-              <Link href="/chinh-sach#mua-hang-thanh-toan" className="lt-foot-link" style={{ fontSize: 12 }}>
-                Mua hàng &amp; Thanh toán
-              </Link>
-              <Link href="/chinh-sach#uu-dai" className="lt-foot-link" style={{ fontSize: 12 }}>
-                Ưu đãi
-              </Link>
-              <Link href="/chinh-sach#bao-mat" className="lt-foot-link" style={{ fontSize: 12 }}>
-                Bảo mật thông tin
-              </Link>
-              <Link href="/chinh-sach#dieu-khoan" className="lt-foot-link" style={{ fontSize: 12 }}>
-                Điều khoản
-              </Link>
-              <Link href="/quan-tri" className="lt-foot-link" style={{ fontSize: 12, opacity: 0.75 }}>
-                ⚙️ Quản trị
-              </Link>
-            </span>
+            <span className="lt-subfoot-rule" />
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-start" }}>
-            <span>Thanh toán VietQR · COD · Đóng gói giấy dó &amp; Giao hàng toàn quốc</span>
+          <div className="lt-subfoot-main">
+            <div className="lt-subfoot-legal">
+              <span className="lt-subfoot-copy">
+                © {year} {SITE.legal.company}
+              </span>
+              <span>Mã số thuế {SITE.legal.taxCode}</span>
+              <span>{SITE.legal.license}</span>
+            </div>
+
+            <ul className="lt-subfoot-promises" aria-label="Cam kết dịch vụ">
+              <li>
+                <Icon name="qr-code" size={15} />
+                VietQR &amp; COD
+              </li>
+              <li>
+                <Icon name="package" size={15} />
+                Gói giấy dó
+              </li>
+              <li>
+                <Icon name="truck" size={15} />
+                Giao toàn quốc
+              </li>
+            </ul>
+          </div>
+
+          <nav aria-label="Chính sách" className="lt-subfoot-links">
+            <Link href="/chinh-sach#bang-gia">Bảng giá</Link>
+            <Link href="/tra-cuu-don">Kiểm tra đơn</Link>
+            <Link href="/chinh-sach#giao-hang-doi-tra">Giao hàng &amp; Đổi trả</Link>
+            <Link href="/chinh-sach#mua-hang-thanh-toan">Mua hàng &amp; Thanh toán</Link>
+            <Link href="/chinh-sach#uu-dai">Ưu đãi</Link>
+            <Link href="/chinh-sach#bao-mat">Bảo mật thông tin</Link>
+            <Link href="/chinh-sach#dieu-khoan">Điều khoản</Link>
+            <Link href="/quan-tri" className="lt-subfoot-admin">
+              <Icon name="settings" size={13} />
+              Quản trị
+            </Link>
             {SITE.legal.moitUrl ? (
-              <a
-                href={SITE.legal.moitUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="lt-foot-link"
-                style={{
-                  fontSize: 12,
-                  padding: "4px 10px",
-                  border: "1px solid rgba(188,154,108,.4)",
-                  borderRadius: 4,
-                }}
-              >
+              <a href={SITE.legal.moitUrl} target="_blank" rel="noopener noreferrer" className="lt-subfoot-moit">
                 Đã thông báo Bộ Công Thương
               </a>
             ) : null}
-          </div>
+          </nav>
         </div>
       </div>
     </footer>

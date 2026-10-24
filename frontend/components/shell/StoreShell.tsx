@@ -68,7 +68,7 @@ export default function StoreShell({ children }: { children: React.ReactNode }) 
       </div>
       <a href={zaloLink()} target="_blank" rel="noopener noreferrer" className="lt-zalo" aria-label="Chat Zalo với Lam Trà">
         <Icon name="zalo" size={20} />
-        Chat Zalo
+        <span className="lt-zalo-label">Chat Zalo</span>
       </a>
       <MobileTabBar />
       <ShellToast />

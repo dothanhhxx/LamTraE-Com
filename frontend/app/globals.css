@@ -50,6 +50,10 @@ a:hover { color: var(--primary-hover); }
 .lt-sprig-right img { right: clamp(-56px, -3vw, -24px); transform: translateY(-62%) rotate(14deg); }
 .lt-sprig-left img { left: clamp(-56px, -3vw, -24px); transform: translateY(-62%) scaleX(-1) rotate(14deg); }
 
+/* Story page hero: wide on desktop, taller crop on phones (min-height + aspect-ratio would force overflow) */
+.lt-story-hero { aspect-ratio: 21 / 9; }
+@media (max-width: 719px) { .lt-story-hero { aspect-ratio: 4 / 3; } }
+
 /* Full-bleed photo band; --photo is set inline */
 .lt-band-photo {
   position: relative;
@@ -399,6 +403,105 @@ button:focus-visible, a:focus-visible { outline: none; box-shadow: var(--focus-r
 .lt-foot-link { color: var(--text-on-inverse-muted); text-decoration: none; font-size: 14px; line-height: 2; }
 .lt-foot-link:hover { color: var(--text-on-inverse); text-decoration: underline; text-underline-offset: 3px; }
 
+/* Sub-footer: tea-seal divider, legal + service promises, policy links */
+.lt-subfoot { margin-top: 48px; font-size: 12px; line-height: 1.6; color: var(--text-on-inverse-muted); }
+.lt-subfoot-seal { display: flex; align-items: center; gap: 18px; }
+.lt-subfoot-rule { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(217, 191, 148, 0.55)); }
+.lt-subfoot-rule:last-child { background: linear-gradient(90deg, rgba(217, 191, 148, 0.55), transparent); }
+/* Diamond seal; tiny dots on its flanks echo a stamped chop */
+.lt-subfoot-mark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  color: var(--tra-300);
+  border: 1px solid rgba(217, 191, 148, 0.6);
+  transform: rotate(45deg);
+  background: rgba(217, 191, 148, 0.06);
+}
+.lt-subfoot-mark svg { transform: rotate(-45deg); }
+.lt-subfoot-mark::before,
+.lt-subfoot-mark::after {
+  content: "";
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--tra-400);
+}
+.lt-subfoot-mark::before { top: -10px; left: -10px; }
+.lt-subfoot-mark::after { bottom: -10px; right: -10px; }
+
+.lt-subfoot-main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px 40px;
+  padding: 26px 0 20px;
+}
+.lt-subfoot-legal { display: flex; flex-direction: column; gap: 2px; max-width: 620px; }
+.lt-subfoot-copy { color: var(--text-on-inverse); font-weight: 500; font-size: 13px; }
+
+.lt-subfoot-promises { display: flex; flex-wrap: wrap; align-items: center; margin: 0; padding: 0; list-style: none; }
+.lt-subfoot-promises li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 16px;
+  color: var(--tra-300);
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+.lt-subfoot-promises li:first-child { padding-left: 0; }
+.lt-subfoot-promises li:last-child { padding-right: 0; }
+.lt-subfoot-promises li + li { border-left: 1px solid rgba(217, 191, 148, 0.35); }
+
+/* Separators sit in the column gap; the list is shifted left by one gap and that strip is clipped,
+   so a diamond never starts a wrapped line. */
+.lt-subfoot-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 26px;
+  margin-left: -26px;
+  padding: 16px 0 0 26px;
+  border-top: 1px solid rgba(188, 154, 108, 0.16);
+  clip-path: inset(0 0 0 26px);
+}
+.lt-subfoot-links a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 28px;
+  color: var(--text-on-inverse-muted);
+  text-decoration: none;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.lt-subfoot-links a:hover { color: var(--logo-cream); }
+/* Small gold diamond between links */
+.lt-subfoot-links a::before {
+  content: "";
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  background: rgba(217, 191, 148, 0.55);
+  transform: translateY(-50%) rotate(45deg);
+}
+.lt-subfoot-admin { opacity: 0.75; }
+.lt-subfoot-moit { margin-left: auto; }
+.lt-subfoot-links a.lt-subfoot-moit::before { display: none; }
+.lt-subfoot-moit { padding: 2px 10px; border: 1px solid rgba(188, 154, 108, 0.4); border-radius: 4px; }
+@media (max-width: 719px) {
+  .lt-subfoot-main { flex-direction: column; align-items: flex-start; }
+  .lt-subfoot-promises li { padding: 0 12px; }
+}
+
 /* ---------- Commerce ---------- */
 .lt-card-photo img { transition: transform var(--dur-slow) var(--ease-out); }
 .lt-card:hover .lt-card-photo img { transform: scale(1.01); }
@@ -683,3 +786,58 @@ button:focus-visible, a:focus-visible { outline: none; box-shadow: var(--focus-r
   box-sizing: border-box;
 }
 
+/* Payment QR: faint frosted save button in the image's top-right corner */
+.lt-qr-save {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(36, 52, 31, 0.14);
+  background: rgba(252, 248, 241, 0.62);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: var(--stone-700);
+  cursor: pointer;
+  opacity: 0.55;
+  box-shadow: 0 1px 3px rgba(25, 36, 26, 0.12);
+  transition: opacity var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out), transform var(--dur-fast, 120ms) var(--ease-out);
+}
+/* invisible 44px hit area */
+.lt-qr-save::before { content: ""; position: absolute; inset: -7px; border-radius: 999px; }
+.lt-qr-save:hover, .lt-qr-save:focus-visible { opacity: 1; background: rgba(252, 248, 241, 0.94); color: var(--primary); }
+.lt-qr-save:active { transform: scale(0.94); }
+.lt-qr-save[data-state="busy"] { opacity: 1; animation: lt-qr-pulse 900ms ease-in-out infinite; cursor: progress; }
+.lt-qr-save[data-state="done"] { opacity: 1; background: var(--primary); border-color: var(--primary); color: var(--text-on-primary); }
+@keyframes lt-qr-pulse { 50% { opacity: 0.45; } }
+/* touch screens have no hover: keep it a little more visible */
+@media (hover: none) { .lt-qr-save { opacity: 0.78; } }
+
+/* ---------- Phones (≤719px): compact chrome, two-column footer ---------- */
+.lt-foot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 36px 28px; }
+.lt-foot-col-brand { min-width: 220px; }
+@media (max-width: 719px) {
+  .lt-site-header, .lt-site-header.lt-scrolled { padding: 8px 10px; }
+  .lt-header-frame { height: 64px; padding: 0 10px 0 12px; border-width: 1.5px; border-radius: 10px; gap: 8px; }
+  .lt-header-logo-box { width: 56px; height: 74px; margin: -7px 0; }
+  .lt-header-logo-box img { width: 42px; }
+  .lt-header-logo-box::after { left: -6px; right: -6px; height: 16px; }
+
+  .lt-foot-grid { grid-template-columns: 1fr 1fr; gap: 32px 20px; }
+  /* wrapped footer links: normal leading, spacing comes from padding (keeps a ~36px tap row) */
+  .lt-foot-link { display: inline-block; line-height: 1.45; padding: 6px 0; }
+  .lt-foot-col-brand, .lt-foot-col-wide { grid-column: 1 / -1; min-width: 0; }
+
+  .lt-subfoot-promises { gap: 8px 18px; }
+  .lt-subfoot-promises li, .lt-subfoot-promises li:first-child, .lt-subfoot-promises li:last-child { padding: 0; }
+  .lt-subfoot-promises li + li { border-left: 0; }
+
+  /* Zalo bubble shrinks to an icon so it covers less content */
+  .lt-zalo { width: 48px; height: 48px; padding: 0; justify-content: center; }
+  .lt-zalo-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
