@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button, Icon } from "@/components/ds";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { PhotoBand, TeaSprig } from "@/components/shell/PhotoBand";
+import { JOURNEY_PHOTOS as J, type Figure } from "@/lib/posts";
 
 export const metadata: Metadata = {
   title: "Câu chuyện Lam Trà",
@@ -14,6 +15,14 @@ const VALUES = [
   { icon: "leaf", title: "Hái tay, sao tay", text: "Búp chè được hái vào sáng sớm khi còn sương, sao trên chảo gang theo cách các nhà chè Tân Cương vẫn làm." },
   { icon: "scale", title: "Nói rõ từng gói", text: "Mỗi gói ghi khối lượng, phân hạng, vùng trồng và ngày đóng gói. Bạn biết mình đang uống gì." },
   { icon: "gift", title: "Trao tay tử tế", text: "Lời nhắn của bạn được viết tay lên thiệp. Hộp quà được gói như khi chính Lam Trà mang biếu." },
+];
+
+const JOURNEY: { title: string; text: string; img?: Figure }[] = [
+  { title: "Vùng trồng", img: J.vungTrong, text: "Hành trình bắt đầu ở Tân Cương, vùng đất trồng và chế biến chè lâu đời. Điều kiện tự nhiên cùng kinh nghiệm canh tác qua nhiều thế hệ cho trà hương thơm tự nhiên, vị chát dịu và hậu ngọt đặc trưng." },
+  { title: "Thu hái", img: J.thuHai, text: "Khi búp chè đạt độ non thích hợp, người làm chè chọn hái từng búp để giữ độ tươi. Sự khéo léo trong từng thao tác giữ lại hương vị tự nhiên của lá chè." },
+  { title: "Chế biến", img: J.cheBien, text: "Búp chè qua làm héo, diệt men, vò và sấy khô tùy từng loại trà. Nhiệt độ, thời gian và tay nghề quyết định màu nước, hương thơm và vị trà." },
+  { title: "Đóng gói", text: "Trà được đóng gói kín để tránh ẩm, ánh sáng và mùi lạ. Bao bì ghi rõ vùng trồng, phân hạng, cách pha, và mang câu chuyện văn hóa trà Việt đến tay bạn." },
+  { title: "Thưởng trà", img: J.thuongTra, text: "Lá trà khô được đánh thức bằng nước nóng, hương thơm lan tỏa, sắc nước hiện ra. Chén trà gắn với những lúc sum họp gia đình, tiếp bạn hay nghỉ tay sau một ngày làm việc." },
 ];
 
 export default function StoryPage() {
@@ -36,6 +45,27 @@ export default function StoryPage() {
           <h2>Cái tên Lam Trà</h2>
           <p>“Lam” là màu xanh của đồi chè lúc sương tan, cũng là chữ “làm” bớt đi một dấu: làm trà bằng tay, bằng thời gian và bằng sự tỉ mỉ. Câu chúng tôi vẫn nói với nhau: trọn vị trà Việt, trọn tấm lòng trao gửi.</p>
         </div>
+
+        <section aria-labelledby="hanh-trinh" style={{ maxWidth: "var(--reading-max)", margin: "clamp(56px,8vw,88px) auto 0" }}>
+          <span style={{ fontSize: 13, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--accent)" }}>Năm công đoạn</span>
+          <h2 id="hanh-trinh" style={{ margin: "8px 0 32px", fontSize: "clamp(24px,2.6vw,32px)", lineHeight: 1.25, fontWeight: 500, color: "var(--text-strong)" }}>Hành trình từ đồi chè đến chén trà</h2>
+          <ol className="lt-journey">
+            {JOURNEY.map((s, i) => (
+              <li key={s.title} className="lt-journey-step">
+                <span className="lt-journey-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <div className="lt-journey-body">
+                  <h3>{s.title}</h3>
+                  <p>{s.text}</p>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {s.img && <img src={s.img.src} alt={s.img.alt} width={s.img.w} height={s.img.h} loading="lazy" decoding="async" />}
+                </div>
+              </li>
+            ))}
+          </ol>
+          <div style={{ marginTop: 32 }}>
+            <Button href="/tra-dam/hanh-trinh-tu-doi-che-den-tach-tra" variant="secondary" iconRight="arrow-right">Đọc trọn hành trình</Button>
+          </div>
+        </section>
       </div>
 
       <TeaSprig side="right" />

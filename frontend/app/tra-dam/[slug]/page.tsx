@@ -41,6 +41,12 @@ export default async function PostPage({ params }: Props) {
           {post.body.map((b, i) => (
             <div key={i}>
               {b.h && <h2>{b.h}</h2>}
+              {b.img && (
+                <figure className="lt-figure">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={b.img.src} alt={b.img.alt} width={b.img.w} height={b.img.h} loading="lazy" decoding="async" />
+                </figure>
+              )}
               {b.p && <p>{b.p}</p>}
               {b.list && (
                 <ul>

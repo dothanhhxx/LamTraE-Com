@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { adminAuthGuard } from "../../middleware/auth-guard.js";
-import { LocalDiskStorage } from "../../infrastructure/storage/local-disk.js";
+import { FileStorage } from "../../infrastructure/storage/file-storage.js";
 
 export const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post("/api/admin/upload", { preHandler: [adminAuthGuard] }, async (request, reply) => {
@@ -22,7 +22,7 @@ export const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(400).send({ ok: false, error: "Dung lượng ảnh tối đa là 10MB." });
       }
 
-      const { url, filename } = await LocalDiskStorage.saveFile(buffer, data.filename);
+      const { url, filename } = await FileStorage.saveFile(buffer, data.filename);
       return { ok: true, url, filename };
     } catch (err: any) {
       return reply.status(500).send({ ok: false, error: `Lỗi khi lưu ảnh: ${err.message}` });

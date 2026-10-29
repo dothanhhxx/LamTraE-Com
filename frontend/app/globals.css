@@ -54,6 +54,35 @@ a:hover { color: var(--primary-hover); }
 .lt-story-hero { aspect-ratio: 21 / 9; }
 @media (max-width: 719px) { .lt-story-hero { aspect-ratio: 4 / 3; } }
 
+/* Story page journey: numbered steps on a vertical rail; photos stay near native size (source images are ~570px wide) */
+.lt-journey { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.lt-journey-step { position: relative; display: grid; grid-template-columns: 44px 1fr; gap: 0 20px; padding-bottom: 40px; }
+.lt-journey-step:last-child { padding-bottom: 0; }
+.lt-journey-step::before {
+  content: ""; position: absolute; left: 21px; top: 48px; bottom: 4px;
+  width: 1px; background: var(--border-hairline);
+}
+.lt-journey-step:last-child::before { display: none; }
+.lt-journey-num {
+  width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--border-strong);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-variant-numeric: tabular-nums; color: var(--accent); background: var(--surface-card);
+}
+.lt-journey-body { display: flex; flex-direction: column; gap: 10px; padding-top: 8px; min-width: 0; }
+.lt-journey-body h3 { margin: 0; font-size: 19px; line-height: 1.3; font-weight: 500; color: var(--text-strong); }
+.lt-journey-body p { margin: 0; font-size: 15px; line-height: 1.7; color: var(--text-body); max-width: 60ch; }
+.lt-journey-body img { display: block; width: 100%; max-width: 572px; height: auto; margin-top: 6px; border-radius: var(--radius-card); background: var(--surface-photo); }
+@media (max-width: 719px) {
+  .lt-journey-step { grid-template-columns: 36px 1fr; gap: 0 14px; }
+  .lt-journey-step::before { left: 17px; top: 40px; }
+  .lt-journey-num { width: 36px; height: 36px; font-size: 13px; }
+  .lt-journey-body { padding-top: 4px; }
+}
+
+/* Inline photos inside long-form posts */
+.lt-figure { margin: 4px 0 20px; }
+.lt-figure img { display: block; width: 100%; height: auto; border-radius: var(--radius-card); background: var(--surface-photo); }
+
 /* Full-bleed photo band; --photo is set inline */
 .lt-band-photo {
   position: relative;

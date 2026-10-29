@@ -28,8 +28,13 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # Bí mật: nhập trên Render Dashboard → Environment (sync: false = không lưu trong repo)
       - key: ADMIN_SECRET_KEY
-        value: "LamTra@TanCuong2026"
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
       - key: BACKEND_INTERNAL_PORT
         value: "4000"
       - key: CORS_ORIGIN

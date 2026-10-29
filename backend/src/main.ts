@@ -4,6 +4,7 @@ import cookie from "@fastify/cookie";
 import multipart from "@fastify/multipart";
 import fastifyStatic from "@fastify/static";
 import { ENV } from "./config/env.js";
+import { JsonStore } from "./infrastructure/persistence/json-store.js";
 import { authRoutes } from "./modules/auth/auth.routes.js";
 import { productsRoutes } from "./modules/products/products.routes.js";
 import { ordersRoutes } from "./modules/orders/orders.routes.js";
@@ -65,13 +66,14 @@ async function bootstrap() {
   });
 
   // 5. Health Check
-  server.get("/api/health", async () => {
-    return {
-      ok: true,
-      service: "lam-tra-api",
-      uptime: process.uptime(),
-      timestamp: new Date().toISOString(),
-    };
+  // Có chạm vào database để ping định kỳ (UptimeRobot) giữ cả Render lẫn Supabase không ngủ.
+  server.get("/api/health", async (_request, reply) => {
+    try {
+      const storage = await JsonStore.ping();
+      return { ok: true, service: "lam-tra-api", storage, uptime: process.uptime(), timestamp: new Date().toISOString() };
+    } catch (err: any) {
+      return reply.status(503).send({ ok: false, service: "lam-tra-api", error: err.message });
+    }
   });
 
   // 6. Đăng ký các modules
