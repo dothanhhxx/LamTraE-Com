@@ -71,7 +71,7 @@ Nếu muốn chạy riêng từng ứng dụng:
 
 - **Cửa hàng (Khách mua)**: [http://localhost:3000](http://localhost:3000) (Guest Checkout, cập nhật realtime theo giá backend)
 - **Cổng Quản trị (Chủ shop)**: [http://localhost:3000/quan-tri](http://localhost:3000/quan-tri)
-  - Mật mã Master: Xem cấu hình `ADMIN_SECRET_KEY` trong file `backend/.env` (mặc định: `LamTra@TanCuong2026`)
+  - Mật mã Master: Xem cấu hình `ADMIN_SECRET_KEY` trong file `backend/.env` (chạy local để trống thì dùng mật khẩu thử nghiệm; production bắt buộc đặt mật khẩu riêng ≥ 12 ký tự)
   - Quản lý sản phẩm & giá: [http://localhost:3000/quan-tri/san-pham](http://localhost:3000/quan-tri/san-pham)
   - Quản lý đơn hàng: [http://localhost:3000/quan-tri/don-hang](http://localhost:3000/quan-tri/don-hang)
   - Quản lý liên hệ & báo giá: [http://localhost:3000/quan-tri/lien-he](http://localhost:3000/quan-tri/lien-he)

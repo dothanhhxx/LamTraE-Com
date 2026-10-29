@@ -5,6 +5,7 @@ import multipart from "@fastify/multipart";
 import fastifyStatic from "@fastify/static";
 import { ENV } from "./config/env.js";
 import { JsonStore } from "./infrastructure/persistence/json-store.js";
+import { adminKeyConfigured } from "./modules/auth/auth.service.js";
 import { authRoutes } from "./modules/auth/auth.routes.js";
 import { productsRoutes } from "./modules/products/products.routes.js";
 import { ordersRoutes } from "./modules/orders/orders.routes.js";
@@ -86,6 +87,9 @@ async function bootstrap() {
   try {
     const address = await server.listen({ port: ENV.PORT, host: ENV.HOST });
     console.log(`[LamTra API] Server đang chạy tại: ${address}`);
+    if (!adminKeyConfigured()) {
+      console.warn("[LamTra API] ⚠ Trang quản trị đang bị KHOÁ: đặt ADMIN_SECRET_KEY (≥ 12 ký tự, khác mật khẩu mặc định) trong Environment.");
+    }
   } catch (err) {
     server.log.error(err);
     process.exit(1);

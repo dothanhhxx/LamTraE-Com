@@ -1,8 +1,14 @@
 export const ADMIN_COOKIE_NAME = "lt_admin_session";
 const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 ngày
 
+// Mật khẩu mặc định này từng nằm công khai trong repo và trên trang đăng nhập: chỉ dùng khi chạy local.
+// Ở production, khoá thiếu / ngắn hơn 12 ký tự / trùng mặc định đều bị coi như chưa cấu hình → khoá trang quản trị.
+const DEV_DEFAULT_KEY = "LamTra@TanCuong2026";
+
 function getSecretKey(): string {
-  return process.env.ADMIN_SECRET_KEY || "LamTra@TanCuong2026";
+  const key = (process.env.ADMIN_SECRET_KEY || "").trim();
+  if (process.env.NODE_ENV !== "production") return key || DEV_DEFAULT_KEY;
+  return key.length >= 12 && key !== DEV_DEFAULT_KEY ? key : "";
 }
 
 function toBase64Url(data: Uint8Array): string {
@@ -22,8 +28,9 @@ function fromBase64Url(str: string): string {
 export class AuthService {
   /** Kiểm tra mật mã chủ shop */
   static verifyPasscode(passcode: string): boolean {
-    if (!passcode || typeof passcode !== "string") return false;
-    return passcode.trim() === getSecretKey();
+    const secret = getSecretKey();
+    if (!secret || !passcode || typeof passcode !== "string") return false;
+    return passcode.trim() === secret;
   }
 
   /** Tạo session token đã được ký HMAC SHA-256 bằng Web Crypto chuẩn */
@@ -51,7 +58,7 @@ export class AuthService {
 
   /** Xác thực token từ Cookie bằng Web Crypto (tương thích Edge Runtime) */
   static async verifySessionToken(token?: string | null): Promise<boolean> {
-    if (!token || typeof token !== "string") return false;
+    if (!token || typeof token !== "string" || !getSecretKey()) return false;
     const parts = token.split(".");
     if (parts.length !== 2) return false;
 

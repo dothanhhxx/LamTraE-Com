@@ -11,7 +11,7 @@ export const ENV = {
   BACKEND_ROOT,
   PORT: Number(process.env.PORT) || 4000,
   HOST: process.env.HOST || "0.0.0.0",
-  ADMIN_SECRET_KEY: process.env.ADMIN_SECRET_KEY || "LamTra@TanCuong2026",
+  ADMIN_SECRET_KEY: process.env.ADMIN_SECRET_KEY || "",
   CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:3000",
   LAMTRA_WEBHOOK_URL: process.env.LAMTRA_WEBHOOK_URL || "",
   DATA_DIR: process.env.DATA_DIR || path.resolve(BACKEND_ROOT, "data"),

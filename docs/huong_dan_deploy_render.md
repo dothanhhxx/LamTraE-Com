@@ -48,7 +48,7 @@ Trong dự án đã có sẵn file [`render.yaml`](file:///d:/Github/LamTraE-Com
    - **Region**: `Singapore` (tối ưu tốc độ cho người dùng Việt Nam)
    - **Plan**: `Free`
 5. Nhập hoặc điều chỉnh các biến môi trường nếu muốn:
-   - `ADMIN_SECRET_KEY`: Khóa bí mật đăng nhập trang quản trị (mặc định Render sẽ tự sinh chuỗi bảo mật ngẫu nhiên, bạn có thể nhập mật mã riêng như `LamTra@TanCuong2026`).
+   - `ADMIN_SECRET_KEY`: Khóa bí mật đăng nhập trang quản trị (mặc định Render sẽ tự sinh chuỗi bảo mật ngẫu nhiên, bạn nhập mật mã riêng (≥ 12 ký tự)).
 6. Nhấn nút **Apply**. Render sẽ tự động thực hiện build và khởi chạy ứng dụng!
 
 ---
@@ -84,7 +84,7 @@ Cuộn xuống phần **Environment Variables**, nhấn **Add Environment Variab
 | Key (Khóa) | Value (Giá trị) | Ghi chú |
 | :--- | :--- | :--- |
 | `NODE_ENV` | `production` | Bật chế độ tối ưu hiệu năng |
-| `ADMIN_SECRET_KEY` | `LamTra@TanCuong2026` | Mật khẩu để đăng nhập vào trang `/quan-tri` |
+| `ADMIN_SECRET_KEY` | `<mật-khẩu-riêng ≥ 12 ký tự>` | Mật khẩu để đăng nhập vào trang `/quan-tri` |
 | `BACKEND_INTERNAL_PORT` | `4000` | Cổng nội bộ cho API Fastify |
 
 ### Bước 4: Khởi động Deploy
@@ -104,7 +104,7 @@ Nếu bạn muốn tách độc lập Backend và Frontend thành 2 máy chủ r
 - **Environment Variables**:
   - `PORT`: `10000`
   - `HOST`: `0.0.0.0`
-  - `ADMIN_SECRET_KEY`: `LamTra@TanCuong2026`
+  - `ADMIN_SECRET_KEY`: `<mật-khẩu-riêng ≥ 12 ký tự>`
   - `CORS_ORIGIN`: `https://lam-tra-frontend.onrender.com`
 - Sau khi deploy xong, sao chép URL Backend (ví dụ: `https://lam-tra-backend.onrender.com`).
 
@@ -162,4 +162,4 @@ Sau khi Render báo trạng thái **Live** màu xanh, hãy kiểm tra các đư�
    ```text
    https://<ten-web-cua-ban>.onrender.com/quan-tri
    ```
-   - Nhập mã bảo mật (`LamTra@TanCuong2026` hoặc mã bạn đã điền trong `ADMIN_SECRET_KEY`) để kiểm tra quản lý đơn hàng và chỉnh sửa sản phẩm.
+   - Nhập mã bảo mật (mã bạn đã điền trong `ADMIN_SECRET_KEY`) để kiểm tra quản lý đơn hàng và chỉnh sửa sản phẩm.

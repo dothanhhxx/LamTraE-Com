@@ -58,7 +58,7 @@ flowchart TD
    - Chủ shop truy cập lần đầu sẽ thấy màn hình nhập **Mã bảo mật quản trị (Master Passcode)** được thiết kế sang trọng, tối giản.
    - Mã bảo mật được định nghĩa trong `.env`:
      ```env
-     ADMIN_SECRET_KEY=LamTra@TanCuong2026!Secured
+     ADMIN_SECRET_KEY=<mật-khẩu-riêng-của-bạn>
      ```
    - Khi nhập đúng, server tạo một mã `admin_session` có chữ ký bảo mật (HMAC SHA-256) và lưu vào `Cookie` với cờ `HttpOnly`, `SameSite=Lax`, `Secure`.
    - Phiên đăng nhập kéo dài **30 ngày**, chủ shop không phải gõ lại mỗi lần vào web.

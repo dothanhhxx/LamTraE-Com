@@ -137,8 +137,7 @@ export default function AdminLoginPage() {
         </form>
 
         <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid #F3F4F6", fontSize: 12.5, color: "#9CA3AF" }}>
-          Chưa đổi mã? Mã mặc định thử nghiệm: <code style={{ color: "#047857", fontWeight: 600 }}>LamTra@TanCuong2026</code>
-          <div style={{ marginTop: 8 }}>
+          <div>
             <Link href="/" style={{ color: "#047857", textDecoration: "none", fontWeight: 500 }}>
               ← Quay lại trang chủ Lam Trà
             </Link>
