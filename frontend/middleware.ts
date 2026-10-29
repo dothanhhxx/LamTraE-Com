@@ -1,5 +1,25 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { ADMIN_COOKIE_NAME, AuthService } from "@/lib/auth";
+import { ADMIN_COOKIE_NAME } from "@/lib/auth";
+
+// Backend là nơi duy nhất giữ ADMIN_SECRET_KEY: middleware hỏi backend cookie có hợp lệ không,
+// thay vì tự kiểm bằng một bản sao khoá (hai bản lệch nhau sẽ đá người dùng về trang đăng nhập).
+const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:4000";
+
+async function isAdminSession(req: NextRequest): Promise<boolean> {
+  const token = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
+  if (!token) return false;
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/admin/auth`, {
+      headers: { cookie: `${ADMIN_COOKIE_NAME}=${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) return false;
+    const data = (await res.json()) as { authenticated?: boolean };
+    return data.authenticated === true;
+  } catch {
+    return false;
+  }
+}
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -17,9 +37,8 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 3. Kiểm tra token phiên từ cookie
-  const token = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
-  const isAuthenticated = await AuthService.verifySessionToken(token);
+  // 3. Kiểm tra token phiên từ cookie (backend xác thực)
+  const isAuthenticated = await isAdminSession(req);
 
   // 4. Nếu là trang chủ /quan-tri (màn hình nhập passcode):
   // Nếu đã đăng nhập rồi -> chuyển hướng vào trang quản lý đơn hàng
