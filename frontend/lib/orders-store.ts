@@ -5,10 +5,26 @@ import { readJSON, writeJSON } from "./storage";
 
 const ORDERS_KEY = "lamtra-orders-v1";
 const ADDR_KEY = "lamtra-addresses-v1";
+// Số ngày giữ lịch sử đơn trên máy, tính theo ngày lịch: 1 = chỉ trong hôm nay (qua 0h là xoá), 3 = hôm nay và 2 ngày trước.
+// Chỉ xoá bản lưu trên trình duyệt; đơn trên server vẫn còn và tra cứu được bằng mã đơn + SĐT.
+const KEEP_DAYS = 3;
 
 export type SavedAddress = { name: string; phone: string; email?: string; province: string; address: string };
 
-export const localOrders = () => readJSON<Order[]>(ORDERS_KEY, []);
+function keepFrom() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - (KEEP_DAYS - 1));
+  return d.getTime();
+}
+
+export function localOrders() {
+  const all = readJSON<Order[]>(ORDERS_KEY, []);
+  const from = keepFrom();
+  const kept = all.filter((o) => new Date(o.createdAt).getTime() >= from);
+  if (kept.length !== all.length) writeJSON(ORDERS_KEY, kept);
+  return kept;
+}
 export const localOrder = (code: string) => localOrders().find((o) => o.code === code);
 
 export function saveLocalOrder(o: Order) {
