@@ -213,8 +213,7 @@ export default function Footer() {
               <span className="lt-subfoot-copy">
                 © {year} {SITE.legal.company}
               </span>
-              <span>Mã số thuế {SITE.legal.taxCode}</span>
-              <span>{SITE.legal.license}</span>
+              <span>{SITE.legal.notice}</span>
             </div>
 
             <ul className="lt-subfoot-promises" aria-label="Cam kết dịch vụ">

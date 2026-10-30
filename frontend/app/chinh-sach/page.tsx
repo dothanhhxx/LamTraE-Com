@@ -757,11 +757,9 @@ export default async function PolicyPage() {
             >
               <strong style={{ color: "var(--text-strong)" }}>{SITE.legal.company}</strong>
               <br />
-              Mã số thuế: {SITE.legal.taxCode} · {SITE.legal.license}
+              {SITE.legal.notice}
               <br />
               Địa chỉ xưởng: {SITE.address}
-              <br />
-              Đại diện pháp lý: Ông {SITE.legal.representative}
             </div>
           </section>
         </div>

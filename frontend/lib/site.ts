@@ -22,12 +22,10 @@ export const SITE = {
   },
   /** Thời gian chủ shop đối soát chuyển khoản và xác nhận đơn */
   confirmWithin: "30 phút",
-  /** Thông tin bắt buộc với website thương mại điện tử tại Việt Nam (Nghị định 52/2013, 85/2021). */
+  /** Thông tin pháp lý ở chân trang và trang chính sách. Đây là dự án sinh viên nên chưa có giấy phép/mã số thuế. */
   legal: {
-    company: "Hộ kinh doanh Lam Trà",
-    taxCode: "0000000000",
-    license: "Giấy chứng nhận đăng ký hộ kinh doanh số 00000000 do UBND xã Tân Cương cấp",
-    representative: "Người đại diện: (điền tên)",
+    company: "Lam Trà",
+    notice: "Student project – E-Business, Hanoi University",
     /** Link hồ sơ trên online.gov.vn sau khi được duyệt thông báo website */
     moitUrl: "",
   },

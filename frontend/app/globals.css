@@ -467,7 +467,7 @@ button:focus-visible, a:focus-visible { outline: none; box-shadow: var(--focus-r
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   gap: 20px 40px;
   padding: 26px 0 20px;
 }
