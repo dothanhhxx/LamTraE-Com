@@ -4,9 +4,21 @@ import type { ReactNode } from "react";
 export function PhotoBand({ id, image, title, desc, actions }: { id: string; image: string; title: ReactNode; desc?: ReactNode; actions?: ReactNode }) {
   return (
     <section aria-labelledby={id} className="lt-band-photo" style={{ ["--photo" as string]: `url('${image}')` }}>
-      <div className="lt-container" style={{ paddingTop: "clamp(64px,9vw,120px)", paddingBottom: "clamp(64px,9vw,120px)" }}>
+      <div className="lt-container" style={{ paddingTop: "clamp(48px,6vw,80px)", paddingBottom: "clamp(48px,6vw,80px)" }}>
         <div style={{ maxWidth: 560, display: "flex", flexDirection: "column", gap: 18 }}>
-          <h2 id={id} style={{ margin: 0, fontSize: "clamp(28px,3.6vw,44px)", lineHeight: 1.18, fontWeight: 500, letterSpacing: "-.01em", color: "var(--logo-cream)", textWrap: "balance" }}>
+          <h2
+            id={id}
+            style={{
+              margin: 0,
+              fontSize: "clamp(30px, 3.4vw, 44px)",
+              lineHeight: 1.15,
+              fontWeight: 600,
+              letterSpacing: "0.015em",
+              fontFamily: "var(--font-display)",
+              color: "var(--logo-cream)",
+              textWrap: "balance",
+            }}
+          >
             {title}
           </h2>
           {desc && <p style={{ margin: 0, fontSize: 16, lineHeight: 1.65, color: "var(--reu-100)", maxWidth: 480 }}>{desc}</p>}

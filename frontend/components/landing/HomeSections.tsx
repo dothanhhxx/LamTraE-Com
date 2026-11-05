@@ -6,7 +6,7 @@ import { CATEGORIES, PRODUCTS, getProduct, photo, type Product } from "@/lib/pro
 import { TESTIMONIALS } from "@/lib/reviews";
 import { PhotoBand, TeaSprig } from "@/components/shell/PhotoBand";
 
-const section = { paddingTop: "clamp(48px,7vw,80px)", paddingBottom: "clamp(48px,7vw,80px)" } as const;
+const section = { paddingTop: "clamp(40px,5vw,64px)", paddingBottom: "clamp(40px,5vw,64px)" } as const;
 
 export default function HomeSections({ products }: { products?: Product[] } = {}) {
   const allProducts = products && products.length > 0 ? products : PRODUCTS;
@@ -26,7 +26,20 @@ export default function HomeSections({ products }: { products?: Product[] } = {}
               </span>
               <span style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(25,36,26,.82) 0%, rgba(25,36,26,.1) 60%)" }} />
               <span style={{ position: "absolute", left: 18, right: 18, bottom: 16, display: "flex", flexDirection: "column", gap: 4, color: "var(--logo-cream)" }}>
-                <span style={{ fontSize: 19, fontWeight: 500, display: "flex", alignItems: "center", gap: 6 }}>{c.name}<Icon name="arrow-right" size={16} /></span>
+                <span
+                  style={{
+                    fontSize: "clamp(21px, 2vw, 25px)",
+                    fontFamily: "var(--font-display)",
+                    fontWeight: 600,
+                    letterSpacing: "0.02em",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                  }}
+                >
+                  {c.name}
+                  <Icon name="arrow-right" size={16} />
+                </span>
                 <span style={{ fontSize: 13, lineHeight: 1.45, color: "var(--reu-100)" }}>{c.desc}</span>
               </span>
             </Link>
@@ -73,10 +86,10 @@ export default function HomeSections({ products }: { products?: Product[] } = {}
       </section>
 
       <section aria-labelledby="tra-dam">
-      <div className="lt-container" style={{ ...section, paddingBottom: "clamp(96px,12vw,170px)" }}>
+      <div className="lt-container" style={{ ...section, paddingBottom: "clamp(64px,7vw,104px)" }}>
         <SectionTitle id="tra-dam" eyebrow="Trà đàm" title="Hiểu trà để thưởng trà" action={<Link href="/tra-dam" style={{ fontSize: 14 }}>Đọc thêm</Link>} />
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", gap: 24 }}>
-          {POSTS.map((p) => (
+          {POSTS.slice(0, 6).map((p) => (
             <Link key={p.slug} href={`/tra-dam/${p.slug}`} className="lt-card" style={{ display: "flex", gap: 16, alignItems: "center", textDecoration: "none" }}>
               <span className="lt-card-photo" style={{ flex: "0 0 112px", borderRadius: 6, overflow: "hidden" }}>
                 <ProductImage src={photo(p.ph)} alt="" ratio="1 / 1" />

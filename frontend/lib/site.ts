@@ -4,6 +4,8 @@ export const SITE = {
   name: "Lam Trà",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   tagline: "Trọn vị trà Việt, trọn tấm lòng trao gửi.",
+  /** 4 từ khoá slogan hiển thị ở góc phải chân trang */
+  slogan: ["Trọn vị", "Trà Việt", "Tấm lòng", "Trao gửi"],
   address: "Xã Tân Cương, tỉnh Thái Nguyên",
   phone: "0949 992 493",
   zalo: "0949992493",
@@ -38,6 +40,7 @@ export const NAV = [
   { label: "Trang chủ", href: "/" },
   { label: "Câu chuyện", href: "/cau-chuyen" },
   { label: "Sản phẩm", href: "/san-pham" },
+  { label: "Chứng nhận", href: "/chung-nhan" },
   { label: "Trà đàm", href: "/tra-dam" },
   { label: "Liên hệ", href: "/lien-he" },
 ];

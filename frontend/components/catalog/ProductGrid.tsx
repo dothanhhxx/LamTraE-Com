@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Button, Choice, Dialog, Icon, Select } from "@/components/ds";
+import { Button, Icon } from "@/components/ds";
+import { FilterSheet, PillGroup, SortMenu } from "./CatalogControls";
 import { fold } from "@/lib/text";
 import { CATEGORIES, PRODUCTS, PURPOSES, getCategory, priceOf, type Product } from "@/lib/products";
-import { TeaGrid } from "./TeaCard";
+import { BuyGrid, FeaturedProduct } from "./BuyCard";
 
 const chip = (on: boolean) => ({
   display: "inline-flex", alignItems: "center", height: 36, padding: "0 14px", borderRadius: 999, fontSize: 13, whiteSpace: "nowrap" as const,
@@ -75,31 +76,27 @@ export default function ProductGrid({ initialProducts }: { initialProducts?: Pro
   if (rating) active.push({ label: `Từ ${rating} sao`, clear: { sao: "" } });
 
   const filters = (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24, padding: "20px" }}>
-      <fieldset style={{ border: 0, margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-        <legend style={{ fontSize: 13, fontWeight: 500, color: "var(--text-strong)", marginBottom: 10 }}>Mục đích</legend>
-        {PURPOSES.map((x) => (
-          <Choice key={x.value} name="muc-dich" checked={purpose === x.value} onChange={() => set({ "muc-dich": purpose === x.value ? "" : x.value })} title={x.label} desc={x.desc} />
-        ))}
-      </fieldset>
-      <fieldset style={{ border: 0, margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-        <legend style={{ fontSize: 13, fontWeight: 500, color: "var(--text-strong)", marginBottom: 10 }}>Khoảng giá (gói 150g)</legend>
-        {PRICES.map((x) => (
-          <Choice key={x.value} name="gia" checked={price === x.value} onChange={() => set({ gia: price === x.value ? "" : x.value })} title={x.label} />
-        ))}
-      </fieldset>
-      <fieldset style={{ border: 0, margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-        <legend style={{ fontSize: 13, fontWeight: 500, color: "var(--text-strong)", marginBottom: 10 }}>Đánh giá</legend>
-        {["4.8", "4.5"].map((x) => (
-          <Choice key={x} name="sao" checked={rating === x} onChange={() => set({ sao: rating === x ? "" : x })} title={`Từ ${x} sao trở lên`} />
-        ))}
-      </fieldset>
-    </div>
+    <>
+      <PillGroup legend="Mục đích" options={PURPOSES} value={purpose} onChange={(v) => set({ "muc-dich": v })} />
+      <PillGroup legend="Khoảng giá (gói 150g)" options={PRICES} value={price} onChange={(v) => set({ gia: v })} />
+      <PillGroup legend="Đánh giá" options={["4.8", "4.5"].map((x) => ({ value: x, label: `Từ ${x} sao` }))} value={rating} onChange={(v) => set({ sao: v })} />
+    </>
   );
 
+  const filtering = Boolean(cat || q || purpose || price || rating);
+  const featured = [...allProducts].filter((p) => p.active !== false).sort((a, b) => b.sold - a.sold)[0];
+
   return (
-    <div className="lt-container" style={{ paddingTop: 16, paddingBottom: 80 }}>
-      <div role="navigation" aria-label="Lọc theo danh mục" style={{ display: "flex", gap: 8, overflowX: "auto", padding: "4px 0 20px", scrollbarWidth: "none" }}>
+    <div className="lt-container" style={{ paddingTop: 8, paddingBottom: 80 }}>
+      {!filtering && featured && <FeaturedProduct p={featured} />}
+
+      <header className="lt-collection-head">
+        <span>Bộ sưu tập Lam Trà</span>
+        <h1>{category ? category.name : "Sản phẩm Lam Trà"}</h1>
+        <p>{category ? category.desc : "Trà Tân Cương, Thái Nguyên hái tay, sao chảo gang, cùng những hộp quà gửi trao tấm lòng."}</p>
+      </header>
+
+      <div role="navigation" aria-label="Lọc theo danh mục" style={{ display: "flex", gap: 8, overflowX: "auto", padding: "4px 0 20px", scrollbarWidth: "none", justifyContent: "safe center" }}>
         <Link href={hrefWith({ "danh-muc": "" })} style={chip(!cat)}>Tất cả</Link>
         {CATEGORIES.map((c) => (
           <Link key={c.slug} href={hrefWith({ "danh-muc": c.slug })} style={chip(cat === c.slug)}>{c.name}</Link>
@@ -108,15 +105,15 @@ export default function ProductGrid({ initialProducts }: { initialProducts?: Pro
 
       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "0 0 16px", borderBottom: "1px solid var(--border-hairline)", marginBottom: 28, fontSize: 14, color: "var(--text-muted)" }}>
         <span style={{ flex: "1 1 260px" }}>
-          {category ? category.desc : "Toàn bộ trà và quà tặng của Lam Trà."} <span style={{ whiteSpace: "nowrap" }}>· {list.length} sản phẩm</span>
+          {list.length} sản phẩm{category ? ` trong ${category.name}` : ""}
         </span>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <Button variant="secondary" size="sm" iconLeft="sliders-horizontal" onClick={() => setOpen(true)}>
-            Bộ lọc{active.length ? ` (${active.length})` : ""}
-          </Button>
-          <div style={{ width: 190 }}>
-            <Select aria-label="Sắp xếp" value={sort} onChange={(e) => set({ "sap-xep": e.target.value })} options={SORTS.map((s) => ({ value: s.value, label: s.label }))} style={{ height: 36, fontSize: 13 }} />
-          </div>
+          <button type="button" className="lt-tool-btn" aria-haspopup="dialog" onClick={() => setOpen(true)}>
+            <Icon name="sliders-horizontal" size={16} />
+            Bộ lọc
+            {active.length > 0 && <span className="lt-tool-count">{active.length}</span>}
+          </button>
+          <SortMenu value={sort} options={SORTS.map((s) => ({ value: s.value, label: s.label }))} onChange={(v) => set({ "sap-xep": v })} />
         </div>
       </div>
 
@@ -140,18 +137,26 @@ export default function ProductGrid({ initialProducts }: { initialProducts?: Pro
           <Button variant="secondary" href="/san-pham">Xem tất cả trà</Button>
         </div>
       ) : (
-        <TeaGrid products={list} />
+        <BuyGrid products={list} />
       )}
 
-      <Dialog open={open} onClose={() => setOpen(false)} title="Bộ lọc">
+      <FilterSheet
+        open={open}
+        onClose={() => setOpen(false)}
+        footer={
+          <>
+            <button type="button" className="lt-sheet-reset" onClick={() => set({ "muc-dich": "", gia: "", sao: "" })}>
+              <Icon name="rotate-ccw" size={15} />
+              Xóa lọc
+            </button>
+            <button type="button" className="lt-sheet-apply" onClick={() => setOpen(false)}>
+              Xem {list.length} sản phẩm
+            </button>
+          </>
+        }
+      >
         {filters}
-        <div style={{ position: "sticky", bottom: 0, display: "flex", gap: 10, padding: "12px 20px 20px", background: "var(--surface-card)", borderTop: "1px solid var(--border-hairline)" }}>
-          <Button variant="ghost" onClick={() => set({ "muc-dich": "", gia: "", sao: "" })}>Xóa</Button>
-          <div style={{ flex: 1 }}>
-            <Button fullWidth onClick={() => setOpen(false)}>Xem {list.length} sản phẩm</Button>
-          </div>
-        </div>
-      </Dialog>
+      </FilterSheet>
     </div>
   );
 }

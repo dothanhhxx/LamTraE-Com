@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import ProductGrid from "@/components/catalog/ProductGrid";
-import { PageHeader } from "@/components/shell/PageHeader";
+import { Breadcrumbs } from "@/components/shell/PageHeader";
 import { ProductApiService } from "@/services/products.api";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +16,9 @@ export default async function CatalogPage() {
 
   return (
     <>
-      <PageHeader title="Trà Lam Trà" eyebrow="Tân Cương · Thái Nguyên" crumbs={[{ label: "Sản phẩm" }]} />
+      <div className="lt-container" style={{ paddingTop: 20 }}>
+        <Breadcrumbs crumbs={[{ label: "Sản phẩm" }]} />
+      </div>
       <Suspense>
         <ProductGrid initialProducts={products} />
       </Suspense>

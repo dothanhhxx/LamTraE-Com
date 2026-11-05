@@ -185,12 +185,37 @@ export function Panel({ children, style, tone = "card" }: { children: ReactNode;
   return <div style={{ background: bg, border: "1px solid var(--border-hairline)", borderRadius: "var(--radius-md)", ...style }}>{children}</div>;
 }
 
-export function SectionTitle({ eyebrow, title, action, id }: { eyebrow?: string; title: string; action?: ReactNode; id?: string }) {
+export function SectionTitle({
+  eyebrow,
+  title,
+  action,
+  id,
+  displayFont = true,
+}: {
+  eyebrow?: string;
+  title: string;
+  action?: ReactNode;
+  id?: string;
+  displayFont?: boolean;
+}) {
   return (
     <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginBottom: 28, fontFamily: "var(--font-ui)" }}>
       <div style={{ minWidth: 0 }}>
         {eyebrow && <div style={{ fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", fontWeight: 500, color: "var(--accent)", marginBottom: 8 }}>{eyebrow}</div>}
-        <h2 id={id} style={{ margin: 0, fontSize: "clamp(24px,2.6vw,32px)", lineHeight: 1.25, fontWeight: 500, letterSpacing: "-.01em", color: "var(--text-strong)" }}>{title}</h2>
+        <h2
+          id={id}
+          style={{
+            margin: 0,
+            fontSize: displayFont ? "clamp(28px, 3.2vw, 38px)" : "clamp(22px, 2vw, 28px)",
+            lineHeight: 1.18,
+            fontWeight: displayFont ? 600 : 500,
+            letterSpacing: displayFont ? "0.015em" : "-.01em",
+            fontFamily: displayFont ? "var(--font-display)" : "var(--font-ui)",
+            color: "var(--text-strong)",
+          }}
+        >
+          {title}
+        </h2>
       </div>
       {action && <span style={{ flexShrink: 0, whiteSpace: "nowrap", paddingBottom: 4 }}>{action}</span>}
     </div>

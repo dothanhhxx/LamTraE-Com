@@ -12,9 +12,89 @@ export const JOURNEY_PHOTOS = {
   voChe: { src: "/assets/journey/vo-che.webp", alt: "Búp chè non quay trong lồng sao", w: 526, h: 348 },
 };
 const J = JOURNEY_PHOTOS;
+
+// Ảnh thương hiệu (ảnh chứng nhận đã cắt bỏ dải logo đơn vị khác ở trên cùng)
+export const STORY_PHOTOS = {
+  boSuuTap: { src: "/assets/story/bo-suu-tap-tinh-hoa-tra-viet.webp", alt: "Bốn hộp trà Lam Trà: Trà Đinh, Trà Nõn Tôm, Trà Nhài, Trà Móc Câu", w: 810, h: 540 },
+  chungNhan: { src: "/assets/chung-nhan/tong-hop.webp", alt: "Giấy chứng nhận cơ sở đủ điều kiện an toàn thực phẩm, Giấy chứng nhận VietGAP và Giấy chứng nhận đăng ký hợp tác xã của Hợp tác xã Chè Thanh Huyền Trà", w: 1254, h: 1104 },
+};
+const S = STORY_PHOTOS;
 export type Post = { slug: string; title: string; excerpt: string; date: string; ph: string; readMin: number; related: string[]; body: Block[] };
 
 export const POSTS: Post[] = [
+  {
+    slug: "minh-bach-nguon-goc-an-tam-chat-luong",
+    title: "Minh bạch nguồn gốc, an tâm chất lượng",
+    excerpt: "Lam Trà hợp tác cùng Hợp tác xã Chè Thanh Huyền Trà (Thái Nguyên), đơn vị có đầy đủ giấy chứng nhận an toàn thực phẩm, VietGAP và đăng ký hợp tác xã.",
+    date: "2026-11-04", ph: S.chungNhan.src, readMin: 2, related: ["tra-moc-cau", "tra-non-tom", "dinh-thuong-hang"],
+    body: [
+      { p: "Tại Lam Trà, chúng tôi chú trọng lựa chọn đối tác sản xuất có thông tin rõ ràng và hồ sơ chứng nhận minh bạch." },
+      { h: "Đối tác sản xuất: Hợp tác xã Chè Thanh Huyền Trà", p: "Lam Trà hợp tác cùng Hợp tác xã Chè Thanh Huyền Trà (Thái Nguyên), đơn vị hoạt động trong lĩnh vực chế biến và kinh doanh chè, có Giấy chứng nhận cơ sở đủ điều kiện an toàn thực phẩm do Phòng Kinh tế thành phố Thái Nguyên cấp." },
+      { h: "Hồ sơ chứng nhận", img: S.chungNhan, list: ["Giấy chứng nhận cơ sở đủ điều kiện an toàn thực phẩm", "Giấy chứng nhận VietGAP cho sản phẩm chè búp tươi", "Giấy chứng nhận đăng ký hợp tác xã"] },
+      { p: "Với sự đồng hành của đối tác sản xuất, Lam Trà hướng đến việc mang những sản phẩm trà Việt có nguồn gốc rõ ràng đến gần hơn với người tiêu dùng." },
+      { p: "Lam Trà: trân trọng giá trị trà Việt, xây dựng niềm tin từ những điều minh bạch." },
+    ],
+  },
+  {
+    slug: "tinh-hoa-tra-viet-trong-tung-bup-non",
+    title: "Tinh hoa trà Việt trong từng búp non",
+    excerpt: "Trà Đinh, Trà Nõn Tôm, Trà Nhài, Trà Móc Câu: bốn dòng trà, bốn sắc thái hương vị, cùng hội tụ trong bộ sưu tập Lam Trà.",
+    date: "2026-11-02", ph: S.boSuuTap.src, readMin: 2, related: ["dinh-thuong-hang", "tra-non-tom", "tra-moc-cau"],
+    body: [
+      { p: "Mỗi loại trà mang một hương vị riêng, mỗi tách trà mở ra một câu chuyện về vùng đất và văn hóa thưởng trà Việt Nam." },
+      { img: S.boSuuTap, p: "Từ vị thanh khiết, hậu ngọt sâu của Trà Đinh, hương thơm dịu nhẹ của Trà Nõn Tôm, nét thanh tao của Trà Nhài đến vị đậm đà, hậu ngọt của Trà Móc Câu, mỗi lựa chọn đều mang đến một trải nghiệm thưởng trà riêng biệt." },
+      { h: "Bốn dòng trà, bốn sắc thái", list: ["Trà Đinh: hương vị thanh khiết, hậu ngọt sâu, tinh tế", "Trà Nõn Tôm: hương thơm dịu nhẹ, vị ngọt thanh, đậm hậu", "Trà Nhài: hương nhài thanh khiết, vị trà dịu nhẹ, cân bằng", "Trà Móc Câu: vị trà đậm đà, hậu ngọt, thích hợp dùng hằng ngày"] },
+      { h: "Điều Lam Trà giữ trong mỗi hộp", list: ["Trà Thái Nguyên chất lượng cao", "Giữ trọn hương vị truyền thống", "Thiết kế hiện đại, phù hợp làm quà tặng", "Khám phá câu chuyện văn hóa qua mã QR trên bao bì"] },
+      { p: "Dù bạn yêu thích vị trà thanh nhẹ hay đậm đà, Lam Trà luôn có một lựa chọn dành cho những khoảnh khắc thưởng trà của bạn. Lam Trà: tinh hoa trà Việt trong từng búp non." },
+    ],
+  },
+  {
+    slug: "mot-am-tra-pha-duoc-bao-nhieu-lan",
+    title: "Một ấm trà có thể pha được bao nhiêu lần?",
+    excerpt: "Một ấm trà Tân Cương có thể pha 3 – 4 lượt nước mà vẫn giữ hương vị. Mỗi lượt mang một sắc thái riêng, và đây là cách pha để tận hưởng trọn từng lượt.",
+    date: "2026-10-31", ph: J.rotTra.src, readMin: 4, related: ["tra-moc-cau", "tra-non-tom", "dinh-thuong-hang"],
+    body: [
+      { h: "Một ấm trà Tân Cương pha được mấy lượt?", p: "Thông thường, trà xanh Tân Cương Thái Nguyên có thể pha khoảng 3 – 4 lượt nước, tùy chất lượng lá trà, lượng trà sử dụng, nhiệt độ nước và thời gian ủ. Trà chế biến từ búp chè non, chất lượng tốt và được bảo quản đúng cách thường giữ được hương vị qua nhiều lượt pha." },
+      { p: "Không phải lượt nước nào cũng giống nhau. Qua mỗi lần pha, các hợp chất tạo hương và vị trong lá trà tiếp tục hòa tan vào nước, khiến màu sắc, hương thơm và độ đậm thay đổi. Đó chính là điểm thú vị khiến thưởng trà trở thành một trải nghiệm đáng khám phá." },
+      { h: "Lượt thứ nhất: đánh thức hương trà", img: J.rotTra, p: "Lá trà bắt đầu nở ra và giải phóng hương, vị. Nước trà thường có màu vàng xanh trong, hương thơm nhẹ nhàng và vị chát thanh. Với trà Tân Cương, bạn có thể cảm nhận hương gợi nhớ cốm non cùng hậu ngọt dịu sau khi uống." },
+      { h: "Lượt thứ hai: đậm đà hơn", p: "Lá trà đã nở nhiều hơn, hương vị thường rõ nét hơn lượt đầu. Vị chát và hậu ngọt trở nên cân bằng, giúp bạn cảm nhận rõ đặc trưng của trà Tân Cương." },
+      { h: "Lượt thứ ba: dịu nhẹ, thanh thoát", p: "Hương vị bắt đầu nhẹ dần. Vị chát giảm, nước nhạt màu hơn nhưng vẫn giữ được một phần hương thơm và hậu vị. Đây là lượt nước hợp với người thích trà nhẹ nhàng." },
+      { h: "Lượt thứ tư: dư vị cuối cùng", p: "Hương và vị giảm đáng kể. Nếu trà tốt và điều chỉnh thời gian ủ phù hợp, bạn vẫn có thể thưởng thức vị trà thanh nhẹ. Khi nước đã quá nhạt, hãy thay trà mới." },
+      { h: "Bí quyết pha qua nhiều lượt nước", list: ["Khoảng 5g trà cho ấm 150 – 200ml; tráng ấm và chén bằng nước nóng trước khi pha", "Dùng nước khoảng 80 – 85°C, tránh nước sôi trực tiếp vì dễ làm trà chát", "Lượt 1 ủ 30 – 45 giây, lượt 2 ủ 40 – 50 giây, lượt 3 ủ 50 – 60 giây, lượt 4 có thể ủ 60 – 90 giây", "Rót hết nước sau mỗi lượt, không để lá trà ngâm lâu trong ấm"] },
+      { p: "Thời gian trên chỉ mang tính tham khảo. Bạn có thể điều chỉnh tùy loại trà và khẩu vị của mình." },
+      { h: "Lưu ý để giữ hương vị", list: ["Chọn trà có nguồn gốc rõ ràng, bảo quản trong bao bì kín", "Không dùng quá nhiều trà hoặc ngâm quá lâu chỉ để tạo vị đậm", "Thưởng thức các lượt trà trong cùng một buổi, không để bã trà qua đêm rồi pha tiếp", "Để ý sự thay đổi của hương, màu nước và hậu vị để tìm cách pha hợp với mình"] },
+      { p: "Lượt đầu nhẹ nhàng, lượt tiếp theo đậm đà hơn, những lượt cuối dần thanh thoát. Một ấm trà, nhiều tầng hương vị. Cùng Lam Trà khám phá nét tinh tế của trà Tân Cương qua từng lượt nước." },
+    ],
+  },
+  {
+    slug: "chen-tra-dau-cau-chuyen",
+    title: "Chén trà đầu câu chuyện: nét đẹp trong văn hóa người Việt",
+    excerpt: "Trong đời sống người Việt, chén trà không đơn thuần là thức uống mà còn là lời chào thân tình, thể hiện sự hiếu khách và gắn kết con người.",
+    date: "2026-10-30", ph: J.thuongTra.src, readMin: 4, related: ["tra-moc-cau", "tra-non-tom"],
+    body: [
+      { p: "Từ những cuộc gặp gỡ đầu tiên đến những buổi sum họp gia đình, chén trà luôn mang trong mình những giá trị văn hóa giản dị mà sâu sắc." },
+      { h: "Chén trà, lời chào thân tình", p: "Khi có khách đến chơi nhà, gia chủ thường mời một chén trà trước khi bắt đầu câu chuyện. Không cần lời chào hỏi cầu kỳ, một chén trà được rót bằng sự chân thành cũng đủ tạo nên bầu không khí gần gũi. Bởi vậy, mời trà không đơn thuần là mời một thức uống mà còn là lời mời mở đầu cho sự kết nối." },
+      { h: "Chén trà trong những buổi sum họp", img: J.thuongTra, p: "Buổi sáng, một ấm trà nóng mở đầu ngày mới. Buổi chiều, chén trà là người bạn trong phút nghỉ ngơi. Những dịp lễ, Tết, cả nhà quây quần bên bàn trà: ông bà kể chuyện ngày xưa, cha mẹ chia sẻ chuyện cuộc sống, con cháu có dịp lắng nghe và thấu hiểu thế hệ đi trước." },
+      { h: "Văn hóa mời trà: sự tinh tế trong ứng xử", p: "Gia chủ chuẩn bị trà, chén và nước nóng cẩn thận, mời trà bằng thái độ niềm nở. Người thưởng trà nhấp từng ngụm nhỏ để cảm nhận hương vị và tận hưởng cuộc trò chuyện. Văn hóa trà vì thế không chỉ nằm ở cách pha hay cách uống mà còn ở thái độ ứng xử và sự chân thành giữa người với người." },
+      { h: "Trà Tân Cương: hương vị của những cuộc trò chuyện", p: "Với hương thơm gợi nhớ cốm non, vị chát dịu và hậu ngọt thanh, trà Tân Cương Thái Nguyên hợp với những cuộc gặp bạn bè, buổi tiếp khách tại gia hay phút nghỉ ngơi sau ngày làm việc. Hương trà nhẹ nhàng cùng cách thưởng thức chậm rãi tạo nên không gian để mọi người trò chuyện và sẻ chia." },
+      { h: "Lam Trà: kết nối những câu chuyện qua hương vị trà Việt", p: "Lam Trà mong đưa trà truyền thống đến gần hơn với cuộc sống hiện đại qua những sản phẩm có nguồn gốc rõ ràng, bao bì tiện dụng và thiết kế mang nét đẹp văn hóa Việt. Qua mã QR trên bao bì, bạn có thể tìm hiểu thêm về vùng chè Tân Cương, hành trình làm nên búp trà và nghệ thuật thưởng trà." },
+      { p: "Giữa nhịp sống hiện đại, một chén trà có thể là lý do giản dị để mọi người dành thời gian cho nhau. Một chén trà mở lời, một câu chuyện bắt đầu." },
+    ],
+  },
+  {
+    slug: "y-nghia-tang-tra-trong-van-hoa-viet",
+    title: "Tặng trà có ý nghĩa gì trong văn hóa Việt Nam?",
+    excerpt: "Trà không chỉ là thức uống quen thuộc mà còn là món quà thể hiện sự quan tâm, lòng kính trọng và tình cảm chân thành, dành cho gia đình, bạn bè hay đối tác.",
+    date: "2026-10-29", ph: "hopqua", readMin: 4, related: ["hop-qua-trao-gui", "dinh-thuong-hang", "tra-moc-cau"],
+    body: [
+      { h: "Trao gửi sự trân trọng và chân thành", p: "Trong văn hóa tặng quà, trà mang ý nghĩa của sự trân trọng và quan tâm. Một hộp trà ngon không chỉ thể hiện tấm lòng người tặng mà còn gửi gắm lời chúc bình an, sức khỏe đến người nhận. Khác với những món quà mang tính hình thức, trà được dùng hằng ngày, tạo nên những khoảnh khắc thư giãn và gắn kết." },
+      { h: "Tặng trà cho gia đình: món quà của sự quan tâm", p: "Những món quà dành cho ông bà, cha mẹ thường thể hiện lòng biết ơn và sự hiếu kính. Một hộp trà Tân Cương với hương thơm tự nhiên, vị chát dịu và hậu ngọt thanh hợp với người yêu trà truyền thống. Trong dịp Tết Nguyên đán, lễ Vu Lan hay những buổi đoàn viên, món quà trà còn là mong muốn dành thêm thời gian để trò chuyện cùng người thân." },
+      { h: "Tặng trà cho bạn bè: gắn kết những mối quan hệ", p: "Tặng trà cho bạn không cần dịp đặc biệt: có thể là món quà nhỏ sau chuyến đi, lời cảm ơn vì sự giúp đỡ, hay đơn giản là chia sẻ một hương vị mình yêu thích. Trà Móc Câu, Nõn Tôm hay trà Nhài mang đến nhiều lựa chọn hợp với từng sở thích." },
+      { h: "Tặng trà cho đối tác: lịch sự và tôn trọng", p: "Trà mang nét văn hóa truyền thống, có tính ứng dụng và dễ kết hợp với thiết kế quà tặng trang nhã. Trà Tân Cương có nguồn gốc rõ ràng, chất lượng ổn định, bao bì chỉn chu là món quà ý nghĩa trong dịp lễ, Tết, tri ân khách hàng hay gặp gỡ đối tác." },
+      { h: "Quà trà từ Lam Trà", img: S.boSuuTap, p: "Lam Trà hướng đến những bộ quà tặng kết hợp trà Tân Cương chất lượng với hộp giấy cứng hiện đại, trang nhã; bên trong là hai hộp trà được chọn để hợp với nhiều dịp tặng. Mã QR trên bao bì giúp người nhận khám phá nguồn gốc trà, nét đặc trưng của vùng chè Tân Cương và những câu chuyện văn hóa gắn với sản phẩm." },
+      { p: "Giá trị của món quà không chỉ nằm ở hình thức hay giá thành mà ở sự phù hợp với người nhận và tình cảm người tặng gửi gắm. Một hộp trà trao tay, một lời trân trọng gửi gắm." },
+    ],
+  },
   {
     slug: "nhung-ban-tay-lam-nen-chen-tra",
     title: "Từ những búp trà non: những bàn tay làm nên chén trà",

@@ -91,7 +91,7 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
       <section
         style={{
           position: "relative", overflow: "hidden", background: "var(--reu-900)",
-          minHeight: mobile ? 760 : "min(940px, 100vh)", display: "flex", alignItems: mobile ? "flex-end" : "center",
+          minHeight: mobile ? 620 : "min(640px, 82vh)", display: "flex", alignItems: mobile ? "flex-end" : "center",
         }}
       >
         <div
@@ -109,27 +109,38 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
               : "linear-gradient(90deg, rgba(25,36,26,.94) 0%, rgba(36,52,31,.82) 38%, rgba(36,52,31,.25) 72%, rgba(36,52,31,.1) 100%), linear-gradient(0deg, rgba(25,36,26,.6) 0%, transparent 30%)",
           }}
         />
-        <div style={{ position: "relative", width: "100%", maxWidth: 1240, margin: "0 auto", padding: mobile ? "120px 20px 150px" : "140px clamp(24px,3vw,40px) 220px" }}>
+        <div style={{ position: "relative", width: "100%", maxWidth: 1240, margin: "0 auto", padding: mobile ? "88px 20px 112px" : "72px clamp(24px,3vw,40px) 150px" }}>
           <div
             style={{
-              maxWidth: 600, opacity: loaded ? 1 : 0, transform: `translateY(${loaded ? "0px" : "8px"})`,
+              maxWidth: 580, opacity: loaded ? 1 : 0, transform: `translateY(${loaded ? "0px" : "8px"})`,
               transition: "opacity 600ms cubic-bezier(.2,.7,.2,1),transform 600ms cubic-bezier(.2,.7,.2,1)",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 22 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
               <span style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", fontWeight: 500, color: "var(--tra-300)", whiteSpace: "nowrap", flexShrink: 0 }}>Tân Cương · Thái Nguyên</span>
               <span style={{ flex: "0 0 64px", height: 1, background: "var(--tra-400)", opacity: 0.7 }} />
             </div>
-            <h1 style={{ margin: 0, fontSize: "clamp(38px,6.2vw,76px)", lineHeight: 1.12, fontWeight: 500, letterSpacing: "-.02em", color: "var(--logo-cream)", textWrap: "balance" }}>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: "clamp(40px, 4.8vw, 62px)",
+                lineHeight: 1.1,
+                fontWeight: 600,
+                letterSpacing: "0.015em",
+                fontFamily: "var(--font-display)",
+                color: "var(--logo-cream)",
+                textWrap: "balance",
+              }}
+            >
               Trọn vị trà Việt,
               <br />
               <span style={{ color: "var(--tra-300)" }}>trọn tấm lòng trao gửi.</span>
             </h1>
-            <p style={{ margin: "24px 0 0", maxWidth: 500, fontSize: "clamp(16px,1.5vw,18px)", lineHeight: 1.65, color: "var(--reu-100)", textWrap: "pretty" }}>
+            <p style={{ margin: "18px 0 0", maxWidth: 460, fontSize: "clamp(15px,1.1vw,16px)", lineHeight: 1.65, color: "var(--reu-100)", textWrap: "pretty" }}>
               Búp chè Tân Cương hái sáng sớm, sao tay trên chảo gang. Mỗi gói trà ghi rõ khối lượng và phân hạng, để bạn chọn đúng vị cho mình hay cho người thân.
             </p>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 28px", marginTop: 34 }}>
-              <Button variant="accent" size="lg" iconRight="arrow-right" onClick={go(null)}>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 24px", marginTop: 26 }}>
+              <Button variant="accent" iconRight="arrow-right" onClick={go(null)}>
                 Mua ngay
               </Button>
               <a href="#tra-noi-bat" onClick={go(TEAS.findIndex((t) => t.category === "qua-tang"))} className="lt-gift-link">
@@ -137,13 +148,13 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
                 Xem hộp quà biếu
               </a>
             </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "16px 0", marginTop: 48 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "14px 0", marginTop: 34 }}>
               {trust.map((t) => (
-                <div key={t.icon} style={{ display: "flex", alignItems: "center", gap: 12, paddingRight: 22, marginRight: 22, borderRight: t.divider ? "1px solid rgba(188,154,108,.3)" : 0 }}>
-                  <span style={{ width: 40, height: 40, flexShrink: 0, borderRadius: 999, border: "1px solid rgba(188,154,108,.6)", color: "var(--tra-300)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Icon name={t.icon} size={18} />
+                <div key={t.icon} style={{ display: "flex", alignItems: "center", gap: 10, paddingRight: 18, marginRight: 18, borderRight: t.divider ? "1px solid rgba(188,154,108,.3)" : 0 }}>
+                  <span style={{ width: 34, height: 34, flexShrink: 0, borderRadius: 999, border: "1px solid rgba(188,154,108,.6)", color: "var(--tra-300)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Icon name={t.icon} size={16} />
                   </span>
-                  <span style={{ fontSize: 13, lineHeight: 1.4, color: "var(--logo-cream)" }}>
+                  <span style={{ fontSize: 12.5, lineHeight: 1.4, color: "var(--logo-cream)" }}>
                     {t.a}
                     <br />
                     <span style={{ color: "var(--reu-200)" }}>{t.b}</span>
@@ -155,10 +166,10 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
         </div>
       </section>
 
-      <section id="tra-noi-bat" aria-label="Trà nổi bật" ref={stageRef} style={{ position: "relative", zIndex: 2, padding: "0 clamp(12px,3vw,40px) clamp(48px,7vw,96px)", marginTop: mobile ? -96 : -150 }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", background: "var(--surface-card)", border: "1px solid var(--border-hairline)", borderRadius: 10, boxShadow: "var(--shadow-lg)", overflow: "hidden", display: "flex", flexWrap: "wrap" }}>
+      <section id="tra-noi-bat" aria-label="Trà nổi bật" ref={stageRef} style={{ position: "relative", zIndex: 2, padding: "0 clamp(12px,3vw,40px) clamp(40px,5vw,64px)", marginTop: mobile ? -72 : -96 }}>
+        <div style={{ maxWidth: 1120, margin: "0 auto", background: "var(--surface-card)", border: "1px solid var(--border-hairline)", borderRadius: 10, boxShadow: "var(--shadow-lg)", overflow: "hidden", display: "flex", flexWrap: "wrap" }}>
           {isDesktop ? (
-            <div style={{ flex: "0 0 232px", padding: "20px 14px", background: "var(--logo-green)", display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ flex: "0 0 220px", padding: "16px 12px", background: "var(--logo-green)", display: "flex", flexDirection: "column", gap: 6 }}>
               <div style={{ fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--tra-300)", padding: "4px 10px 12px" }}>Trà nổi bật</div>
               {TEAS.map((t, i) => (
                 <button
@@ -167,14 +178,14 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
                   onClick={() => pick(i)}
                   className={i === idx ? "lt-tea-item" : "lt-tea-item lt-tea-idle"}
                   style={{
-                    display: "flex", alignItems: "center", gap: 12, padding: "8px 10px", borderRadius: 6,
+                    display: "flex", alignItems: "center", gap: 10, padding: "6px 8px", borderRadius: 6,
                     border: "1px solid " + (i === idx ? "rgba(188,154,108,.7)" : "rgba(253,237,216,.1)"),
                     background: i === idx ? "rgba(188,154,108,.16)" : undefined,
                     color: "var(--logo-cream)", textAlign: "left", cursor: "pointer", fontFamily: "inherit",
                     transition: "background 200ms,border-color 200ms",
                   }}
                 >
-                  <span style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 4, backgroundImage: `url('${photo(t.ph)}')`, backgroundSize: "cover", backgroundPosition: "center" }} />
+                  <span style={{ width: 38, height: 38, flexShrink: 0, borderRadius: 4, backgroundImage: `url('${photo(t.ph)}')`, backgroundSize: "cover", backgroundPosition: "center" }} />
                   <span style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
                     <span style={{ fontSize: 11, color: "var(--tra-300)", fontVariantNumeric: "tabular-nums" }}>{pad(i + 1)}</span>
                     <span style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.25 }}>{t.name}</span>
@@ -204,8 +215,16 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
           )}
 
           <div style={{ flex: "999 1 420px", minWidth: 0, padding: "clamp(12px,1.6vw,20px)", display: "flex" }}>
-            <div style={{ position: "relative", flex: 1, alignSelf: "flex-start", opacity: fading ? 0 : 1, transition: "opacity 200ms cubic-bezier(.2,.7,.2,1)" }}>
-              <ProductImage src={photo(tea.ph)} alt={tea.name} ratio="4 / 5" radius="6px" />
+            <div style={{ position: "relative", flex: 1, alignSelf: isDesktop ? "stretch" : "flex-start", opacity: fading ? 0 : 1, transition: "opacity 200ms cubic-bezier(.2,.7,.2,1)" }}>
+              {isDesktop ? (
+                // Desktop: ảnh cao bằng cột thông tin bên cạnh, không để khoảng trắng
+                <div style={{ position: "relative", height: "100%", minHeight: 420, borderRadius: 6, overflow: "hidden", background: "var(--surface-photo)" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photo(tea.ph)} alt={tea.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+              ) : (
+                <ProductImage src={photo(tea.ph)} alt={tea.name} ratio={mobile ? "4 / 3" : "5 / 4"} radius="6px" />
+              )}
               <span style={{ position: "absolute", left: 14, top: 14, padding: "6px 12px", borderRadius: 999, background: "rgba(252,248,241,.88)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", fontSize: 12, color: "var(--text-strong)", whiteSpace: "nowrap" }}>
                 {tea.origin}
               </span>
@@ -216,18 +235,28 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
             </div>
           </div>
 
-          <div style={{ flex: "1 1 320px", minWidth: 0, padding: "clamp(20px,2.4vw,32px) clamp(20px,2.4vw,32px) clamp(20px,2.4vw,28px) clamp(20px,1vw,12px)", display: "flex", flexDirection: "column", gap: 18 }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ flex: "1 1 320px", minWidth: 0, padding: "clamp(20px,2.4vw,32px) clamp(20px,2.4vw,32px) clamp(20px,2.4vw,28px) clamp(20px,1vw,12px)", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               <div style={{ fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", fontWeight: 500, color: "var(--accent)", fontVariantNumeric: "tabular-nums" }}>
                 {pad(idx + 1)} / {pad(TEAS.length)} · {tea.kind}
               </div>
-              <h2 style={{ margin: 0, fontSize: "clamp(26px,2.6vw,34px)", lineHeight: 1.2, fontWeight: 500, letterSpacing: "-.01em", color: "var(--text-strong)" }}>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: "clamp(26px, 2.6vw, 34px)",
+                  lineHeight: 1.16,
+                  fontWeight: 600,
+                  letterSpacing: "0.015em",
+                  fontFamily: "var(--font-display)",
+                  color: "var(--text-strong)",
+                }}
+              >
                 <Link href={`/san-pham/${tea.slug}`} className="lt-card-name" style={{ color: "inherit", textDecoration: "none" }}>{tea.name}</Link>
               </h2>
               <div style={{ fontSize: 15, color: "var(--tra-500)" }}>{tea.note}</div>
               <Rating value={tea.rating} count={tea.reviews} />
             </div>
-            <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: "var(--text-body)", textWrap: "pretty" }}>{tea.desc}</p>
+            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--text-body)", textWrap: "pretty" }}>{tea.desc}</p>
             {tea.fixed ? (
               <div style={{ padding: "14px 16px", border: "1px solid var(--border-hairline)", borderRadius: 6, background: "var(--bg-page)", fontSize: 13, lineHeight: 1.55, color: "var(--text-body)" }}>
                 Bộ quà gói sẵn trong hộp sơn mài. Bạn ghi lời nhắn ở bước đặt hàng, Lam Trà sẽ viết tay vào thiệp.
@@ -244,12 +273,12 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
               <div style={{ flex: "1 1 150px", minWidth: 0 }}>
-                <Button variant="secondary" size="lg" fullWidth iconLeft={added ? "check" : "shopping-bag"} onClick={addToCart}>
+                <Button variant="secondary" fullWidth iconLeft={added ? "check" : "shopping-bag"} onClick={addToCart}>
                   {added ? "Đã thêm" : "Thêm vào giỏ"}
                 </Button>
               </div>
               <div style={{ flex: "1 1 150px", minWidth: 0 }}>
-                <Button size="lg" fullWidth iconRight="arrow-right" onClick={buyNow}>
+                <Button fullWidth iconRight="arrow-right" onClick={buyNow}>
                   Mua ngay
                 </Button>
               </div>
