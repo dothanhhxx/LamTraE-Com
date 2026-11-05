@@ -143,6 +143,9 @@ export default function Footer() {
           <nav aria-label="Hỗ trợ & Trải nghiệm">
             <h2 style={head}>Hỗ trợ &amp; Trải nghiệm</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <Link href="/huong-dan" className="lt-foot-link" style={{ color: "var(--tra-300)" }}>
+                Cẩm nang pha trà (QR)
+              </Link>
               <Link href="/cau-chuyen" className="lt-foot-link">
                 Câu chuyện Lam Trà
               </Link>
