@@ -241,7 +241,7 @@ export default function Header() {
             </Link>
 
             {/* Elegant Divider between icons and CTA button */}
-            <span style={{ width: 1, height: 28, background: "rgba(188, 154, 108, 0.35)", margin: "0 6px" }} className="lt-desktop" />
+            <span style={{ width: 1, height: 28, background: "rgba(188, 154, 108, 0.35)", margin: "0 6px" }} className="lt-desktop lt-head-divider" />
 
             <Link href="/san-pham" className="lt-order-btn lt-desktop">
               <span>Đặt hàng ngay</span>

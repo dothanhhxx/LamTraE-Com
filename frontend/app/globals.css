@@ -305,6 +305,11 @@ button:focus-visible, a:focus-visible { outline: none; box-shadow: var(--focus-r
   .lt-desktop { display: flex !important; }
   .lt-mobile { display: none !important; }
 }
+/* 1000–1199px (iPad ngang, laptop nhỏ): menu 6 mục + nút CTA không vừa một hàng → ẩn CTA và vạch ngăn
+   (mục "Sản phẩm" trên menu đã dẫn tới cùng trang) để header không đẩy trang cuộn ngang. */
+@media (min-width: 1000px) and (max-width: 1199px) {
+  .lt-header-frame .lt-order-btn.lt-desktop, .lt-header-frame .lt-head-divider { display: none !important; }
+}
 
 /* ---------- Shell: mobile tab bar + Zalo ---------- */
 :root { --tabbar-space: 0px; }
@@ -718,11 +723,25 @@ body:has(.lt-mobile-drawer) .lt-fab { display: none; }
   .lt-header-logo-box { width: 56px; height: 74px; margin: -7px 0; }
   .lt-header-logo-box img { width: 42px; }
   .lt-header-logo-box::after { left: -6px; right: -6px; height: 16px; }
+}
 
-
-  /* Zalo bubble shrinks to an icon so it covers less content */
-  .lt-zalo { width: 48px; height: 48px; padding: 0; justify-content: center; }
-  .lt-zalo-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* ---------- Màn hình cảm ứng / điện thoại ----------
+   Safari iOS tự phóng to trang khi chạm vào ô nhập có chữ < 16px; nhiều ô (Input, Select, tìm kiếm)
+   đặt 13–15px bằng style inline nên cần !important để ghi đè. */
+@media (max-width: 1023px) and (pointer: coarse), (max-width: 719px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea { font-size: 16px !important; }
+}
+/* Vùng chạm tối thiểu ~44px trên thiết bị cảm ứng */
+@media (pointer: coarse) {
+  .lt-ft-social a { width: 44px; height: 44px; }
+  .lt-ft-copy small a { display: inline-block; padding: 8px 2px; }
+  .lt-buy-stepper { height: 44px; }
+  .lt-buy-stepper button { width: 44px; height: 44px; }
+  .lt-tool-btn { height: 44px; }
+  .lt-cert-jump a { height: 44px; }
+}
+@media (max-width: 719px) {
+  .lt-ft-copy small { font-size: 12px; line-height: 1.6; }
 }
 
 /* ---------- Trang Sản phẩm: khối nổi bật + thẻ mua nhanh ---------- */
