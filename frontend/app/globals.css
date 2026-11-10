@@ -1012,6 +1012,38 @@ body:has(.lt-mobile-drawer) .lt-fab { display: none; }
 .lt-story-open-down:hover { background: rgba(253, 237, 216, .12); color: var(--logo-cream); }
 @keyframes lt-bob { 50% { transform: translateY(5px); } }
 
+/* ---------- Trang chủ: Trà đàm dạng 3 thẻ bài viết (.lt-talk) ---------- */
+.lt-talk-head { max-width: 640px; margin: 0 auto clamp(32px, 4vw, 48px); text-align: center; }
+.lt-talk-eyebrow { display: inline-flex; align-items: center; gap: 12px; margin: 0 0 12px; font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--tra-600); }
+.lt-talk-eyebrow::before, .lt-talk-eyebrow::after { content: ""; width: 32px; height: 1px; background: currentColor; opacity: .6; }
+.lt-talk-head h2 { margin: 0 0 14px; font-family: var(--font-display); font-size: clamp(34px, 4.4vw, 56px); line-height: 1.05; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; color: var(--reu-800); }
+.lt-talk-head p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--text-body); }
+.lt-talk-grid { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: clamp(16px, 2vw, 24px); }
+.lt-talk-card {
+  height: 100%; display: flex; flex-direction: column; overflow: hidden; border-radius: 8px; text-decoration: none;
+  background: #0F2A1E; border: 1px solid rgba(188, 154, 108, .45); box-shadow: 0 18px 36px -24px rgba(15, 42, 30, .7);
+  transition: transform 220ms cubic-bezier(.2, .7, .2, 1), box-shadow 220ms;
+}
+.lt-talk-card:hover { transform: translateY(-4px); box-shadow: 0 26px 44px -24px rgba(15, 42, 30, .8); }
+.lt-talk-card:focus-visible { outline: 2px solid var(--tra-500); outline-offset: 3px; }
+.lt-talk-photo { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; background: var(--surface-photo); }
+.lt-talk-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 400ms cubic-bezier(.2, .7, .2, 1); }
+.lt-talk-card:hover .lt-talk-photo img { transform: scale(1.04); }
+.lt-talk-tag {
+  position: absolute; left: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 4px;
+  background: rgba(15, 42, 30, .9); border: 1px solid rgba(217, 191, 148, .45); font-size: 12px; font-weight: 500; color: var(--logo-cream);
+}
+.lt-talk-tag svg { color: var(--tra-300); }
+.lt-talk-body { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: clamp(18px, 2vw, 24px); }
+.lt-talk-meta { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--reu-200); }
+.lt-talk-title { font-size: clamp(19px, 1.6vw, 21px); line-height: 1.35; font-weight: 600; color: var(--tra-300); text-wrap: balance; }
+.lt-talk-excerpt { font-size: 14px; line-height: 1.65; color: var(--reu-100); }
+.lt-talk-more { margin-top: auto; padding-top: 6px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--tra-300); }
+.lt-talk-card:hover .lt-talk-more { color: var(--logo-cream); }
+.lt-talk-all { margin-top: clamp(24px, 3vw, 36px); text-align: center; }
+.lt-talk-all a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600; color: var(--reu-800); text-underline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) { .lt-talk-card, .lt-talk-photo img { transition: none; } .lt-talk-card:hover { transform: none; } .lt-talk-card:hover .lt-talk-photo img { transform: none; } }
+
 /* ---------- Trang chủ: Câu chuyện vùng đất (.lt-origin) ---------- */
 .lt-origin { padding: clamp(56px, 8vw, 112px) 0; }
 .lt-origin-grid { display: grid; gap: clamp(40px, 5vw, 72px); align-items: center; }

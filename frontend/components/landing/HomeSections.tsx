@@ -1,10 +1,17 @@
 import Link from "next/link";
 import { Button, Icon, ProductImage, Rating, SectionTitle } from "@/components/ds";
 import { TeaGrid } from "@/components/catalog/TeaCard";
-import { POSTS, formatDate } from "@/lib/posts";
+import { POSTS } from "@/lib/posts";
 import { CATEGORIES, PRODUCTS, getProduct, photo, type Product } from "@/lib/products";
 import { TESTIMONIALS } from "@/lib/reviews";
 import { PhotoBand, TeaSprig } from "@/components/shell/PhotoBand";
+
+// 3 bài Trà đàm tiêu biểu ở Trang chủ: từ đồi chè, đến cách pha, đến bảo quản
+const TALKS = [
+  { slug: "thai-nguyen-noi-huong-tra-ke-chuyen", tag: "Vùng chè Tân Cương" },
+  { slug: "cach-pha-tra-thai-nguyen", tag: "Góc pha trà" },
+  { slug: "bao-quan-tra-xanh", tag: "Giữ hương trà" },
+];
 
 const section = { paddingTop: "clamp(40px,5vw,64px)", paddingBottom: "clamp(40px,5vw,64px)" } as const;
 
@@ -85,23 +92,38 @@ export default function HomeSections({ products }: { products?: Product[] } = {}
       </div>
       </section>
 
-      <section aria-labelledby="tra-dam">
-      <div className="lt-container" style={{ ...section, paddingBottom: "clamp(64px,7vw,104px)" }}>
-        <SectionTitle id="tra-dam" eyebrow="Trà đàm" title="Hiểu trà để thưởng trà" action={<Link href="/tra-dam" style={{ fontSize: 14 }}>Đọc thêm</Link>} />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", gap: 24 }}>
-          {POSTS.slice(0, 6).map((p) => (
-            <Link key={p.slug} href={`/tra-dam/${p.slug}`} className="lt-card" style={{ display: "flex", gap: 16, alignItems: "center", textDecoration: "none" }}>
-              <span className="lt-card-photo" style={{ flex: "0 0 112px", borderRadius: 6, overflow: "hidden" }}>
-                <ProductImage src={photo(p.ph)} alt="" ratio="1 / 1" />
-              </span>
-              <span style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <span className="lt-card-name" style={{ fontSize: 16, lineHeight: 1.35, fontWeight: 500, color: "var(--text-strong)" }}>{p.title}</span>
-                <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{formatDate(p.date)} · {p.readMin} phút đọc</span>
-              </span>
-            </Link>
-          ))}
+      <section aria-labelledby="tra-dam" className="lt-container lt-talk" style={{ ...section, paddingBottom: "clamp(64px,7vw,104px)" }}>
+        <header className="lt-talk-head">
+          <p className="lt-talk-eyebrow">Trà đàm</p>
+          <h2 id="tra-dam">Hiểu trà để thưởng trà</h2>
+          <p>Ghé đồi chè, tìm một cách pha vừa vị và giữ trọn hương trà cho những buổi thưởng trà mỗi ngày.</p>
+        </header>
+        <ul className="lt-talk-grid">
+          {TALKS.map(({ slug, tag }) => {
+            const p = POSTS.find((x) => x.slug === slug);
+            if (!p) return null;
+            return (
+              <li key={slug}>
+                <Link href={`/tra-dam/${slug}`} className="lt-talk-card">
+                  <span className="lt-talk-photo">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={photo(p.ph)} alt="" loading="lazy" decoding="async" />
+                    <span className="lt-talk-tag"><Icon name="leaf" size={14} />{tag}</span>
+                  </span>
+                  <span className="lt-talk-body">
+                    <span className="lt-talk-meta"><Icon name="clock" size={14} />{p.readMin} phút đọc</span>
+                    <span className="lt-talk-title">{p.title}</span>
+                    <span className="lt-talk-excerpt">{p.excerpt}</span>
+                    <span className="lt-talk-more">Đọc thêm<Icon name="arrow-right" size={16} /></span>
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+        <div className="lt-talk-all">
+          <Link href="/tra-dam">Xem tất cả bài Trà đàm</Link>
         </div>
-      </div>
       </section>
 
       <TeaSprig side="right" />
