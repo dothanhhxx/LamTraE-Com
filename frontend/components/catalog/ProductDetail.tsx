@@ -18,7 +18,7 @@ function Gallery({ p }: { p: Product }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       <ProductImage src={photo(shots[i].ph)} alt={shots[i].alt} ratio="4 / 5" />
       {shots.length > 1 && (
-        <div role="tablist" aria-label="Ảnh sản phẩm" style={{ display: "flex", gap: 8 }}>
+        <div role="tablist" aria-label="Ảnh sản phẩm" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
           {shots.map((s, j) => (
             <button
               key={s.ph + j}

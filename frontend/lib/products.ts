@@ -6,6 +6,7 @@ export const CATEGORIES: Category[] = [
   { slug: "tra-xanh", name: "Trà xanh", desc: "Móc Câu, Nõn Tôm sao tay, hợp uống hằng ngày.", ph: "moccau" },
   { slug: "tra-sen", name: "Trà sen", desc: "Búp trà ướp gạo sen Tây Hồ theo lối xưa.", ph: "sen" },
   { slug: "thuong-hang", name: "Thượng hạng", desc: "Phần búp nhỏ nhất, dành cho người sành trà.", ph: "dinhth" },
+  { slug: "tra-thao-moc", name: "Trà thảo mộc", desc: "Trà xanh phối hoa cúc, táo đỏ, quế, gừng, dễ uống.", ph: "/assets/products/tra-thanh-nhiet-duong-tam-1.webp" },
   { slug: "qua-tang", name: "Quà tặng", desc: "Hộp quà gói sẵn, kèm thiệp viết tay.", ph: "hopqua" },
 ];
 
@@ -63,8 +64,17 @@ const STORE_TIP = "Giữ trong túi zip hoặc hũ kín, để nơi khô mát, t
 export const PRODUCTS: Product[] = [
   {
     slug: "tra-dinh-sen", name: "Trà Đinh Sen", category: "tra-sen", kind: "Trà sen", note: "Hương sen dịu, hậu ngọt kéo dài",
-    base: 320000, rating: 4.9, reviews: 88, sold: 410, addedAt: "2026-03-02", origin: "Tân Cương · Thái Nguyên", ph: "sen",
-    gallery: [{ ph: "hero", alt: "Đồi chè Tân Cương lúc sáng sớm" }],
+    base: 320000, rating: 4.9, reviews: 88, sold: 410, addedAt: "2026-03-02", origin: "Tân Cương · Thái Nguyên",
+    ph: "/assets/products/tra-dinh-sen-1.webp",
+    gallery: [
+      { ph: "/assets/products/tra-dinh-sen-2.webp", alt: "Hộp Trà Đinh Sen bên đóa sen hồng và chén trà vàng sánh" },
+      { ph: "/assets/products/tra-dinh-sen-3.webp", alt: "Hộp Trà Đinh Sen trên bệ đá giữa mặt nước" },
+      { ph: "/assets/products/tra-dinh-sen-4.webp", alt: "Hộp Trà Đinh Sen mở nắp, cánh trà và cánh sen tung bay" },
+      { ph: "/assets/products/tra-dinh-sen-5.webp", alt: "Hộp thiếc Trà Đinh Sen với hình hoa sen và đồi chè" },
+      { ph: "/assets/products/tra-dinh-sen-6.webp", alt: "Túi giấy xanh Trà Đinh Sen giữa đồi chè" },
+      { ph: "/assets/products/tra-dinh-sen-7.webp", alt: "Túi giấy kraft Trà Đinh Sen giữa núi đồi" },
+      { ph: "/assets/products/tra-dinh-sen-8.webp", alt: "Hộp túi lọc Trà Đinh Sen cùng ấm thủy tinh và chén sứ" },
+    ],
     desc: "Búp Đinh non ướp cùng gạo sen Tây Hồ theo lối xưa, mỗi cân trà cần hơn nghìn bông sen. Nước vàng sánh, thơm thanh, hợp tiếp khách và biếu tặng.",
     purposes: ["bieu-tang"], occasions: ["tet", "trung-thu", "tan-gia"],
     specs: [
@@ -80,8 +90,12 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: "tra-moc-cau", name: "Trà Móc Câu", category: "tra-xanh", kind: "Trà xanh", note: "Hương cốm non, chát dịu",
-    base: 150000, compareAt: 170000, rating: 4.7, reviews: 142, sold: 980, addedAt: "2025-11-10", origin: "Tân Cương · Thái Nguyên", ph: "moccau",
-    gallery: [{ ph: "hero", alt: "Đồi chè Tân Cương lúc sáng sớm" }],
+    base: 150000, compareAt: 170000, rating: 4.7, reviews: 142, sold: 980, addedAt: "2025-11-10", origin: "Tân Cương · Thái Nguyên",
+    ph: "/assets/products/tra-moc-cau-1.webp",
+    gallery: [
+      { ph: "/assets/products/tra-moc-cau-2.webp", alt: "Hộp Trà Móc Câu trên bệ đá giữa núi đồi" },
+      { ph: "/assets/products/tra-moc-cau-3.webp", alt: "Hộp Trà Móc Câu mở nắp, cánh trà xoăn tung bay" },
+    ],
     desc: "Cánh trà xoăn nhỏ như móc câu, sao tay trên chảo gang. Nước xanh vàng, vị chát dịu rồi ngọt, hợp uống hằng ngày.",
     purposes: ["hang-ngay"], occasions: [],
     specs: [
@@ -97,8 +111,13 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: "tra-non-tom", name: "Trà Nõn Tôm", category: "tra-xanh", kind: "Trà xanh", note: "Nước xanh trong, vị thanh",
-    base: 220000, rating: 4.8, reviews: 64, sold: 520, addedAt: "2026-01-15", origin: "Tân Cương · Thái Nguyên", ph: "nontom",
-    gallery: [{ ph: "hero", alt: "Đồi chè Tân Cương lúc sáng sớm" }],
+    base: 220000, rating: 4.8, reviews: 64, sold: 520, addedAt: "2026-01-15", origin: "Tân Cương · Thái Nguyên",
+    ph: "/assets/products/tra-non-tom-1.webp",
+    gallery: [
+      { ph: "/assets/products/tra-non-tom-2.webp", alt: "Hộp Trà Nõn Tôm mở nắp, búp trà và hoa trà bay lên" },
+      { ph: "/assets/products/tra-non-tom-3.webp", alt: "Hộp Trà Nõn Tôm mở nắp, cánh trà tung bay" },
+      { ph: "/assets/products/tra-non-tom-4.webp", alt: "Hộp túi lọc Trà Nõn Tôm cùng ấm thủy tinh và chén sứ" },
+    ],
     desc: "Chỉ hái một tôm một lá vào sáng sớm. Cánh trà nhỏ, đều, nước xanh trong và hậu ngọt rõ.",
     purposes: ["hang-ngay", "bieu-tang"], occasions: ["20-10"],
     specs: [
@@ -129,6 +148,45 @@ export const PRODUCTS: Product[] = [
     ],
     brew: { temp: "75 – 80°C", amount: "4g cho ấm 150ml", time: "Tráng trà, hãm 20 giây", infusions: "6 – 7 nước", tip: "Dùng ấm nhỏ, chén mỏng để cảm rõ hậu vị." },
     stock: { "500|1": 0, "300|1": 3 },
+  },
+  {
+    slug: "tra-nhai", name: "Trà Nhài", category: "tra-xanh", kind: "Trà ướp hoa", note: "Thơm hoa nhài, vị thanh mát",
+    base: 240000, rating: 5.0, reviews: 0, sold: 0, isNew: true, addedAt: "2026-11-11", origin: "Tân Cương · Thái Nguyên",
+    ph: "/assets/products/tra-nhai-1.webp",
+    gallery: [
+      { ph: "/assets/products/tra-nhai-2.webp", alt: "Hộp Trà Nhài mở nắp, búp trà và hoa nhài bay lên" },
+      { ph: "/assets/products/tra-nhai-3.webp", alt: "Hộp Trà Nhài trên bệ đá giữa đồi chè" },
+      { ph: "/assets/products/tra-nhai-4.webp", alt: "Hộp túi lọc Trà Nhài cùng ấm thủy tinh và chén sứ" },
+    ],
+    desc: "Búp trà xanh Tân Cương ướp cùng hoa nhài tươi hái lúc chớm nở. Nước vàng xanh, hương nhài thoang thoảng, vị chát nhẹ rồi ngọt, hợp uống hằng ngày và mời khách.",
+    purposes: ["hang-ngay", "bieu-tang"], occasions: ["20-10", "tan-gia"],
+    specs: [
+      { label: "Vùng trồng", value: "Tân Cương, Thái Nguyên" },
+      { label: "Mùa hái", value: "Vụ xuân và vụ hè" },
+      { label: "Chế biến", value: "Sao tay chảo gang, ướp hoa nhài tươi nhiều lượt" },
+      { label: "Hương vị", value: "Hương nhài dịu, chát nhẹ, hậu ngọt" },
+      { label: "Màu nước", value: "Vàng xanh trong" },
+      { label: "Hạn dùng", value: "12 tháng kể từ ngày đóng gói" },
+      { label: "Bảo quản", value: STORE_TIP },
+    ],
+    brew: { temp: "80 – 85°C", amount: "5g cho ấm 150ml", time: "Tráng trà, hãm 20 – 25 giây", infusions: "4 nước", tip: "Đậy nắp ấm khi hãm để giữ hương nhài." },
+  },
+  {
+    slug: "tra-thanh-nhiet-duong-tam", name: "Trà Thanh Nhiệt Dưỡng Tâm", category: "tra-thao-moc", kind: "Trà thảo mộc", note: "Hoa cúc, táo đỏ, quế, gừng",
+    base: 180000, rating: 5.0, reviews: 0, sold: 0, isNew: true, addedAt: "2026-11-11", origin: "Thảo mộc Việt · Thái Nguyên",
+    ph: "/assets/products/tra-thanh-nhiet-duong-tam-1.webp",
+    gallery: [],
+    desc: "Trà xanh Thái Nguyên phối cùng hoa cúc, táo đỏ, kỷ tử, quế và gừng, 100% nguyên liệu tự nhiên. Vị thanh, ấm nhẹ, ngọt dịu tự nhiên, hợp uống buổi chiều hoặc sau bữa ăn.",
+    purposes: ["hang-ngay"], occasions: ["tet", "tan-gia"],
+    specs: [
+      { label: "Thành phần", value: "Trà xanh, hoa cúc, táo đỏ, kỷ tử, quế, gừng" },
+      { label: "Nguồn gốc", value: "Trà xanh Thái Nguyên, thảo mộc Việt" },
+      { label: "Hương vị", value: "Thơm hoa cúc, ấm quế gừng, ngọt dịu từ táo đỏ" },
+      { label: "Màu nước", value: "Vàng hổ phách" },
+      { label: "Hạn dùng", value: "12 tháng kể từ ngày đóng gói" },
+      { label: "Bảo quản", value: STORE_TIP },
+    ],
+    brew: { temp: "90 – 95°C", amount: "5g cho ấm 300ml", time: "Hãm 3 – 5 phút", infusions: "2 – 3 nước", tip: "Có thể thêm chút mật ong khi nước nguội bớt." },
   },
   {
     slug: "hop-qua-trao-gui", name: "Hộp quà Trao Gửi", category: "qua-tang", kind: "Quà tặng", note: "Gói sẵn, kèm thiệp viết tay",
