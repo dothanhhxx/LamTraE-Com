@@ -317,8 +317,83 @@ button:focus-visible, a:focus-visible { outline: none; box-shadow: var(--focus-r
 .lt-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; color: var(--text-muted); text-decoration: none; position: relative; }
 .lt-tab[aria-current="page"] { color: var(--primary); font-weight: 500; }
 .lt-tab:hover { color: var(--primary); }
-.lt-zalo { position: fixed; right: 16px; bottom: calc(var(--tabbar-space) + 16px); z-index: 25; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 12px; border-radius: 999px; background: var(--primary); color: var(--text-on-primary); text-decoration: none; font-size: 14px; font-weight: 500; box-shadow: var(--shadow-md); transition: background var(--dur-base) var(--ease-out); }
-.lt-zalo:hover { background: var(--primary-hover); color: var(--text-on-primary); }
+/* Cột nút nổi góc phải: Zalo (chỉ logo) ở trên, Trợ lý AI (linh vật Bé Búp) ở dưới */
+.lt-fab { position: fixed; right: 16px; bottom: calc(var(--tabbar-space) + 16px); z-index: 45; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.lt-fab-btn { position: relative; width: 56px; height: 56px; padding: 0; display: grid; place-items: center; border: 2px solid var(--tra-400); border-radius: 50%; background: var(--reu-800); color: var(--logo-cream); cursor: pointer; box-shadow: var(--shadow-md); transition: transform var(--dur-fast) var(--ease-out), background var(--dur-base) var(--ease-out); }
+.lt-fab-btn:hover { background: var(--reu-700); color: var(--logo-cream); }
+.lt-fab-btn:active { transform: scale(.95); }
+.lt-fab-btn:focus-visible { outline: 2px solid var(--tra-300); outline-offset: 3px; }
+
+/* ---------- Trợ lý Lam Trà (chatbot) ----------
+   Nút mở nằm ngay trên nút Zalo; khung chat nền xanh rêu đậm, chữ kem, điểm nhấn vàng trà. */
+.lt-chat-launcher { overflow: visible; }
+.lt-chat-launcher img { border-radius: 50%; }
+.lt-chat-launcher-label { position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%); padding: 8px 12px; white-space: nowrap; border: 1px solid var(--paper-300); border-radius: var(--radius-lg); background: var(--paper-50); color: var(--reu-800); font: 500 13px/1.2 var(--font-ui); box-shadow: var(--shadow-sm); pointer-events: none; }
+.lt-chat button:focus-visible, .lt-chat a:focus-visible { outline: 2px solid var(--tra-300); outline-offset: 2px; }
+.lt-chat {
+  position: fixed; right: 16px; bottom: calc(var(--tabbar-space) + 148px); z-index: 40;
+  width: min(380px, calc(100vw - 32px)); height: min(580px, calc(100dvh - var(--tabbar-space) - 236px));
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--reu-800); color: var(--logo-cream); border: 1px solid rgba(217,191,148,.35); border-radius: var(--radius-sheet);
+  box-shadow: var(--shadow-lg); font-family: var(--font-ui);
+  animation: lt-chat-in var(--dur-base) var(--ease-out);
+}
+@keyframes lt-chat-in { from { opacity: 0; transform: translateY(8px) scale(.98); } }
+.lt-chat-head { display: flex; align-items: center; gap: 12px; padding: 12px 8px 12px 16px; background: var(--reu-900); border-bottom: 1px solid rgba(217,191,148,.22); }
+.lt-chat-avatar { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--logo-green); border: 1.5px solid var(--tra-400); }
+.lt-chat-avatar-sm { width: 28px; height: 28px; border-width: 1px; }
+.lt-chat-title { margin: 0; font-size: 15px; font-weight: 600; color: var(--logo-cream); }
+.lt-chat-status { margin: 2px 0 0; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--reu-200); }
+.lt-chat-dot { width: 7px; height: 7px; border-radius: 50%; background: #7FC48A; }
+.lt-chat-icon { width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--reu-100); cursor: pointer; transition: background var(--dur-fast) var(--ease-out); }
+.lt-chat-icon:hover:not(:disabled) { background: rgba(217,191,148,.16); color: var(--tra-300); }
+.lt-chat-icon:disabled { opacity: .45; cursor: default; }
+.lt-chat-log { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.lt-chat-row { display: flex; align-items: flex-end; gap: 8px; }
+.lt-chat-user { justify-content: flex-end; }
+.lt-chat-bubble { max-width: 82%; padding: 10px 12px; border-radius: 12px; font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; }
+.lt-chat-assistant .lt-chat-bubble { background: rgba(253,237,216,.08); border: 1px solid rgba(217,191,148,.2); border-bottom-left-radius: 4px; }
+.lt-chat-user .lt-chat-bubble { background: var(--tra-300); color: var(--reu-900); border-bottom-right-radius: 4px; }
+.lt-chat-bubble p { margin: 0 0 6px; }
+.lt-chat-bubble p:last-of-type { margin-bottom: 0; }
+.lt-chat-bubble ul { margin: 4px 0 6px; padding-left: 18px; }
+.lt-chat-bubble li { margin: 2px 0; }
+.lt-chat-bubble strong { color: var(--tra-100); font-weight: 600; }
+.lt-chat-user .lt-chat-bubble strong { color: inherit; }
+.lt-chat-bubble a { color: var(--tra-300); text-decoration: underline; text-underline-offset: 2px; }
+.lt-chat-bubble a:hover { color: var(--logo-cream); }
+.lt-chat-time { display: block; margin-top: 4px; font-size: 11px; text-align: right; opacity: .6; }
+.lt-chat-typing { display: flex; gap: 4px; padding: 14px 14px; }
+.lt-chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--reu-200); animation: lt-chat-dot 1s infinite ease-in-out; }
+.lt-chat-typing span:nth-child(2) { animation-delay: .15s; }
+.lt-chat-typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes lt-chat-dot { 0%, 80%, 100% { opacity: .3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+.lt-chat-quick { display: flex; gap: 8px; padding: 10px 16px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid rgba(217,191,148,.16); }
+.lt-chat-quick::-webkit-scrollbar { display: none; }
+.lt-chat-quick button { flex-shrink: 0; min-height: 32px; padding: 0 12px; border: 1px solid rgba(217,191,148,.45); border-radius: 999px; background: transparent; color: var(--logo-cream); font: 13px/1 var(--font-ui); cursor: pointer; transition: background var(--dur-fast) var(--ease-out); }
+.lt-chat-quick button:hover:not(:disabled) { background: rgba(217,191,148,.16); }
+.lt-chat-quick button:disabled { opacity: .5; cursor: default; }
+.lt-chat-form { display: flex; align-items: flex-end; gap: 8px; padding: 4px 16px 0; }
+.lt-chat-form textarea { flex: 1; min-height: 44px; max-height: 120px; padding: 11px 12px; box-sizing: border-box; resize: none; border: 1px solid rgba(217,191,148,.35); border-radius: var(--radius-lg); background: rgba(0,0,0,.18); color: var(--logo-cream); font: 16px/1.4 var(--font-ui); field-sizing: content; }
+.lt-chat-form textarea::placeholder { color: var(--reu-300); }
+.lt-chat-form textarea:focus { outline: none; border-color: var(--tra-300); }
+.lt-chat-send { width: 44px; height: 44px; flex-shrink: 0; display: grid; place-items: center; border: 0; border-radius: var(--radius-lg); background: var(--tra-300); color: var(--reu-900); cursor: pointer; transition: background var(--dur-fast) var(--ease-out); }
+.lt-chat-send:hover:not(:disabled) { background: var(--tra-100); }
+.lt-chat-send:disabled { background: rgba(217,191,148,.25); color: var(--reu-300); cursor: default; }
+.lt-chat-hint { margin: 6px 16px 10px; font-size: 11px; text-align: center; color: var(--reu-300); }
+/* Màn thấp (điện thoại xoay ngang): khung chat cao gần hết màn, đặt cạnh cột nút nổi thay vì phía trên */
+@media (max-height: 560px) {
+  .lt-chat { top: 8px; bottom: 8px; right: 88px; height: auto; width: min(380px, calc(100vw - 104px)); }
+}
+/* Mở menu di động thì ẩn nút nổi (đang che nút "Đặt hàng ngay"); menu dài hơn màn thì cuộn bên trong */
+body:has(.lt-mobile-drawer) .lt-fab { display: none; }
+.lt-mobile-drawer { max-height: calc(100dvh - 110px); overflow-y: auto; overscroll-behavior: contain; }
+@media (max-width: 719px) {
+  .lt-chat-launcher-label { display: none; } /* nhãn cố định che nội dung trên điện thoại; nút vẫn có aria-label */
+  .lt-fab-btn { width: 52px; height: 52px; }
+  .lt-chat { bottom: calc(var(--tabbar-space) + 140px); height: min(560px, calc(100dvh - var(--tabbar-space) - 220px)); }
+  .lt-chat-hint { display: none; }
+}
 
 /* ---------- Commerce ---------- */
 .lt-card-photo img { transition: transform var(--dur-slow) var(--ease-out); }

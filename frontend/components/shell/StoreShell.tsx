@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Icon, Toast } from "@/components/ds";
 import { CartProvider, useCart } from "@/lib/cart";
 import { zaloLink } from "@/lib/site";
+import ChatWidget from "./ChatWidget";
 import Footer from "./Footer";
 import Header from "./Header";
 
@@ -66,10 +67,12 @@ export default function StoreShell({ children }: { children: React.ReactNode }) 
         <main className="lt-page-bg" style={{ flex: 1 }}>{children}</main>
         <Footer />
       </div>
-      <a href={zaloLink()} target="_blank" rel="noopener noreferrer" className="lt-zalo" aria-label="Chat Zalo với Lam Trà">
-        <Icon name="zalo" size={20} />
-        <span className="lt-zalo-label">Chat Zalo</span>
-      </a>
+      <div className="lt-fab">
+        <a href={zaloLink()} target="_blank" rel="noopener noreferrer" className="lt-fab-btn lt-zalo" aria-label="Chat Zalo với Lam Trà" title="Chat Zalo">
+          <Icon name="zalo-mark" size={30} />
+        </a>
+        <ChatWidget />
+      </div>
       <MobileTabBar />
       <ShellToast />
     </CartProvider>
