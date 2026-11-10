@@ -22,4 +22,7 @@ export const ENV = {
   SUPABASE_URL: (process.env.SUPABASE_URL || "").trim().replace(/\/+$/, "").replace(/\/(rest|storage|auth)\/v1$/, ""),
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
   SUPABASE_BUCKET: process.env.SUPABASE_BUCKET || "products",
+  // Trợ lý AI. Thiếu key thì chatbot vẫn chạy bằng bộ câu hỏi mẫu (không gọi AI).
+  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || "",
+  CHAT_MODEL: process.env.CHAT_MODEL || "claude-opus-5-5",
 };

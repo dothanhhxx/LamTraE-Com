@@ -11,6 +11,7 @@
     "backup:supabase": "tsx src/scripts/backup-supabase.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
     "@fastify/cookie": "^11.1.3",
     "@fastify/cors": "^11.3.1",
     "@fastify/multipart": "^10.1.4",

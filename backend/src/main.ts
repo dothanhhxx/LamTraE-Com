@@ -11,6 +11,7 @@ import { productsRoutes } from "./modules/products/products.routes.js";
 import { ordersRoutes } from "./modules/orders/orders.routes.js";
 import { messagesRoutes } from "./modules/messages/messages.routes.js";
 import { uploadsRoutes } from "./modules/uploads/uploads.routes.js";
+import { chatRoutes } from "./modules/chat/chat.routes.js";
 
 async function bootstrap() {
   const server = Fastify({
@@ -83,6 +84,7 @@ async function bootstrap() {
   await server.register(ordersRoutes);
   await server.register(messagesRoutes);
   await server.register(uploadsRoutes);
+  await server.register(chatRoutes);
 
   try {
     const address = await server.listen({ port: ENV.PORT, host: ENV.HOST });
