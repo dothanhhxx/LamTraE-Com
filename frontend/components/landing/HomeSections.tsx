@@ -5,6 +5,7 @@ import { POSTS } from "@/lib/posts";
 import { CATEGORIES, PRODUCTS, getProduct, photo, type Product } from "@/lib/products";
 import { TESTIMONIALS } from "@/lib/reviews";
 import { PhotoBand, TeaSprig } from "@/components/shell/PhotoBand";
+import HomeClosing from "@/components/landing/HomeClosing";
 
 // 3 bài Trà đàm tiêu biểu ở Trang chủ: từ đồi chè, đến cách pha, đến bảo quản
 const TALKS = [
@@ -139,6 +140,7 @@ export default function HomeSections({ products }: { products?: Product[] } = {}
           </>
         }
       />
+      <HomeClosing />
     </>
   );
 }
