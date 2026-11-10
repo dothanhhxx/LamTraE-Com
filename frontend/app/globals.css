@@ -974,6 +974,32 @@ body:has(.lt-mobile-drawer) .lt-fab { display: none; }
     linear-gradient(180deg, rgba(10, 28, 19, .55) 0%, rgba(10, 28, 19, .35) 45%, rgba(10, 28, 19, .82) 100%),
     url("/assets/bg/tea-hills-mist.webp") center 40% / cover no-repeat, #0F2A1E;
 }
+/* Bìa Trang chủ: ảnh poster bộ sản phẩm Lam Trà, chữ đặt trên nền xanh rêu bên trái */
+.lt-hero-poster {
+  background:
+    linear-gradient(90deg, rgba(9, 30, 20, .9) 0%, rgba(9, 30, 20, .72) 32%, rgba(9, 30, 20, .2) 52%, rgba(9, 30, 20, 0) 64%),
+    url("/assets/bg/hero-poster.webp") right 55% / cover no-repeat, #0F2A1E;
+}
+/* chữ dàn sát lề trái như một trang bìa, không bó trong khung nội dung 1200px */
+@media (min-width: 720px) {
+  .lt-hero-poster .lt-story-open-inner { max-width: none; padding-left: clamp(40px, 8vw, 160px); padding-right: clamp(40px, 8vw, 160px); gap: 22px; }
+}
+.lt-hero-poster .lt-story-open-inner > * { max-width: 640px; }
+/* máy tính bảng / laptop nhỏ: chữ chiếm hơn nửa bề rộng nên phủ tối sâu hơn để chữ luôn đọc rõ */
+@media (min-width: 720px) and (max-width: 1199px) {
+  .lt-hero-poster {
+    background:
+      linear-gradient(90deg, rgba(9, 30, 20, .94) 0%, rgba(9, 30, 20, .86) 48%, rgba(9, 30, 20, .4) 68%, rgba(9, 30, 20, 0) 82%),
+      url("/assets/bg/hero-poster.webp") right 55% / cover no-repeat, #0F2A1E;
+  }
+}
+@media (max-width: 719px) {
+  .lt-hero-poster {
+    background:
+      linear-gradient(180deg, rgba(9, 30, 20, .94) 0%, rgba(9, 30, 20, .88) 55%, rgba(9, 30, 20, .2) 78%, rgba(9, 30, 20, 0) 100%),
+      url("/assets/bg/hero-poster.webp") 78% bottom / auto min(92vw, 420px) no-repeat, #0F2A1E;
+  }
+}
 .lt-story-open-inner { min-height: clamp(380px, 52vh, 520px); display: flex; flex-direction: column; justify-content: flex-end; gap: 14px; padding-top: 24px; padding-bottom: clamp(40px, 6vw, 72px); }
 .lt-story-open-inner > nav:first-child { margin-bottom: auto; }
 .lt-story-open nav a, .lt-story-open nav span, .lt-story-open nav li { color: var(--reu-100) !important; }
