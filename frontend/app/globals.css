@@ -787,12 +787,15 @@ body:has(.lt-mobile-drawer) .lt-fab { display: none; }
   position: relative;
   background: #FFFFFF;
   border: 1.5px solid var(--border-hairline, #DFD2BB);
-  border-radius: 8px;
-  overflow: hidden;
+  border-radius: 10px;
+  padding: 10px 12px;
   transition: all 160ms ease;
   box-shadow: 0 1px 4px rgba(36, 52, 31, 0.05);
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 .lt-admin-image-card.is-primary {
   border-color: var(--tra-500, #94723F);
@@ -822,11 +825,20 @@ body:has(.lt-mobile-drawer) .lt-fab { display: none; }
   transform: translateY(-2px);
 }
 
+.lt-admin-image-card-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 .lt-admin-drag-handle {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 34px;
+  min-width: 32px;
   min-height: 44px;
   border-radius: 6px;
   touch-action: none;
@@ -836,6 +848,9 @@ body:has(.lt-mobile-drawer) .lt-fab { display: none; }
   color: var(--stone-500, #978A73);
   background: rgba(0, 0, 0, 0.03);
   transition: all 140ms ease;
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
 }
 .lt-admin-drag-handle:active,
 .lt-admin-drag-handle.is-active {
@@ -844,20 +859,58 @@ body:has(.lt-mobile-drawer) .lt-fab { display: none; }
   background: var(--paper-200, #EEE4D2);
 }
 
+.lt-admin-card-quick-del {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 6px;
+  border: 1px solid #FECACA;
+  background: #FEF2F2;
+  color: #DC2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 140ms ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+.lt-admin-card-quick-del:hover {
+  background: #FEE2E2;
+  border-color: #EF4444;
+  color: #B91C1C;
+  transform: scale(1.05);
+}
+.lt-admin-card-quick-del:active {
+  transform: scale(0.95);
+}
+
+.lt-admin-image-toolbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border-hairline, #DFD2BB);
+  box-sizing: border-box;
+}
+
 .lt-admin-toolbar-btn {
-  height: 30px;
-  padding: 0 8px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0 10px;
   border-radius: 6px;
   border: 1px solid var(--border-hairline, #DFD2BB);
   background: #FFFFFF;
   color: var(--stone-800, #39332A);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 5px;
   transition: all 140ms ease;
   white-space: nowrap;
 }
@@ -890,6 +943,7 @@ body:has(.lt-mobile-drawer) .lt-fab { display: none; }
 .lt-admin-btn-delete:hover {
   background: #FEE2E2 !important;
   border-color: #EF4444 !important;
+  color: #B91C1C !important;
 }
 
 /* ─── RESPONSIVE ADMIN FORM GRIDS & UTILITIES ─── */
@@ -988,13 +1042,6 @@ body:has(.lt-mobile-drawer) .lt-fab { display: none; }
   cursor: pointer;
   transition: all 140ms ease;
   white-space: nowrap;
-}
-
-.lt-admin-image-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
 }
 
 /* Control filter bar in ProductManager */
@@ -1128,28 +1175,37 @@ body:has(.lt-mobile-drawer) .lt-fab { display: none; }
   }
 
   /* Image card inside reorder list wraps cleanly on mobile */
-  .lt-admin-image-card-responsive {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 8px !important;
+  .lt-admin-image-card {
+    padding: 10px 10px !important;
   }
   .lt-admin-image-card-main {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     width: 100%;
+  }
+  .lt-admin-card-quick-del {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+  }
+  .lt-admin-drag-handle {
+    min-width: 34px !important;
+    min-height: 48px !important;
+    font-size: 20px !important;
   }
   .lt-admin-image-toolbar {
     width: 100% !important;
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 6px !important;
-    justify-content: flex-end !important;
+    justify-content: flex-start !important;
     padding-top: 8px !important;
     border-top: 1px dashed var(--paper-200, #EEE4D2) !important;
   }
   .lt-admin-toolbar-btn {
     height: 38px !important;
+    min-height: 38px !important;
     min-width: 38px !important;
     padding: 0 10px !important;
     font-size: 12px !important;

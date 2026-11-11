@@ -466,8 +466,16 @@ export function ProductEditModal({
     if (images.length <= 1) {
       if (confirm("Đây là ảnh duy nhất của sản phẩm. Bạn có chắc muốn xóa không?")) {
         setImages([]);
+        setPreviewIndex(null);
       }
       return;
+    }
+    if (previewIndex !== null) {
+      if (previewIndex === index) {
+        setPreviewIndex(null);
+      } else if (previewIndex > index) {
+        setPreviewIndex(previewIndex - 1);
+      }
     }
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
@@ -1120,7 +1128,7 @@ export function ProductEditModal({
                     Chưa có ảnh nào. Vui lòng kéo ảnh vào khung phía trên hoặc chọn ảnh mẫu.
                   </div>
                 ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: "380px", overflowY: "auto", paddingRight: 4 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10, maxHeight: "420px", overflowY: "auto", overflowX: "hidden", paddingRight: 4, paddingBottom: 6 }}>
                     {images.map((item, index) => {
                       const isPrimary = index === 0;
                       const isDragged = draggedIndex === index;
@@ -1137,12 +1145,12 @@ export function ProductEditModal({
                           onDragOver={(e) => handleDragOver(e, index)}
                           onDrop={(e) => handleDrop(e, index)}
                           onDragEnd={handleDragEnd}
-                          className={`lt-admin-image-card lt-admin-image-card-responsive ${isPrimary ? "is-primary" : ""} ${isDragged ? "is-dragged" : ""} ${isOver ? "is-dragover" : ""} ${isTouchDragging ? "is-touch-dragging" : ""} ${isTouchOver ? "is-touch-over" : ""}`}
+                          className={`lt-admin-image-card ${isPrimary ? "is-primary" : ""} ${isDragged ? "is-dragged" : ""} ${isOver ? "is-dragover" : ""} ${isTouchDragging ? "is-touch-dragging" : ""} ${isTouchOver ? "is-touch-over" : ""}`}
                           style={{
-                            padding: "8px 10px",
                             background: isPrimary ? "linear-gradient(to right, #FFFDF9, #FFFFFF)" : "#FFFFFF",
                           }}
                         >
+                          {/* Header Row: Drag Handle + Thumbnail + Info + Top-Right Quick Delete Button */}
                           <div className="lt-admin-image-card-main">
                             {/* Drag Handle Icon - Supports mouse drag and mobile touch drag */}
                             <div
@@ -1152,11 +1160,10 @@ export function ProductEditModal({
                               onTouchEnd={handleTouchEnd}
                               onTouchCancel={handleTouchCancel}
                               title="Kéo thả để đổi thứ tự (Chạm giữ và kéo trên điện thoại)"
+                              aria-label="Kéo thả đổi thứ tự"
                               style={{
                                 color: isPrimary ? "var(--tra-500)" : "var(--stone-500)",
                                 cursor: isTouchDragging ? "grabbing" : "grab",
-                                fontSize: 18,
-                                lineHeight: 1,
                                 userSelect: "none",
                                 WebkitUserSelect: "none",
                                 touchAction: "none",
@@ -1178,7 +1185,8 @@ export function ProductEditModal({
                               style={{
                                 width: 52,
                                 height: 52,
-                                borderRadius: 6,
+                                minWidth: 52,
+                                borderRadius: 7,
                                 border: isPrimary ? "1.5px solid var(--tra-400)" : "1px solid var(--border-hairline)",
                                 background: "#FAF8F5",
                                 backgroundImage: `url('${photo(item.url)}')`,
@@ -1232,22 +1240,32 @@ export function ProductEditModal({
                                 {isPrimary ? (
                                   <span
                                     style={{
-                                      fontSize: 10.5,
+                                      fontSize: 11,
                                       fontWeight: 700,
                                       color: "#94723F",
                                       background: "#FBF3E4",
                                       border: "1px solid #DFBE89",
-                                      padding: "1px 7px",
+                                      padding: "2px 8px",
                                       borderRadius: 4,
                                       display: "inline-flex",
                                       alignItems: "center",
-                                      gap: 3,
+                                      gap: 4,
                                     }}
                                   >
                                     ⭐ #1 Ảnh bìa chính
                                   </span>
                                 ) : (
-                                  <span style={{ fontSize: 10.5, fontWeight: 600, color: "var(--stone-600)", background: "var(--paper-100)", padding: "1px 6px", borderRadius: 4 }}>
+                                  <span
+                                    style={{
+                                      fontSize: 11,
+                                      fontWeight: 600,
+                                      color: "var(--stone-600)",
+                                      background: "var(--paper-100)",
+                                      border: "1px solid var(--border-hairline)",
+                                      padding: "2px 7px",
+                                      borderRadius: 4,
+                                    }}
+                                  >
                                     #{index + 1} Ảnh phụ
                                   </span>
                                 )}
@@ -1275,10 +1293,24 @@ export function ProductEditModal({
                                 }}
                               >
                                 <code style={{ textDecoration: "underline", textDecorationStyle: "dotted" }}>
-                                  {item.url.length > 35 ? `${item.url.slice(0, 32)}...` : item.url}
+                                  {item.url.length > 34 ? `${item.url.slice(0, 31)}...` : item.url}
                                 </code>
                               </button>
                             </div>
+
+                            {/* Dedicated Top-Right Quick Delete Button */}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteImage(index);
+                              }}
+                              title="Xóa ảnh này ngay"
+                              aria-label={`Xóa ảnh ${index + 1}`}
+                              className="lt-admin-card-quick-del"
+                            >
+                              <Icon name="trash-2" size={15} />
+                            </button>
                           </div>
 
                           {/* Control Toolbar with Mobile-Friendly Touch Targets */}
@@ -1294,7 +1326,7 @@ export function ProductEditModal({
                               className="lt-admin-toolbar-btn"
                             >
                               <Icon name="search" size={13} />
-                              <span className="lt-admin-btn-text">Xem</span>
+                              <span>Xem</span>
                             </button>
 
                             {/* Make primary */}
@@ -1314,7 +1346,7 @@ export function ProductEditModal({
                               type="button"
                               disabled={index === 0}
                               onClick={() => handleMove(index, -1)}
-                              title="Di chuyển lên trước"
+                              title={index === 0 ? "Đã ở vị trí đầu tiên" : "Di chuyển lên trước"}
                               className="lt-admin-toolbar-btn lt-admin-btn-move"
                             >
                               ↑ Lên
@@ -1325,7 +1357,7 @@ export function ProductEditModal({
                               type="button"
                               disabled={index === images.length - 1}
                               onClick={() => handleMove(index, 1)}
-                              title="Di chuyển xuống sau"
+                              title={index === images.length - 1 ? "Đã ở vị trí cuối cùng" : "Di chuyển xuống sau"}
                               className="lt-admin-toolbar-btn lt-admin-btn-move"
                             >
                               ↓ Xuống
@@ -1335,11 +1367,11 @@ export function ProductEditModal({
                             <button
                               type="button"
                               onClick={() => handleDeleteImage(index)}
-                              title="Xóa ảnh này"
+                              title="Xóa ảnh này khỏi sản phẩm"
                               className="lt-admin-toolbar-btn lt-admin-btn-delete"
                             >
                               <Icon name="trash-2" size={13} />
-                              <span className="lt-admin-btn-text">Xóa</span>
+                              <span>Xóa ảnh</span>
                             </button>
                           </div>
                         </div>
