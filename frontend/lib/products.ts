@@ -36,6 +36,8 @@ export type Product = {
   base: number;
   /** Giá trước khuyến mãi cho biến thể mặc định (200g · Premium), nếu có */
   compareAt?: number;
+  /** Giá bán cơ sở phân hạng Tiêu chuẩn (200g), để trống sẽ tự động tính = 75% giá Premium */
+  standardBase?: number;
   /** Sản phẩm giá cố định, không chọn khối lượng / phân hạng */
   fixed?: boolean;
   rating: number;
@@ -52,6 +54,8 @@ export type Product = {
   unit?: string;
   /** Ảnh phụ (tên file trong /assets/photos) kèm chú thích */
   gallery: { ph: string; alt: string }[];
+  /** Danh sách ảnh chi tiết / phụ phân hạng Tiêu chuẩn (nếu có) */
+  standardGallery?: { ph: string; alt: string }[];
   desc: string;
   purposes: Purpose[];
   occasions: Occasion[];
@@ -70,6 +74,7 @@ export const PRODUCTS: Product[] = [
     slug: "tra-dinh-sen", name: "Trà Đinh Sen", category: "tra-sen", kind: "Trà sen", note: "Hương sen dịu, hậu ngọt kéo dài",
     base: 559000, rating: 4.9, reviews: 88, sold: 410, addedAt: "2026-03-02", origin: "Tân Cương · Thái Nguyên",
     ph: "/assets/products/tra-dinh-sen-1.webp",
+    standardPh: "/assets/products/tra-dinh-sen-7.webp",
     gallery: [
       { ph: "/assets/products/tra-dinh-sen-2.webp", alt: "Hộp Trà Đinh Sen bên đóa sen hồng và chén trà vàng sánh" },
       { ph: "/assets/products/tra-dinh-sen-3.webp", alt: "Hộp Trà Đinh Sen trên bệ đá giữa mặt nước" },
@@ -324,7 +329,12 @@ export const MAX_QTY = 99;
 
 export function priceOf(p: Product, size = DEFAULT_SIZE, grade = DEFAULT_GRADE) {
   if (p.fixed) return p.base;
-  return Math.round((p.base * (SIZE_FACTOR[size] ?? 1) * (GRADE_FACTOR[grade] ?? 1)) / 1000) * 1000;
+  const sizeFactor = SIZE_FACTOR[size] ?? 1;
+  if (grade === "2") {
+    const basePrice = p.standardBase && p.standardBase > 0 ? p.standardBase : p.base * (GRADE_FACTOR["2"] ?? 0.75);
+    return Math.round((basePrice * sizeFactor) / 1000) * 1000;
+  }
+  return Math.round((p.base * sizeFactor * (GRADE_FACTOR[grade] ?? 1)) / 1000) * 1000;
 }
 
 export function variantLabel(p: Product, size = DEFAULT_SIZE, grade = DEFAULT_GRADE) {

@@ -54,6 +54,7 @@ export class ProductService {
       note: data.note || "",
       base,
       compareAt: data.compareAt ? Number(data.compareAt) : undefined,
+      standardBase: data.standardBase ? Number(data.standardBase) : undefined,
       fixed: !!data.fixed,
       rating: data.rating || 5.0,
       reviews: data.reviews || 0,
@@ -62,7 +63,9 @@ export class ProductService {
       addedAt: data.addedAt || new Date().toISOString().slice(0, 10),
       origin: data.origin || "Tân Cương · Thái Nguyên",
       ph: data.ph || "moccau",
+      standardPh: data.standardPh || undefined,
       gallery: data.gallery || [],
+      standardGallery: data.standardGallery || [],
       desc: data.desc || "",
       purposes: data.purposes || ["hang-ngay"],
       occasions: data.occasions || [],
@@ -112,7 +115,10 @@ export class ProductService {
       ...data,
       slug: newSlug,
       base,
-      compareAt: data.compareAt ? Number(data.compareAt) : undefined,
+      compareAt: data.compareAt !== undefined ? (data.compareAt ? Number(data.compareAt) : undefined) : existing.compareAt,
+      standardBase: data.standardBase !== undefined ? (data.standardBase ? Number(data.standardBase) : undefined) : existing.standardBase,
+      standardPh: data.standardPh !== undefined ? (data.standardPh || undefined) : existing.standardPh,
+      standardGallery: data.standardGallery !== undefined ? data.standardGallery : existing.standardGallery,
       active: data.active !== undefined ? data.active : existing.active,
       deleted: false,
     };
@@ -135,7 +141,7 @@ export class ProductService {
   /** Cập nhật nhanh giá và trạng thái (inline edit) */
   static async updateQuick(
     slug: string,
-    patch: { base?: number; compareAt?: number; active?: boolean; stock?: Record<string, number> }
+    patch: { base?: number; compareAt?: number; standardBase?: number; active?: boolean; stock?: Record<string, number> }
   ): Promise<{ ok: boolean; product?: Product; error?: string }> {
     const updated = await ProductRepository.updateQuick(slug, patch);
     if (!updated) {

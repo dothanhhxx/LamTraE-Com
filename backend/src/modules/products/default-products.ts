@@ -16,6 +16,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
     addedAt: "2026-03-02",
     origin: "Tân Cương · Thái Nguyên",
     ph: "/assets/products/tra-dinh-sen-1.webp",
+    standardPh: "/assets/products/tra-dinh-sen-7.webp",
     gallery: [
       { ph: "/assets/products/tra-dinh-sen-2.webp", alt: "Hộp Trà Đinh Sen bên đóa sen hồng và chén trà vàng sánh" },
       { ph: "/assets/products/tra-dinh-sen-3.webp", alt: "Hộp Trà Đinh Sen trên bệ đá giữa mặt nước" },

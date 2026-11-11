@@ -15,7 +15,8 @@ export function toItems(lines: CartLine[], customProducts?: import("./products")
     const max = maxQtyOf(p, l.size, l.grade);
     const qty = Math.max(0, Math.min(max, Math.floor(l.qty)));
     if (qty < 1) return [];
-    return [{ ...l, qty, key: keyOf(l), name: p.name, ph: p.ph, variant: variantLabel(p, l.size, l.grade), unit, total: unit * qty, max }];
+    const itemPh = l.grade === "2" && p.standardPh ? p.standardPh : p.ph;
+    return [{ ...l, qty, key: keyOf(l), name: p.name, ph: itemPh, variant: variantLabel(p, l.size, l.grade), unit, total: unit * qty, max }];
   });
 }
 

@@ -31,6 +31,8 @@ export type Product = {
   note: string;
   base: number;
   compareAt?: number;
+  /** Giá bán cơ sở phân hạng Tiêu chuẩn (200g), để trống sẽ tự động tính = 75% giá Premium */
+  standardBase?: number;
   fixed?: boolean;
   rating: number;
   reviews: number;
@@ -38,8 +40,14 @@ export type Product = {
   isNew?: boolean;
   addedAt: string;
   origin: string;
+  /** Ảnh đại diện chính (Hạng Premium) */
   ph: string;
+  /** Ảnh đại diện (Hạng Tiêu chuẩn, hộp phổ thông) */
+  standardPh?: string;
+  /** Danh sách ảnh chi tiết / phụ phân hạng Premium */
   gallery: { ph: string; alt: string }[];
+  /** Danh sách ảnh chi tiết / phụ phân hạng Tiêu chuẩn (nếu có) */
+  standardGallery?: { ph: string; alt: string }[];
   desc: string;
   purposes: Purpose[];
   occasions: Occasion[];
@@ -53,6 +61,7 @@ export type Product = {
 export type ProductOverride = {
   base?: number;
   compareAt?: number;
+  standardBase?: number;
   active?: boolean;
   stock?: Record<string, number>;
   updatedAt?: string;

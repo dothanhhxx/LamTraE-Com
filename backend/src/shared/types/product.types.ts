@@ -31,6 +31,8 @@ export type Product = {
   note: string;
   base: number;
   compareAt?: number;
+  /** Giá bán cơ sở phân hạng Tiêu chuẩn (200g), để trống sẽ tự động tính = 75% giá Premium */
+  standardBase?: number;
   fixed?: boolean;
   rating: number;
   reviews: number;
@@ -44,6 +46,8 @@ export type Product = {
   /** Nhãn quy cách cho sản phẩm giá cố định, ví dụ "Hộp 20 túi lọc" */
   unit?: string;
   gallery: { ph: string; alt: string }[];
+  /** Danh sách ảnh chi tiết / phụ phân hạng Tiêu chuẩn (nếu có) */
+  standardGallery?: { ph: string; alt: string }[];
   desc: string;
   purposes: Purpose[];
   occasions: Occasion[];
@@ -57,6 +61,7 @@ export type Product = {
 export type ProductOverride = {
   base?: number;
   compareAt?: number;
+  standardBase?: number;
   active?: boolean;
   stock?: Record<string, number>;
   updatedAt?: string;
