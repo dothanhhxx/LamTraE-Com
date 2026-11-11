@@ -369,7 +369,7 @@ export function ProductEditModal({
               onChange={(e) => setBase(e.target.value)}
               style={{ width: "100%", height: 38, padding: "0 12px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 14, fontWeight: 700, color: "#0D2219" }}
             />
-            <span style={{ fontSize: 11.5, color: "#6B7280" }}>Giá cho gói 150g (hoặc cả hộp nếu giá cố định)</span>
+            <span style={{ fontSize: 11.5, color: "#6B7280" }}>Giá cho hộp 200g Premium (hoặc cả hộp nếu giá cố định)</span>
           </div>
 
           <div>
@@ -390,7 +390,7 @@ export function ProductEditModal({
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 8 }}>
             <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#374151", cursor: "pointer" }}>
               <input type="checkbox" checked={fixed} onChange={(e) => setFixed(e.target.checked)} />
-              <span>Giá cố định (không chọn khối lượng 150g/300g/500g)</span>
+              <span>Giá cố định (không chọn khối lượng 100g/200g/500g)</span>
             </label>
             <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#047857", fontWeight: 600, cursor: "pointer" }}>
               <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />

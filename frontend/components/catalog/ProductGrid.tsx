@@ -78,7 +78,7 @@ export default function ProductGrid({ initialProducts }: { initialProducts?: Pro
   const filters = (
     <>
       <PillGroup legend="Mục đích" options={PURPOSES} value={purpose} onChange={(v) => set({ "muc-dich": v })} />
-      <PillGroup legend="Khoảng giá (gói 150g)" options={PRICES} value={price} onChange={(v) => set({ gia: v })} />
+      <PillGroup legend="Khoảng giá (hộp 200g)" options={PRICES} value={price} onChange={(v) => set({ gia: v })} />
       <PillGroup legend="Đánh giá" options={["4.8", "4.5"].map((x) => ({ value: x, label: `Từ ${x} sao` }))} value={rating} onChange={(v) => set({ sao: v })} />
     </>
   );

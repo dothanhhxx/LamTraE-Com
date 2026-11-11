@@ -806,7 +806,7 @@ export function ProductManager() {
                   {/* Inline Price Edit for Mobile */}
                   <div style={{ background: "#FAF8F5", padding: "10px 12px", borderRadius: 8, border: "1px solid #EFE8DC", display: "flex", flexDirection: "column", gap: 8 }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: "#4B5563" }}>Giá cơ sở (150g):</span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: "#4B5563" }}>Giá cơ sở (hộp 200g):</span>
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <input
                           type="number"

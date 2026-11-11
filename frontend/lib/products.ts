@@ -34,7 +34,7 @@ export type Product = {
   kind: string;
   note: string;
   base: number;
-  /** Giá trước khuyến mãi cho biến thể mặc định (150g · Hạng 1), nếu có */
+  /** Giá trước khuyến mãi cho biến thể mặc định (200g · Premium), nếu có */
   compareAt?: number;
   /** Sản phẩm giá cố định, không chọn khối lượng / phân hạng */
   fixed?: boolean;
@@ -64,7 +64,7 @@ const STORE_TIP = "Giữ trong túi zip hoặc hũ kín, để nơi khô mát, t
 export const PRODUCTS: Product[] = [
   {
     slug: "tra-dinh-sen", name: "Trà Đinh Sen", category: "tra-sen", kind: "Trà sen", note: "Hương sen dịu, hậu ngọt kéo dài",
-    base: 320000, rating: 4.9, reviews: 88, sold: 410, addedAt: "2026-03-02", origin: "Tân Cương · Thái Nguyên",
+    base: 559000, rating: 4.9, reviews: 88, sold: 410, addedAt: "2026-03-02", origin: "Tân Cương · Thái Nguyên",
     ph: "/assets/products/tra-dinh-sen-1.webp",
     gallery: [
       { ph: "/assets/products/tra-dinh-sen-2.webp", alt: "Hộp Trà Đinh Sen bên đóa sen hồng và chén trà vàng sánh" },
@@ -90,7 +90,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: "tra-moc-cau", name: "Trà Móc Câu", category: "tra-xanh", kind: "Trà xanh", note: "Hương cốm non, chát dịu",
-    base: 150000, compareAt: 170000, rating: 4.7, reviews: 142, sold: 980, addedAt: "2025-11-10", origin: "Tân Cương · Thái Nguyên",
+    base: 219000, rating: 4.7, reviews: 142, sold: 980, addedAt: "2025-11-10", origin: "Tân Cương · Thái Nguyên",
     ph: "/assets/products/tra-moc-cau-1.webp",
     gallery: [
       { ph: "/assets/products/tra-moc-cau-2.webp", alt: "Hộp Trà Móc Câu trên bệ đá giữa núi đồi" },
@@ -111,7 +111,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: "tra-non-tom", name: "Trà Nõn Tôm", category: "tra-xanh", kind: "Trà xanh", note: "Nước xanh trong, vị thanh",
-    base: 220000, rating: 4.8, reviews: 64, sold: 520, addedAt: "2026-01-15", origin: "Tân Cương · Thái Nguyên",
+    base: 249000, rating: 4.8, reviews: 64, sold: 520, addedAt: "2026-01-15", origin: "Tân Cương · Thái Nguyên",
     ph: "/assets/products/tra-non-tom-1.webp",
     gallery: [
       { ph: "/assets/products/tra-non-tom-2.webp", alt: "Hộp Trà Nõn Tôm mở nắp, búp trà và hoa trà bay lên" },
@@ -151,7 +151,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: "tra-nhai", name: "Trà Nhài", category: "tra-xanh", kind: "Trà ướp hoa", note: "Thơm hoa nhài, vị thanh mát",
-    base: 240000, rating: 5.0, reviews: 0, sold: 0, isNew: true, addedAt: "2026-11-11", origin: "Tân Cương · Thái Nguyên",
+    base: 289000, rating: 5.0, reviews: 0, sold: 0, isNew: true, addedAt: "2026-11-11", origin: "Tân Cương · Thái Nguyên",
     ph: "/assets/products/tra-nhai-1.webp",
     gallery: [
       { ph: "/assets/products/tra-nhai-2.webp", alt: "Hộp Trà Nhài mở nắp, búp trà và hoa nhài bay lên" },
@@ -253,14 +253,16 @@ export const photo = (ph: string) => {
   return `/assets/photos/${ph}.jpg`;
 };
 
-export const SIZE_FACTOR: Record<string, number> = { "150": 1, "300": 1.9, "500": 3 };
+// Giá niêm yết (base) là hộp 200g Premium, đúng hộp thật đang bán. 100g đắt hơn 10% tính theo gam, 500g rẻ hơn 8%.
+export const SIZE_FACTOR: Record<string, number> = { "100": 0.55, "200": 1, "500": 2.3 };
 export const GRADE_FACTOR: Record<string, number> = { "1": 1, "2": 0.75 };
-export const SIZE_OPTIONS = ["150", "300", "500"].map((s) => ({ value: s, label: s + "g" }));
+export const GRADE_LABEL: Record<string, string> = { "1": "Premium", "2": "Tiêu chuẩn" };
+export const SIZE_OPTIONS = ["100", "200", "500"].map((s) => ({ value: s, label: s + "g" }));
 export const GRADE_OPTIONS = [
-  { value: "1", label: "Hạng 1", sub: "Hương đậm" },
-  { value: "2", label: "Hạng 2", sub: "Hằng ngày" },
+  { value: "1", label: GRADE_LABEL["1"], sub: "Hương đậm" },
+  { value: "2", label: GRADE_LABEL["2"], sub: "Hằng ngày" },
 ];
-export const DEFAULT_SIZE = "150";
+export const DEFAULT_SIZE = "200";
 export const DEFAULT_GRADE = "1";
 export const LOW_STOCK = 5;
 export const MAX_QTY = 99;
@@ -271,7 +273,7 @@ export function priceOf(p: Product, size = DEFAULT_SIZE, grade = DEFAULT_GRADE) 
 }
 
 export function variantLabel(p: Product, size = DEFAULT_SIZE, grade = DEFAULT_GRADE) {
-  return p.fixed ? "Hộp 3 món" : `${size}g · Hạng ${grade}`;
+  return p.fixed ? "Hộp 3 món" : `${size}g · ${GRADE_LABEL[grade] ?? "Hạng " + grade}`;
 }
 
 export const variantKey = (p: Product, size: string, grade: string) => (p.fixed ? "-|-" : `${size}|${grade}`);
@@ -300,4 +302,26 @@ export function badgeOf(p: Product): { label: string; tone: "sale" | "new" | "ac
   if (p.isNew) return { label: "Mới", tone: "new" };
   if (p.sold > 500) return { label: "Bán chạy", tone: "accent" };
   return undefined;
+}
+
+/** Trích xuất 1-2 từ khóa nổi bật (hương vị, tiêu chuẩn, điểm nhấn) cho thẻ sản phẩm nhỏ gọn */
+export function keywordsOf(p: Product): string[] {
+  const kw: string[] = [];
+  if (p.category === "qua-tang") {
+    return ["Hộp quà sang trọng", "Thiệp viết tay"];
+  }
+  if (p.note) {
+    const parts = p.note.split(/[,;·–—]/).map((s) => s.trim()).filter(Boolean);
+    for (const part of parts) {
+      if (part.length <= 22 && !kw.includes(part)) kw.push(part);
+      if (kw.length >= 2) break;
+    }
+  }
+  if (kw.length === 0 && p.kind) {
+    kw.push(p.kind);
+  }
+  if (kw.length < 2 && p.origin) {
+    kw.push(p.origin.split("·")[0].split(",")[0].trim());
+  }
+  return kw.slice(0, 2);
 }

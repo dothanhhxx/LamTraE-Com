@@ -2,7 +2,7 @@
 
 import { ProductCard } from "@/components/ds";
 import { useCart } from "@/lib/cart";
-import { badgeOf, maxQtyOf, photo, priceOf, type Product } from "@/lib/products";
+import { DEFAULT_SIZE, badgeOf, maxQtyOf, photo, priceOf, type Product } from "@/lib/products";
 
 /** ProductCard đã nối giỏ hàng + yêu thích. Dùng ở danh mục, trang chủ, sản phẩm liên quan, yêu thích, quà biếu. */
 export default function TeaCard({ p }: { p: Product }) {
@@ -18,7 +18,7 @@ export default function TeaCard({ p }: { p: Product }) {
       compareAt={p.compareAt}
       rating={p.rating}
       reviews={p.reviews}
-      badge={soldOut ? { label: "Tạm hết bản 150g", tone: "neutral" } : badgeOf(p)}
+      badge={soldOut ? { label: `Tạm hết bản ${DEFAULT_SIZE}g`, tone: "neutral" } : badgeOf(p)}
       onQuickAdd={soldOut ? undefined : () => add(p.slug)}
       wished={isWished(p.slug)}
       onWish={() => toggleWish(p.slug)}
