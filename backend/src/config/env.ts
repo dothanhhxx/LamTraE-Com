@@ -25,7 +25,12 @@ export const ENV = {
   // Trợ lý AI. Ưu tiên Gemini nếu có GEMINI_API_KEY, rồi tới Claude; thiếu cả hai thì chatbot
   // vẫn chạy bằng bộ câu hỏi mẫu (không gọi AI).
   GEMINI_API_KEY: (process.env.GEMINI_API_KEY || "").trim(),
-  GEMINI_MODEL: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+  GEMINI_MODEL: process.env.GEMINI_MODEL || "gemini-3.5-flash",
+  // Model dự phòng khi model chính quá tải / bị ngừng (thử lần lượt), phân tách bằng dấu phẩy.
+  GEMINI_FALLBACK_MODELS: (process.env.GEMINI_FALLBACK_MODELS ?? "gemini-3.1-flash-lite")
+    .split(",")
+    .map((m) => m.trim())
+    .filter(Boolean),
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || "",
   CHAT_MODEL: process.env.CHAT_MODEL || "claude-opus-5-5",
 };

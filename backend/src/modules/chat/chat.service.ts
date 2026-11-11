@@ -69,26 +69,52 @@ type GeminiResponse = {
   error?: { code?: number; message?: string };
 };
 
+// Lỗi tạm thời / model bị ngừng → thử model kế tiếp
+const GEMINI_RETRYABLE = new Set([404, 429, 500, 502, 503, 504]);
+
 async function geminiReply(history: ChatTurn[], products: Product[]): Promise<string> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(ENV.GEMINI_MODEL)}:generateContent`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-goog-api-key": ENV.GEMINI_API_KEY },
-    signal: AbortSignal.timeout(30_000),
-    body: JSON.stringify({
-      systemInstruction: {
-        parts: [{ text: `${STATIC_SYSTEM}
+  const payload = {
+    systemInstruction: {
+      parts: [{ text: `${STATIC_SYSTEM}
 
 # DỮ LIỆU: SẢN PHẨM ĐANG BÁN (giá và tồn kho hiện tại)
 ${catalogText(products)}` }],
-      },
-      // Gemini dùng vai "model" thay cho "assistant"
-      contents: history.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
-      generationConfig: { maxOutputTokens: 2048, temperature: 0.6 },
-    }),
-  });
-  const data = (await res.json().catch(() => ({}))) as GeminiResponse;
-  if (!res.ok) throw new Error(`Gemini API ${res.status}: ${data.error?.message ?? res.statusText}`);
+    },
+    // Gemini dùng vai "model" thay cho "assistant"
+    contents: history.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
+  };
+  const models = [...new Set([ENV.GEMINI_MODEL, ...ENV.GEMINI_FALLBACK_MODELS])];
+
+  let data: GeminiResponse = {};
+  for (let i = 0; i < models.length; i++) {
+    const model = models[i];
+    const isLast = i === models.length - 1;
+    // Chat tư vấn không cần suy luận sâu: thinkingLevel "low" (chỉ dòng Gemini 3+) cho phản hồi nhanh hơn
+    const generationConfig = {
+      maxOutputTokens: 2048,
+      temperature: 0.6,
+      ...(/^gemini-[3-9]/.test(model) ? { thinkingConfig: { thinkingLevel: "low" } } : {}),
+    };
+    let res: Response;
+    try {
+      res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-goog-api-key": ENV.GEMINI_API_KEY },
+        signal: AbortSignal.timeout(15_000),
+        body: JSON.stringify({ ...payload, generationConfig }),
+      });
+    } catch (err) {
+      // Timeout / lỗi mạng → thử model kế tiếp
+      if (isLast) throw err;
+      console.warn(`[chat] Gemini ${model} không phản hồi (${(err as Error).name}) → thử ${models[i + 1]}`);
+      continue;
+    }
+    data = (await res.json().catch(() => ({}))) as GeminiResponse;
+    if (res.ok) break;
+    const msg = `Gemini API ${res.status} (${model}): ${data.error?.message ?? res.statusText}`;
+    if (!GEMINI_RETRYABLE.has(res.status) || isLast) throw new Error(msg);
+    console.warn(`[chat] ${msg} → thử ${models[i + 1]}`);
+  }
 
   if (data.promptFeedback?.blockReason) return REFUSAL;
   const candidate = data.candidates?.[0];
