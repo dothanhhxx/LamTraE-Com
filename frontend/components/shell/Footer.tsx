@@ -11,9 +11,19 @@ const ABOUT = [
   { label: "Hồ sơ chứng nhận", href: "/chung-nhan" },
   { label: "Trà đàm", href: "/tra-dam" },
   { label: "Cẩm nang pha trà (QR)", href: "/huong-dan" },
-  { label: "Kiểm tra đơn hàng", href: "/tra-cuu-don" },
   { label: "Hỏi đáp", href: "/hoi-dap" },
   { label: "Liên hệ", href: "/lien-he" },
+];
+
+const POLICIES_NAV = [
+  { label: "Chính sách giao hàng", href: "/chinh-sach#van-chuyen" },
+  { label: "Đổi trả & hoàn tiền 7 ngày", href: "/chinh-sach#doi-tra" },
+  { label: "Mua hàng & thanh toán", href: "/chinh-sach#mua-hang-thanh-toan" },
+  { label: "Bảo vệ dữ liệu cá nhân", href: "/chinh-sach#bao-mat" },
+  { label: "Điều khoản sử dụng", href: "/chinh-sach#dieu-khoan" },
+  { label: "Giải quyết khiếu nại", href: "/chinh-sach#khieu-nai" },
+  { label: "Bảng giá niêm yết", href: "/chinh-sach#bang-gia" },
+  { label: "Kiểm tra đơn hàng", href: "/tra-cuu-don" },
 ];
 
 const POLICIES = [
@@ -90,11 +100,22 @@ export default function Footer() {
             </ul>
           </Column>
 
+          <Column title="Chính sách & Điều khoản">
+            <ul className="lt-ft-list">
+              {POLICIES_NAV.map((l) => (
+                <li key={l.href}><Link href={l.href}>{l.label}</Link></li>
+              ))}
+            </ul>
+          </Column>
+
           <Column title="Liên hệ">
             <ul className="lt-ft-contact">
-              <li>
+              <li className="lt-ft-contact-full">
                 <Icon name="map-pin" size={16} />
-                <span>{SITE.address}</span>
+                <span>
+                  <span>{SITE.address}</span>
+                  <small>Vùng chè Tân Cương</small>
+                </span>
               </li>
               <li>
                 <Icon name="phone" size={16} />
@@ -104,39 +125,69 @@ export default function Footer() {
                 </span>
               </li>
               <li>
-                <Icon name="mail" size={16} />
-                <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-              </li>
-              <li>
                 <Icon name="clock" size={16} />
-                <span>{SITE.hours}</span>
+                <span>
+                  <span>{SITE.hours}</span>
+                  <small>Mở cửa hàng ngày</small>
+                </span>
               </li>
-              <li>
+              <li className="lt-ft-contact-full">
+                <Icon name="mail" size={16} />
+                <span>
+                  <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+                  <small>Hòm thư điện tử</small>
+                </span>
+              </li>
+              <li className="lt-ft-contact-full">
                 <Icon name="leaf" size={16} />
-                <span>Trà Tân Cương, Thái Nguyên</span>
+                <span>
+                  <span>Trà Tân Cương, Thái Nguyên</span>
+                  <small>Chính gốc vùng chè di sản</small>
+                </span>
               </li>
             </ul>
           </Column>
         </div>
 
         <div className="lt-ft-bottom">
-          <div className="lt-ft-copy">
-            <span>© {year} {SITE.legal.company}. Tất cả quyền được bảo lưu.</span>
-            <small>
-              {SITE.legal.notice}
-              {POLICIES.map((l) => (
-                <span key={l.href}> · <Link href={l.href}>{l.label}</Link></span>
-              ))}
-              {SITE.legal.moitUrl ? (
-                <span> · <a href={SITE.legal.moitUrl} target="_blank" rel="noopener noreferrer">Đã thông báo Bộ Công Thương</a></span>
-              ) : null}
-            </small>
+          <div className="lt-ft-legal-box">
+            <div className="lt-ft-copy">
+              <strong>© {year} {SITE.legal.company}</strong>
+              <span>{SITE.legal.regNotice} · Người đại diện: {SITE.legal.representative}</span>
+              <span>Địa chỉ xưởng: {SITE.address} · Hotline: {SITE.phone} · Email: {SITE.email}</span>
+              <small>
+                {SITE.legal.notice}
+                {POLICIES.map((l) => (
+                  <span key={l.href}> · <Link href={l.href}>{l.label}</Link></span>
+                ))}
+              </small>
+            </div>
+            {SITE.legal.moitUrl ? (
+              <a
+                href={SITE.legal.moitUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="lt-ft-moit-badge"
+                title="Website Thương mại điện tử đã thông báo với Bộ Công Thương"
+                aria-label="Website đã thông báo Bộ Công Thương theo quy định TMĐT"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/assets/bo-cong-thuong-da-thong-bao.svg"
+                  alt="Đã thông báo Bộ Công Thương"
+                  width={140}
+                  height={53}
+                />
+              </a>
+            ) : null}
           </div>
+
           <div className="lt-ft-seal" aria-hidden="true">
             <span />
             <Icon name="leaf" size={18} />
             <span />
           </div>
+
           <ul className="lt-ft-slogan" aria-label="Tinh thần Lam Trà">
             {SITE.slogan.map((w) => <li key={w}>{w}</li>)}
           </ul>

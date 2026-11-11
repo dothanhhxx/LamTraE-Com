@@ -230,9 +230,17 @@ export default function CheckoutForm() {
           <Button type="submit" size="lg" fullWidth disabled={busy} iconRight={busy ? undefined : "arrow-right"}>
             {busy ? "Đang gửi đơn…" : "Xác nhận đặt hàng"}
           </Button>
-          <span style={{ fontSize: 12, lineHeight: 1.5, color: "var(--text-muted)" }}>
-            Bấm đặt hàng là bạn đồng ý với <Link href="/chinh-sach#dieu-khoan">điều khoản</Link> và <Link href="/chinh-sach#bao-mat">chính sách bảo mật</Link> của Lam Trà.
-          </span>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12, lineHeight: 1.5, color: "var(--text-muted)" }}>
+            <span>
+              🔒 Bằng việc xác nhận đặt hàng, bạn đã đọc và đồng ý với{" "}
+              <Link href="/chinh-sach#dieu-khoan" style={{ textDecoration: "underline" }}>Điều khoản</Link>,{" "}
+              <Link href="/chinh-sach#giao-hang-doi-tra" style={{ textDecoration: "underline" }}>chính sách giao hàng &amp; đổi trả</Link> và{" "}
+              <Link href="/chinh-sach#bao-mat" style={{ textDecoration: "underline" }}>bảo vệ dữ liệu cá nhân</Link> của Lam Trà.
+            </span>
+            <span style={{ fontSize: 11.5, color: "var(--tra-800)" }}>
+              ✓ Giá đã gồm VAT · Miễn phí đổi trả 7 ngày · Được quyền đồng kiểm trước khi thanh toán.
+            </span>
+          </div>
         </Panel>
       </aside>
     </form>

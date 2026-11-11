@@ -30,8 +30,9 @@ const TOC = [
   { id: "giao-hang-doi-tra", label: "Giao hàng và đổi trả", icon: "truck" },
   { id: "mua-hang-thanh-toan", label: "Mua hàng & Thanh toán", icon: "credit-card" },
   { id: "uu-dai", label: "Ưu đãi & Khách hàng thân thiết", icon: "gift" },
-  { id: "bao-mat", label: "Bảo mật thông tin cá nhân", icon: "shield-check" },
+  { id: "bao-mat", label: "Bảo vệ dữ liệu cá nhân", icon: "shield-check" },
   { id: "dieu-khoan", label: "Điều khoản sử dụng website", icon: "info" },
+  { id: "khieu-nai", label: "Giải quyết khiếu nại & tranh chấp", icon: "scale" },
 ];
 
 const REGIONS: [keyof typeof SHIPPING_FEE, string][] = [
@@ -103,7 +104,7 @@ export default async function PolicyPage() {
                 width: "fit-content",
               }}
             >
-              <span>👆 <em>Gợi ý trên điện thoại: Vuốt ngang bảng để xem đủ các gói 150g, 300g, 500g</em></span>
+              <span>👆 <em>Gợi ý trên điện thoại: Vuốt ngang bảng để xem đủ các gói 100g, 200g, 500g</em></span>
             </div>
 
             <div
@@ -121,16 +122,16 @@ export default async function PolicyPage() {
                   <tr style={{ background: "rgba(22, 60, 42, 0.04)" }}>
                     <th style={{ padding: "12px 14px", textAlign: "left" }}>Tên sản phẩm</th>
                     <th style={{ padding: "12px 14px", textAlign: "left" }}>Loại trà &amp; Hương vị</th>
-                    <th style={{ padding: "12px 14px", textAlign: "right" }}>Gói 150g</th>
-                    <th style={{ padding: "12px 14px", textAlign: "right" }}>Gói 300g (Tiết kiệm)</th>
+                    <th style={{ padding: "12px 14px", textAlign: "right" }}>Gói 100g</th>
+                    <th style={{ padding: "12px 14px", textAlign: "right" }}>Hộp 200g (Premium)</th>
                     <th style={{ padding: "12px 14px", textAlign: "right" }}>Gói 500g (Giá tốt nhất)</th>
                     <th style={{ padding: "12px 14px", textAlign: "center" }}>Xem chi tiết</th>
                   </tr>
                 </thead>
                 <tbody>
                   {products.map((p) => {
-                    const price150 = p.fixed ? p.base : priceOf(p, "150", "1");
-                    const price300 = p.fixed ? null : priceOf(p, "300", "1");
+                    const price100 = p.fixed ? p.base : priceOf(p, "100", "1");
+                    const price200 = p.fixed ? null : priceOf(p, "200", "1");
                     const price500 = p.fixed ? null : priceOf(p, "500", "1");
 
                     return (
@@ -167,21 +168,21 @@ export default async function PolicyPage() {
                             color: "var(--text-strong)",
                           }}
                         >
-                          {formatVND(price150)}
+                          {formatVND(price100)}
                           {p.fixed ? (
                             <span style={{ display: "block", fontSize: 11, color: "var(--text-muted)" }}>
                               (Bộ 3 món)
                             </span>
                           ) : (
                             <span style={{ display: "block", fontSize: 11, color: "var(--text-muted)" }}>
-                              Hạng 1: {formatVND(price150)}
+                              Tiêu chuẩn: {formatVND(priceOf(p, "100", "2"))}
                             </span>
                           )}
                         </td>
                         <td style={{ padding: "12px 14px", textAlign: "right", color: "var(--text-body)" }}>
-                          {price300 ? (
+                          {price200 ? (
                             <>
-                              <span style={{ fontWeight: 600 }}>{formatVND(price300)}</span>
+                              <span style={{ fontWeight: 600 }}>{formatVND(price200)}</span>
                               <span
                                 style={{
                                   display: "block",
@@ -189,7 +190,7 @@ export default async function PolicyPage() {
                                   color: "var(--tra-700)",
                                 }}
                               >
-                                Tiết kiệm 5%
+                                Giá niêm yết
                               </span>
                             </>
                           ) : (
@@ -209,7 +210,7 @@ export default async function PolicyPage() {
                                   color: "var(--tra-700)",
                                 }}
                               >
-                                Tiết kiệm 10%
+                                Tiết kiệm 8%
                               </span>
                             </>
                           ) : (
@@ -397,8 +398,30 @@ export default async function PolicyPage() {
               </li>
             </ul>
 
+            <h3 style={{ fontSize: 18, marginTop: 28, marginBottom: 12 }}>
+              2. Chính sách kiểm hàng (Đồng kiểm khi nhận hàng)
+            </h3>
+            <p>
+              Nhằm đảm bảo quyền lợi tối đa cho quý khách hàng theo quy định pháp luật thương mại điện tử Việt Nam:
+            </p>
+            <ul style={{ lineHeight: 1.7, fontSize: 14 }}>
+              <li>
+                <strong>Quyền đồng kiểm:</strong> Quý khách được quyền mở kiện hàng bên ngoài để kiểm tra số lượng,
+                chủng loại sản phẩm và tem niêm phong trước sự chứng kiến của nhân viên giao hàng (bưu tá).
+              </li>
+              <li>
+                <strong>Lưu ý an toàn thực phẩm:</strong> Do trà được đóng gói vô trùng hút chân không để bảo quản
+                hương cốm non, quý khách vui lòng không cắt mở túi tráng bạc bên trong trước khi thanh toán nhận hàng.
+              </li>
+              <li>
+                <strong>Trường hợp phát sinh sự cố:</strong> Nếu phát hiện bưu kiện bị biến dạng, rách ướt hoặc thiếu
+                món so với đơn đặt, quý khách có quyền từ chối nhận hoặc chụp ảnh biên bản đồng kiểm và liên hệ hotline{" "}
+                <strong>{SITE.phone}</strong> để Lam Trà gửi bù ngay lập tức.
+              </li>
+            </ul>
+
             <h3 style={{ fontSize: 18, marginTop: 32, marginBottom: 12 }}>
-              2. Chính sách đổi trả &amp; hoàn tiền trong 7 ngày
+              3. Chính sách đổi trả &amp; hoàn tiền trong 7 ngày
             </h3>
             <p>
               Với tôn chỉ <em>“Trọn vị trà Việt, trọn tấm lòng trao gửi”</em>, Lam Trà cam kết bảo vệ 100%
@@ -471,7 +494,7 @@ export default async function PolicyPage() {
                   Bước 1: Chọn trà
                 </div>
                 <div style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.5 }}>
-                  Xem thông tin phẩm trà, chọn khối lượng (150g, 300g, 500g) và bấm <em>Thêm vào giỏ</em>.
+                  Xem thông tin phẩm trà, chọn khối lượng (100g, 200g, 500g) và bấm <em>Thêm vào giỏ</em>.
                 </div>
               </div>
               <div
@@ -670,47 +693,70 @@ export default async function PolicyPage() {
             </p>
           </section>
 
-          {/* 6. CHÍNH SÁCH BẢO MẬT THÔNG TIN CÁ NHÂN */}
+          {/* 6. CHÍNH SÁCH BẢO VỆ DỮ LIỆU CÁ NHÂN */}
           <section id="bao-mat" style={{ scrollMarginTop: 110, marginBottom: 56 }}>
-            <h2>Chính sách bảo mật thông tin cá nhân</h2>
+            <h2>Chính sách bảo vệ dữ liệu cá nhân</h2>
             <p>
-              Lam Trà cam kết bảo vệ dữ liệu cá nhân của quý khách hàng theo đúng tinh thần Nghị định số
-              13/2023/NĐ-CP của Chính phủ về bảo vệ dữ liệu cá nhân.
+              Lam Trà cam kết bảo vệ dữ liệu cá nhân của quý khách hàng theo quy định của <strong>Luật Bảo vệ dữ liệu
+              cá nhân số 91/2025/QH15</strong>, <strong>Nghị định số 356/2025/NĐ-CP</strong> và các quy định pháp luật
+              Việt Nam hiện hành.
             </p>
 
-            <h3 style={{ fontSize: 16, marginTop: 20, marginBottom: 10 }}>1. Phạm vi thu thập thông tin</h3>
+            <h3 style={{ fontSize: 16, marginTop: 20, marginBottom: 10 }}>1. Mục đích và phạm vi thu thập dữ liệu</h3>
             <p>
-              Chúng tôi chỉ thu thập các thông tin thực sự cần thiết nhằm phục vụ công tác giao vận và chăm sóc
-              đơn hàng:
+              Chúng tôi chỉ thu thập các dữ liệu cá nhân cơ bản thực sự cần thiết nhằm phục vụ xác lập đơn hàng,
+              vận chuyển bưu kiện và giải quyết hậu mãi:
             </p>
             <ul style={{ lineHeight: 1.7, fontSize: 14 }}>
-              <li>Họ tên người đặt hàng và người nhận quà (nếu gửi tặng).</li>
-              <li>Số điện thoại liên lạc để bưu tá giao hàng và gửi xác nhận đơn.</li>
-              <li>Địa chỉ giao nhận chi tiết (số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố).</li>
-              <li>Địa chỉ Email (tùy chọn, để gửi biên nhận điện tử nếu khách hàng yêu cầu).</li>
-              <li>Lời nhắn thiệp chúc mừng (được bảo mật kín đáo giữa người tặng và người nhận).</li>
+              <li><strong>Họ và tên:</strong> Nhận diện người mua hàng và người nhận quà biếu.</li>
+              <li><strong>Số điện thoại:</strong> Liên hệ bưu tá giao hàng, gửi mã tra cứu đơn hàng và hỗ trợ kỹ thuật pha trà.</li>
+              <li><strong>Địa chỉ nhận hàng:</strong> Phục vụ giao hàng tận nơi qua đơn vị bưu chính ủy quyền.</li>
+              <li><strong>Địa chỉ Email (không bắt buộc):</strong> Gửi hóa đơn điện tử hoặc xác nhận đơn hàng khi khách có nhu cầu.</li>
+              <li><strong>Ghi chú đơn hàng:</strong> Lời chúc thiệp tay hoặc dặn dò thời gian giao nhận.</li>
             </ul>
 
-            <h3 style={{ fontSize: 16, marginTop: 20, marginBottom: 10 }}>2. Cam kết sử dụng thông tin</h3>
+            <h3 style={{ fontSize: 16, marginTop: 20, marginBottom: 10 }}>2. Nguyên tắc xử lý &amp; Chia sẻ dữ liệu</h3>
             <ul style={{ lineHeight: 1.7, fontSize: 14 }}>
               <li>
-                Thông tin chỉ được chia sẻ cho đối tác giao nhận bưu chính (Viettel Post, GHTK, EMS) với mục
-                đích duy nhất là vận chuyển bưu kiện tới tay quý khách.
+                <strong>Chỉ phục vụ mục đích đã thỏa thuận:</strong> Dữ liệu chỉ được chia sẻ cho đối tác giao vận bưu chính
+                (Viettel Post, GHTK, EMS) phục vụ duy nhất công tác giao phát bưu kiện tới địa chỉ của quý khách.
               </li>
               <li>
-                <strong>Tuyệt đối không mua bán, trao đổi hoặc chia sẻ</strong> thông tin khách hàng cho bất
-                kỳ bên thứ ba nào vì mục đích quảng cáo rác hay telesale.
+                <strong>Không mua bán hoặc thương mại hóa dữ liệu:</strong> Lam Trà tuyệt đối không bán, cho thuê hoặc cung cấp
+                thông tin khách hàng cho bất kỳ bên thứ ba nào vì mục đích quảng cáo rác, tiếp thị liên kết hay telesale.
               </li>
               <li>
-                Dữ liệu giỏ hàng và danh sách yêu thích được lưu cục bộ trên trình duyệt máy khách (LocalStorage),
-                quý khách có thể tự xóa bất kỳ lúc nào bằng cách xóa lịch sử duyệt web.
-              </li>
-              <li>
-                Quý khách có quyền yêu cầu tra cứu, điều chỉnh hoặc xóa bỏ vĩnh viễn toàn bộ dữ liệu cá nhân
-                của mình bằng cách gửi email về <strong>{SITE.email}</strong> hoặc liên hệ hotline{" "}
-                <strong>{SITE.phone}</strong>.
+                <strong>Lưu trữ an toàn:</strong> Dữ liệu được mã hóa truyền tải (HTTPS/TLS) và lưu trữ nội bộ tại hệ thống máy chủ
+                có phân quyền bảo mật chặt chẽ.
               </li>
             </ul>
+
+            <h3 style={{ fontSize: 16, marginTop: 20, marginBottom: 10 }}>3. Quyền của chủ thể dữ liệu &amp; Thời hạn xử lý</h3>
+            <p>
+              Căn cứ <strong>Điều 4 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15</strong> và <strong>Điều 5 Nghị định
+              356/2025/NĐ-CP</strong>, quý khách có các quyền hợp pháp sau:
+            </p>
+            <ul style={{ lineHeight: 1.7, fontSize: 14 }}>
+              <li><strong>Quyền được biết &amp; Quyền đồng ý:</strong> Được thông báo minh bạch về việc thu thập và tự nguyện quyết định cung cấp thông tin.</li>
+              <li><strong>Quyền xem &amp; chỉnh sửa:</strong> Yêu cầu tra cứu hoặc đính chính dữ liệu cá nhân của mình.</li>
+              <li><strong>Quyền yêu cầu xóa hoặc rút lại sự đồng ý:</strong> Quý khách có quyền yêu cầu xóa vĩnh viễn thông tin hoặc rút lại sự đồng ý xử lý dữ liệu.</li>
+            </ul>
+            <div
+              style={{
+                background: "rgba(188, 154, 108, 0.08)",
+                padding: "14px 18px",
+                borderRadius: 6,
+                borderLeft: "3px solid var(--tra-600)",
+                fontSize: 13,
+                lineHeight: 1.6,
+                color: "var(--text-body)",
+                marginTop: 12,
+              }}
+            >
+              <strong>Thời hạn giải quyết yêu cầu:</strong> Khi quý khách gửi yêu cầu qua email <strong>{SITE.email}</strong>{" "}
+              hoặc hotline <strong>{SITE.phone}</strong>, Lam Trà sẽ phản hồi hướng dẫn thủ tục trong vòng <strong>02 ngày làm việc</strong>{" "}
+              và hoàn tất xử lý yêu cầu xóa/sửa dữ liệu trong vòng <strong>10 – 20 ngày làm việc</strong> theo đúng quy định tại Điều 5 Nghị định 356/2025/NĐ-CP.
+            </div>
           </section>
 
           {/* 7. ĐIỀU KHOẢN SỬ DỤNG WEBSITE */}
@@ -718,49 +764,141 @@ export default async function PolicyPage() {
             <h2>Điều khoản sử dụng website</h2>
             <p>
               Khi truy cập và đặt hàng trên website Lam Trà (<strong>{SITE.url}</strong>), quý khách xác nhận
-              đã đồng ý với các điều khoản hoạt động sau:
+              đã đồng ý với các điều khoản giao kết hoạt động sau:
             </p>
 
             <ul style={{ lineHeight: 1.7, fontSize: 14 }}>
               <li>
-                <strong>Xác lập đơn hàng:</strong> Hợp đồng mua bán được xác lập kể từ thời điểm Lam Trà liên
-                hệ xác nhận thành công với bạn qua Zalo, số điện thoại hoặc email.
+                <strong>Xác lập đơn hàng &amp; Giao kết hợp đồng:</strong> Hợp đồng mua bán điện tử được xác lập kể từ thời điểm
+                hệ thống gửi xác nhận đơn hàng thành công kèm mã đơn <code>LTXXXXXX</code> qua website, tin nhắn Zalo hoặc cuộc gọi xác nhận.
               </li>
               <li>
-                <strong>Hủy đơn &amp; Trường hợp bất khả kháng:</strong> Lam Trà bảo lưu quyền từ chối hoặc
-                hủy bỏ đơn hàng nếu sản phẩm trà đặc sản của mùa vụ tạm thời hết búp non hoặc không đạt chất
-                lượng sao tay tiêu chuẩn. Toàn bộ số tiền đã chuyển khoản (nếu có) sẽ được hoàn trả 100% trong
-                vòng 24 giờ.
+                <strong>Chính sách giá &amp; Minh bạch chi phí:</strong> Toàn bộ giá bán hiển thị trên website là giá niêm yết chính thức
+                đã bao gồm thuế giá trị gia tăng (VAT). Phí vận chuyển và chi phí dịch vụ đóng gói (nếu có) được hiển thị rõ ràng trước khi quý khách bấm đặt mua.
               </li>
               <li>
-                <strong>Bản quyền nội dung:</strong> Toàn bộ hình ảnh đồi chè, bao bì, bài viết chia sẻ về văn
-                hóa Trà đàm và logo Lam Trà thuộc quyền sở hữu trí tuệ của Lam Trà. Nghiêm cấm sao chép, sử
-                dụng lại cho mục đích thương mại khi chưa có sự đồng ý bằng văn bản.
+                <strong>Trường hợp bất khả kháng &amp; Hủy đơn:</strong> Lam Trà bảo lưu quyền liên hệ trao đổi hủy hoặc đổi ngày giao hàng
+                nếu thời tiết sương muối/mưa bão khiến búp chè tươi không đạt tiêu chuẩn sao tay cổ truyền. Mọi khoản thanh toán trước sẽ được hoàn trả 100% trong 24 giờ.
               </li>
               <li>
-                <strong>Tiếp nhận khiếu nại:</strong> Mọi phản hồi về chất lượng trà hoặc thái độ phục vụ của
-                nhân viên giao nhận sẽ được tiếp nhận và phản hồi chính thức trong vòng 24 giờ làm việc.
+                <strong>Quyền sở hữu trí tuệ:</strong> Toàn bộ nhãn hiệu, hình ảnh đồi chè, quy trình sao tay và nội dung bài viết Trà đàm
+                thuộc quyền sở hữu của Lam Trà và Hợp tác xã đối tác. Nghiêm cấm sao chép cho mục đích thương mại khi chưa có sự chấp thuận bằng văn bản.
               </li>
             </ul>
 
             <div
               style={{
                 marginTop: 28,
-                padding: "16px 20px",
+                padding: "20px 24px",
                 background: "var(--surface-card)",
                 borderRadius: 8,
                 border: "1px solid var(--border-hairline)",
                 fontSize: 13,
-                lineHeight: 1.6,
-                color: "var(--text-muted)",
+                lineHeight: 1.7,
+                color: "var(--text-body)",
               }}
             >
-              <strong style={{ color: "var(--text-strong)" }}>{SITE.legal.company}</strong>
-              <br />
-              {SITE.legal.notice}
-              <br />
-              Địa chỉ xưởng: {SITE.address}
+              <div style={{ fontWeight: 700, fontSize: 15, color: "var(--text-strong)", marginBottom: 6 }}>
+                Thông tin chủ sở hữu &amp; Đơn vị vận hành website:
+              </div>
+              <div><strong>Tên đơn vị:</strong> {SITE.legal.company}</div>
+              <div><strong>Mã số HTX / Mã số thuế:</strong> {SITE.legal.taxCode} do UBND thành phố Thái Nguyên cấp ngày 13/07/2023</div>
+              <div><strong>Người đại diện theo pháp luật:</strong> {SITE.legal.representative}</div>
+              <div><strong>Địa chỉ cơ sở chế biến:</strong> {SITE.address}</div>
+              <div><strong>Hotline / Zalo:</strong> {SITE.phone} · <strong>Email:</strong> {SITE.email}</div>
+              <div><strong>Tiêu chuẩn chất lượng:</strong> Chứng nhận VietGAP số DVCL-VG-TT-24-19-22 · Giấy chứng nhận ATTP số 19/2023/NNPTNT-TNg</div>
             </div>
+          </section>
+
+          {/* 8. CƠ CHẾ TIẾP NHẬN & GIẢI QUYẾT KHIẾU NẠI */}
+          <section id="khieu-nai" style={{ scrollMarginTop: 110, marginBottom: 56 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+              <span
+                style={{
+                  display: "inline-flex",
+                  padding: "4px 8px",
+                  background: "var(--tra-100)",
+                  color: "var(--tra-800)",
+                  borderRadius: 4,
+                  fontSize: 12,
+                  fontWeight: 600,
+                }}
+              >
+                Quy định Điều 31 Luật BVQLNTD
+              </span>
+            </div>
+            <h2>Cơ chế tiếp nhận &amp; Giải quyết khiếu nại, tranh chấp</h2>
+            <p>
+              Căn cứ <strong>Điều 31 Luật Bảo vệ quyền lợi người tiêu dùng số 19/2023/QH15</strong> và{" "}
+              <strong>Điều 11 Luật Thương mại điện tử số 122/2025/QH15</strong>, Lam Trà cam kết tiếp nhận và giải quyết
+              mọi phản hồi, khiếu nại của khách hàng theo quy trình 3 bước rõ ràng:
+            </p>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                gap: 16,
+                marginBottom: 24,
+              }}
+            >
+              <div
+                style={{
+                  padding: "18px",
+                  borderRadius: 8,
+                  background: "var(--surface-card)",
+                  border: "1px solid var(--border-hairline)",
+                }}
+              >
+                <div style={{ fontWeight: 700, color: "var(--tra-800)", marginBottom: 6 }}>
+                  Bước 1: Tiếp nhận phản ánh
+                </div>
+                <div style={{ fontSize: 13, color: "var(--text-body)", lineHeight: 1.6 }}>
+                  Khách hàng gửi khiếu nại qua Hotline/Zalo <strong>{SITE.phone}</strong> hoặc email{" "}
+                  <strong>{SITE.email}</strong>, cung cấp mã đơn hàng <code>LTXXXXXX</code> cùng hình ảnh/video phản ánh tình trạng sản phẩm.
+                </div>
+              </div>
+
+              <div
+                style={{
+                  padding: "18px",
+                  borderRadius: 8,
+                  background: "var(--surface-card)",
+                  border: "1px solid var(--border-hairline)",
+                }}
+              >
+                <div style={{ fontWeight: 700, color: "var(--tra-800)", marginBottom: 6 }}>
+                  Bước 2: Xác minh &amp; Phản hồi
+                </div>
+                <div style={{ fontSize: 13, color: "var(--text-body)", lineHeight: 1.6 }}>
+                  Lam Trà có trách nhiệm thông báo đã tiếp nhận và đưa ra phương án xử lý thỏa đáng cho quý khách trong thời hạn{" "}
+                  <strong>tối đa 03 ngày làm việc</strong> kể từ thời điểm nhận đủ thông tin.
+                </div>
+              </div>
+
+              <div
+                style={{
+                  padding: "18px",
+                  borderRadius: 8,
+                  background: "var(--surface-card)",
+                  border: "1px solid var(--border-hairline)",
+                }}
+              >
+                <div style={{ fontWeight: 700, color: "var(--tra-800)", marginBottom: 6 }}>
+                  Bước 3: Giải quyết &amp; Đền bù
+                </div>
+                <div style={{ fontSize: 13, color: "var(--text-body)", lineHeight: 1.6 }}>
+                  Đổi ngay sản phẩm mới giao tận tay hoặc hoàn tiền 100% qua tài khoản ngân hàng trong vòng 24 – 48 giờ làm việc.
+                  Toàn bộ chi phí vận chuyển phát sinh do Lam Trà chi trả 100%.
+                </div>
+              </div>
+            </div>
+
+            <p style={{ fontSize: 13.5, color: "var(--text-muted)", lineHeight: 1.65 }}>
+              Lam Trà luôn ưu tiên giải quyết khiếu nại trên tinh thần thương lượng, hòa giải và lắng nghe người thưởng trà.
+              Trong trường hợp không thể thống nhất qua hòa giải, tranh chấp sẽ được đưa ra cơ quan Nhà nước có thẩm quyền hoặc
+              Tòa án nhân dân có thẩm quyền tại tỉnh Thái Nguyên để giải quyết theo đúng quy định pháp luật Việt Nam.
+            </p>
           </section>
         </div>
       </div>

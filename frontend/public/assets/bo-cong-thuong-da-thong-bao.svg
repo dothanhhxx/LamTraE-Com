@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 60" width="160" height="60" fill="none">
+  <!-- Rounded container -->
+  <rect x="1" y="1" width="158" height="58" rx="8" fill="#FFFFFF" stroke="#005BAA" stroke-width="2"/>
+  
+  <!-- Left emblem circle -->
+  <circle cx="30" cy="30" r="21" fill="#D32F2F"/>
+  <circle cx="30" cy="30" r="19" fill="#005BAA"/>
+  
+  <!-- Center Star and Cog / Wheat ornament -->
+  <polygon points="30,17 33,25 41,25 35,30 37,38 30,33 23,38 25,30 19,25 27,25" fill="#FFD700"/>
+  <circle cx="30" cy="30" r="4.5" fill="#D32F2F"/>
+  <polygon points="30,28 31.5,32 35.5,32 32.5,34.5 33.5,38 30,36 26.5,38 27.5,34.5 24.5,32 28.5,32" fill="#FFD700"/>
+  
+  <!-- Ribbon base -->
+  <path d="M18 40 Q30 46 42 40 L44 44 Q30 49 16 44 Z" fill="#FFD700"/>
+  
+  <!-- Text on Right -->
+  <text x="58" y="24" font-family="'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="800" fill="#005BAA" letter-spacing="0.04em">ĐÃ THÔNG BÁO</text>
+  <text x="58" y="42" font-family="'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="900" fill="#D32F2F" letter-spacing="0.03em">BỘ CÔNG THƯƠNG</text>
+  
+  <!-- Tiny legal code -->
+  <text x="59" y="52" font-family="'Segoe UI', Roboto, sans-serif" font-size="7.5" font-weight="600" fill="#666666" letter-spacing="0.02em">online.gov.vn</text>
+</svg>

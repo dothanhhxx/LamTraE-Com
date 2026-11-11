@@ -24,12 +24,15 @@ export const SITE = {
   },
   /** Thời gian chủ shop đối soát chuyển khoản và xác nhận đơn */
   confirmWithin: "30 phút",
-  /** Thông tin pháp lý ở chân trang và trang chính sách. Đây là dự án sinh viên nên chưa có giấy phép/mã số thuế. */
+  /** Thông tin pháp lý ở chân trang và trang chính sách theo quy định TMĐT Việt Nam */
   legal: {
-    company: "Lam Trà",
-    notice: "Student project – E-Business, Hanoi University",
+    company: "Hợp tác xã Chè Thanh Huyền Trà (Lam Trà)",
+    taxCode: "4601607685",
+    representative: "Phạm Thị Thu Huyền",
+    regNotice: "Đăng ký HTX số 4601607685 do UBND TP. Thái Nguyên cấp ngày 13/07/2023",
+    notice: "Chứng nhận VietGAP số DVCL-VG-TT-24-19-22 · ATTP số 19/2023/NNPTNT-TNg",
     /** Link hồ sơ trên online.gov.vn sau khi được duyệt thông báo website */
-    moitUrl: "",
+    moitUrl: "http://online.gov.vn",
   },
 };
 
