@@ -404,10 +404,10 @@ export function MessageManager() {
                           <strong style={{ color: "#0D2219" }}>{m.date}</strong>
                         </div>
                       )}
-                      {m.product && (
+                      {(m.subject || m.product) && (
                         <div>
-                          <span style={{ color: "#6B7280" }}>Sản phẩm: </span>
-                          <strong style={{ color: "#0D2219" }}>{m.product}</strong>
+                          <span style={{ color: "#6B7280" }}>Chủ đề / Sản phẩm: </span>
+                          <strong style={{ color: "#0D2219" }}>{m.subject || m.product}</strong>
                         </div>
                       )}
                       {m.stars && (

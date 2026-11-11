@@ -55,6 +55,8 @@ function MessageForm({ type, fields, submitLabel, done }: { type: string; fields
   );
 }
 
+export { ConsultationForm } from "./ConsultationForm";
+
 export function ContactForm() {
   return (
     <MessageForm
