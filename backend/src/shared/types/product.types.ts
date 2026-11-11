@@ -39,6 +39,10 @@ export type Product = {
   addedAt: string;
   origin: string;
   ph: string;
+  /** Ảnh hộp phổ thông, hiện khi khách chọn hạng Tiêu chuẩn */
+  standardPh?: string;
+  /** Nhãn quy cách cho sản phẩm giá cố định, ví dụ "Hộp 20 túi lọc" */
+  unit?: string;
   gallery: { ph: string; alt: string }[];
   desc: string;
   purposes: Purpose[];

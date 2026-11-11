@@ -28,7 +28,7 @@ export function priceOf(p: Product, size = DEFAULT_SIZE, grade = DEFAULT_GRADE):
 }
 
 export function variantLabel(p: Product, size = DEFAULT_SIZE, grade = DEFAULT_GRADE): string {
-  return p.fixed ? "Hộp 3 món" : `${size}g · ${GRADE_LABEL[grade] ?? "Hạng " + grade}`;
+  return p.fixed ? p.unit ?? "Hộp 3 món" : `${size}g · ${GRADE_LABEL[grade] ?? "Hạng " + grade}`;
 }
 
 export const variantKey = (p: Product, size: string, grade: string) => (p.fixed ? "-|-" : `${size}|${grade}`);

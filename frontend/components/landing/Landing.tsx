@@ -225,7 +225,7 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
                 <div style={{ position: "relative", flex: 1, alignSelf: isDesktop ? "stretch" : "flex-start", opacity: fading ? 0 : 1, transition: "opacity 200ms cubic-bezier(.2,.7,.2,1)" }}>
                   <div style={{ position: "relative", height: "100%", minHeight: 420, borderRadius: 6, overflow: "hidden", background: "var(--surface-photo)" }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={photo(tea.ph)} alt={tea.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                    <img src={photo(grade === "2" && tea.standardPh ? tea.standardPh : tea.ph)} alt={tea.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                   </div>
                   <span style={{ position: "absolute", left: 14, top: 14, padding: "6px 12px", borderRadius: 999, background: "rgba(252,248,241,.88)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", fontSize: 12, color: "var(--text-strong)", whiteSpace: "nowrap" }}>
                     {tea.origin}
@@ -261,7 +261,7 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
                 <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--text-body)", textWrap: "pretty" }}>{tea.desc}</p>
                 {tea.fixed ? (
                   <div style={{ padding: "14px 16px", border: "1px solid var(--border-hairline)", borderRadius: 6, background: "var(--bg-page)", fontSize: 13, lineHeight: 1.55, color: "var(--text-body)" }}>
-                    Bộ quà gói sẵn trong hộp sơn mài. Bạn ghi lời nhắn ở bước đặt hàng, Lam Trà sẽ viết tay vào thiệp.
+                    {tea.category === "qua-tang" ? "Bộ quà gói sẵn, kèm thiệp. Bạn ghi lời nhắn ở bước đặt hàng, Lam Trà sẽ viết tay vào thiệp." : `Quy cách: ${tea.unit ?? "1 hộp"}.`}
                   </div>
                 ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>

@@ -32,6 +32,9 @@ export class ProductRepository {
       } else if (merged[idx].deleted) {
         // Khôi phục lại nếu bị xóa nhầm
         merged[idx] = { ...def, active: true, deleted: false };
+      } else if (def.standardPh && !merged[idx].standardPh) {
+        // Bổ sung ảnh hộp phổ thông (hạng Tiêu chuẩn), giữ nguyên giá/tồn kho đã chỉnh
+        merged[idx] = { ...merged[idx], standardPh: def.standardPh };
       }
     }
 

@@ -11,9 +11,15 @@ import { formatVND } from "@/components/ds";
 import ProductReviews from "./ProductReviews";
 import { TeaGrid } from "./TeaCard";
 
-function Gallery({ p }: { p: Product }) {
-  const shots = [{ ph: p.ph, alt: p.name }, ...p.gallery];
-  const [i, setI] = useState(0);
+/** Ảnh chính (Premium), ảnh hộp phổ thông (Tiêu chuẩn) nếu có, rồi các góc chụp khác. */
+const shotsOf = (p: Product) => [
+  { ph: p.ph, alt: p.name },
+  ...(p.standardPh ? [{ ph: p.standardPh, alt: `${p.name} hạng Tiêu chuẩn, hộp giấy` }] : []),
+  ...p.gallery,
+];
+
+function Gallery({ p, i, setI }: { p: Product; i: number; setI: (i: number) => void }) {
+  const shots = shotsOf(p);
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       <ProductImage src={photo(shots[i].ph)} alt={shots[i].alt} ratio="4 / 5" />
@@ -51,6 +57,11 @@ export default function ProductDetail({ product: p }: { product: Product }) {
   const { add, isWished, toggleWish } = useCart();
   const [size, setSize] = useState(DEFAULT_SIZE);
   const [grade, setGrade] = useState(DEFAULT_GRADE);
+  const [shot, setShot] = useState(0);
+  const pickGrade = (g: string) => {
+    setGrade(g);
+    if (p.standardPh) setShot(g === "2" ? 1 : 0);
+  };
   const [qty, setQty] = useState(1);
   const unit = priceOf(p, size, grade);
   const onDefault = size === DEFAULT_SIZE && grade === DEFAULT_GRADE;
@@ -66,7 +77,7 @@ export default function ProductDetail({ product: p }: { product: Product }) {
     <div className="lt-container" style={{ paddingTop: 16, paddingBottom: 80 }}>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "28px clamp(28px,4vw,56px)", alignItems: "flex-start" }}>
         <div style={{ flex: "1 1 360px", minWidth: 0, maxWidth: 620 }}>
-          <Gallery p={p} />
+          <Gallery p={p} i={shot} setI={setShot} />
         </div>
 
         <div style={{ flex: "1 1 340px", minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
@@ -91,13 +102,15 @@ export default function ProductDetail({ product: p }: { product: Product }) {
           <p style={{ margin: 0, fontSize: 15, lineHeight: 1.65, color: "var(--text-body)" }}>{p.desc}</p>
 
           {p.fixed ? (
-            <div style={{ padding: "14px 16px", border: "1px solid var(--border-hairline)", borderRadius: 6, background: "var(--surface-card)", fontSize: 13, lineHeight: 1.55 }}>
-              Bộ quà gói sẵn trong hộp sơn mài. Bạn ghi lời nhắn ở bước đặt hàng, Lam Trà sẽ viết tay vào thiệp.
-            </div>
+            p.category === "qua-tang" && (
+              <div style={{ padding: "14px 16px", border: "1px solid var(--border-hairline)", borderRadius: 6, background: "var(--surface-card)", fontSize: 13, lineHeight: 1.55 }}>
+                Bộ quà gói sẵn, kèm thiệp. Bạn ghi lời nhắn ở bước đặt hàng, Lam Trà sẽ viết tay vào thiệp.
+              </div>
+            )
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <OptionPicker label="Khối lượng" options={sizeOpts} value={size} onChange={setSize} />
-              <OptionPicker label="Phân hạng" options={gradeOpts} value={grade} onChange={setGrade} />
+              <OptionPicker label="Phân hạng" options={gradeOpts} value={grade} onChange={pickGrade} />
             </div>
           )}
 
