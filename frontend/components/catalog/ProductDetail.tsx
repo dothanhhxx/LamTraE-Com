@@ -11,18 +11,68 @@ import { formatVND } from "@/components/ds";
 import ProductReviews from "./ProductReviews";
 import { TeaGrid } from "./TeaCard";
 
-/** Ảnh chính (Premium), ảnh hộp phổ thông (Tiêu chuẩn) nếu có, rồi các góc chụp khác. */
-const shotsOf = (p: Product) => [
-  { ph: p.ph, alt: p.name },
-  ...(p.standardPh ? [{ ph: p.standardPh, alt: `${p.name} hạng Tiêu chuẩn, hộp giấy` }] : []),
-  ...p.gallery,
-];
+/** Lấy danh sách ảnh hiển thị theo phân hạng đang chọn (Premium hoặc Tiêu chuẩn) */
+const shotsOf = (p: Product, grade: string) => {
+  if (grade === "2") {
+    // Phân hạng Tiêu chuẩn
+    const stdShots: { ph: string; alt: string }[] = [];
+    if (p.standardPh) {
+      stdShots.push({ ph: p.standardPh, alt: `${p.name} · Hạng Tiêu chuẩn (Hộp phổ thông)` });
+    }
+    if (Array.isArray(p.standardGallery) && p.standardGallery.length > 0) {
+      stdShots.push(...p.standardGallery);
+    }
 
-function Gallery({ p, i, setI }: { p: Product; i: number; setI: (i: number) => void }) {
-  const shots = shotsOf(p);
+    if (stdShots.length > 0) {
+      const seen = new Set(stdShots.map((s) => s.ph));
+      const sharedGallery = (p.gallery || []).filter((g) => !seen.has(g.ph));
+      return [...stdShots, ...sharedGallery];
+    }
+  }
+
+  // Phân hạng Premium (hoặc mặc định)
+  return [
+    { ph: p.ph, alt: `${p.name} · Hạng Premium` },
+    ...(p.gallery || []),
+  ];
+};
+
+function Gallery({ p, grade, i, setI }: { p: Product; grade: string; i: number; setI: (i: number) => void }) {
+  const shots = shotsOf(p, grade);
+  const activeIndex = Math.min(i, Math.max(0, shots.length - 1));
+  const activeShot = shots[activeIndex] || { ph: p.ph, alt: p.name };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      <ProductImage src={photo(shots[i].ph)} alt={shots[i].alt} ratio="4 / 5" />
+      <div style={{ position: "relative" }}>
+        <ProductImage src={photo(activeShot.ph)} alt={activeShot.alt} ratio="4 / 5" />
+        {/* Huy hiệu phân hạng tinh tế trên ảnh sản phẩm */}
+        {!p.fixed && (
+          <div style={{ position: "absolute", top: 12, left: 12, zIndex: 2 }}>
+            {grade === "2" ? (
+              <span style={{
+                display: "inline-flex", alignItems: "center", gap: 5,
+                padding: "4px 10px", borderRadius: 999,
+                background: "rgba(25, 36, 26, 0.88)", backdropFilter: "blur(4px)",
+                color: "#F7F0E3", fontSize: 11.5, fontWeight: 600,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.2)", border: "1px solid rgba(223, 190, 137, 0.4)"
+              }}>
+                🏷️ Hạng Tiêu chuẩn
+              </span>
+            ) : (
+              <span style={{
+                display: "inline-flex", alignItems: "center", gap: 5,
+                padding: "4px 10px", borderRadius: 999,
+                background: "rgba(25, 36, 26, 0.88)", backdropFilter: "blur(4px)",
+                color: "#DFBE89", fontSize: 11.5, fontWeight: 600,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.2)", border: "1px solid rgba(223, 190, 137, 0.4)"
+              }}>
+                👑 Hạng Premium
+              </span>
+            )}
+          </div>
+        )}
+      </div>
       {shots.length > 1 && (
         <div role="tablist" aria-label="Ảnh sản phẩm" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
           {shots.map((s, j) => (
@@ -30,12 +80,16 @@ function Gallery({ p, i, setI }: { p: Product; i: number; setI: (i: number) => v
               key={s.ph + j}
               type="button"
               role="tab"
-              aria-selected={i === j}
+              aria-selected={activeIndex === j}
               aria-label={s.alt}
               onClick={() => setI(j)}
               style={{
-                width: 72, height: 72, padding: 0, borderRadius: 4, cursor: "pointer", backgroundImage: `url('${photo(s.ph)}')`, backgroundSize: "cover", backgroundPosition: "center",
-                border: i === j ? "1.5px solid var(--text-strong)" : "1px solid var(--border-hairline)", opacity: i === j ? 1 : 0.75,
+                width: 72, height: 72, padding: 0, borderRadius: 6, cursor: "pointer",
+                backgroundImage: `url('${photo(s.ph)}')`, backgroundSize: "cover", backgroundPosition: "center",
+                border: activeIndex === j ? "2px solid var(--text-strong)" : "1px solid var(--border-hairline)",
+                opacity: activeIndex === j ? 1 : 0.75,
+                transform: activeIndex === j ? "scale(1.04)" : "none",
+                transition: "all 140ms ease",
               }}
             />
           ))}
@@ -60,7 +114,7 @@ export default function ProductDetail({ product: p }: { product: Product }) {
   const [shot, setShot] = useState(0);
   const pickGrade = (g: string) => {
     setGrade(g);
-    if (p.standardPh) setShot(g === "2" ? 1 : 0);
+    setShot(0);
   };
   const [qty, setQty] = useState(1);
   const unit = priceOf(p, size, grade);
@@ -77,7 +131,7 @@ export default function ProductDetail({ product: p }: { product: Product }) {
     <div className="lt-container" style={{ paddingTop: 16, paddingBottom: 80 }}>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "28px clamp(28px,4vw,56px)", alignItems: "flex-start" }}>
         <div style={{ flex: "1 1 360px", minWidth: 0, maxWidth: 620 }}>
-          <Gallery p={p} i={shot} setI={setShot} />
+          <Gallery p={p} grade={grade} i={shot} setI={setShot} />
         </div>
 
         <div style={{ flex: "1 1 340px", minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
