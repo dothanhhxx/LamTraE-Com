@@ -3706,21 +3706,23 @@ button:hover .lt-thumb-zoom-overlay,
   }
 
   .lt-hero-poster {
+    min-height: auto;
     background:
       linear-gradient(180deg,
-        rgba(8, 24, 16, 0.84) 0%,
-        rgba(8, 24, 16, 0.62) 34%,
-        rgba(8, 24, 16, 0.70) 68%,
+        rgba(8, 24, 16, 0.90) 0%,
+        rgba(8, 24, 16, 0.74) 42%,
+        rgba(8, 24, 16, 0.65) 75%,
         rgba(8, 24, 16, 0.94) 100%),
       url("/assets/bg/hero-poster.webp") 67% center / cover no-repeat,
       #0E261B;
   }
 
   .lt-hero-poster .lt-story-open-inner {
-    padding-top: clamp(28px, 6vw, 44px) !important;
-    padding-bottom: clamp(32px, 6vw, 48px) !important;
-    min-height: clamp(580px, 90vh, 740px) !important;
-    justify-content: center !important;
+    padding-top: clamp(16px, 4vw, 24px) !important;
+    padding-bottom: clamp(20px, 5vw, 28px) !important;
+    min-height: auto !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
   }
 
   .lt-hero-poster .lt-story-open-down {
@@ -3788,6 +3790,21 @@ button:hover .lt-thumb-zoom-overlay,
   transform: translateY(-1px);
 }
 
+/* Khối nút hành động trên Hero */
+.lt-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  margin-top: 10px;
+}
+
+.lt-hero-actions-sec {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
 /* Thanh điểm tin cậy (Trust badges) trên Hero */
 .lt-hero-trust-bar {
   display: flex;
@@ -3844,43 +3861,135 @@ button:hover .lt-thumb-zoom-overlay,
 }
 
 @media (max-width: 719px) {
+  .lt-story-open-eyebrow {
+    font-size: clamp(10.5px, 2.7vw, 11.5px);
+    letter-spacing: 0.12em;
+    gap: 8px;
+    line-height: 1.35;
+  }
+
+  .lt-story-open-eyebrow::after {
+    width: 32px;
+    opacity: 0.6;
+  }
+
+  .lt-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    width: 100%;
+    margin-top: 6px;
+  }
+
+  .lt-hero-actions .lt-hero-cta-btn {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 24px;
+    font-size: 14.5px;
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+    box-shadow: 0 6px 18px -4px rgba(212, 168, 91, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
+  }
+
+  .lt-hero-actions-sec {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .lt-hero-actions-sec .lt-hero-sec-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 0 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    border-radius: var(--radius-pill);
+  }
+
   .lt-hero-trust-bar {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px 14px;
-    margin-top: 22px;
+    margin-top: 14px;
     width: 100%;
+    padding: 0;
+    background: transparent;
+    border: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
   }
 
   .lt-hero-trust-item {
-    padding-right: 0;
-    margin-right: 0;
-    border-right: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
     gap: 10px;
+    padding: 0;
+    margin: 0;
+    border-right: none;
   }
 
   .lt-hero-trust-item:last-child {
+    border-right: none;
     grid-column: 1 / -1;
   }
 
   .lt-hero-trust-icon {
-    width: 36px;
-    height: 36px;
-    border-color: rgba(217, 191, 148, 0.75);
-    background: rgba(10, 28, 19, 0.65);
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 999px;
+    border: 1.5px solid rgba(217, 191, 148, 0.7);
+    background: rgba(14, 38, 27, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: var(--tra-300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lt-hero-trust-icon svg {
+    width: 15px;
+    height: 15px;
   }
 
   .lt-hero-trust-text {
-    font-size: 12px;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 11.5px;
+    line-height: 1.3;
   }
 
   .lt-hero-trust-text strong {
+    font-size: 12px;
+    font-weight: 600;
     color: #FFFFFF;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
   }
 
   .lt-hero-trust-text span {
+    font-size: 11px;
     color: var(--tra-300);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  }
+
+  .lt-origin {
+    padding: clamp(32px, 6vw, 44px) 0;
+  }
+
+  .lt-origin-grid {
+    gap: 22px;
   }
 }
 

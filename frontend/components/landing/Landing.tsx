@@ -94,10 +94,10 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
         <div
           className="lt-container lt-story-open-inner"
           style={{
-            minHeight: mobile ? "clamp(580px, 90vh, 740px)" : "min(760px, 84vh, 46vw)",
-            justifyContent: "center",
-            paddingTop: mobile ? "clamp(28px, 6vw, 44px)" : 64,
-            paddingBottom: mobile ? "clamp(32px, 6vw, 48px)" : 64,
+            minHeight: mobile ? "auto" : "min(760px, 84vh, 46vw)",
+            justifyContent: mobile ? "flex-start" : "center",
+            paddingTop: mobile ? "clamp(16px, 4vw, 24px)" : 64,
+            paddingBottom: mobile ? "clamp(20px, 5vw, 28px)" : 64,
             opacity: loaded ? 1 : 0,
             transform: `translateY(${loaded ? "0px" : "8px"})`,
             transition: "opacity 600ms cubic-bezier(.2,.7,.2,1),transform 600ms cubic-bezier(.2,.7,.2,1)",
@@ -108,8 +108,8 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
             id="trang-chu-title"
             style={{
               margin: 0,
-              fontSize: mobile ? "clamp(32px, 8.2vw, 46px)" : "clamp(40px, 4.8vw, 62px)",
-              lineHeight: 1.15,
+              fontSize: mobile ? "clamp(28px, 7.2vw, 36px)" : "clamp(40px, 4.8vw, 62px)",
+              lineHeight: 1.16,
               fontWeight: 700,
               letterSpacing: "0.01em",
               fontFamily: "var(--font-display)",
@@ -126,27 +126,29 @@ export default function Landing({ products }: { products?: Product[] } = {}) {
             style={{
               maxWidth: 540,
               margin: 0,
-              fontSize: mobile ? 14.5 : 16,
-              lineHeight: 1.6,
+              fontSize: mobile ? 13.5 : 16,
+              lineHeight: 1.55,
               color: "var(--reu-100)",
               textShadow: "0 1px 6px rgba(0,0,0,0.85)",
             }}
           >
             Từ một ấm trà mỗi sáng bên đồi chè Tân Cương, đến món quà trao tay khắp mọi miền. Búp chè hái sáng sớm, sao tay trên chảo gang, ghi rõ khối lượng và phân hạng trong từng gói trà.
           </p>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: mobile ? "10px 12px" : "12px 24px", marginTop: 10 }}>
+          <div className="lt-hero-actions">
             <a href="#tra-noi-bat" onClick={go(null)} className="lt-hero-cta-btn">
               <span>Chọn trà ngay</span>
               <Icon name="arrow-right" size={17} />
             </a>
-            <a href="#khoi-nguon" className={mobile ? "lt-hero-sec-link" : "lt-gift-link"}>
-              <Icon name="book-open" size={17} />
-              <span>Đọc câu chuyện</span>
-            </a>
-            <a href="#tra-noi-bat" onClick={go(TEAS.findIndex((t) => t.category === "qua-tang"))} className={mobile ? "lt-hero-sec-link" : "lt-gift-link"}>
-              <Icon name="gift" size={17} />
-              <span>Xem hộp quà biếu</span>
-            </a>
+            <div className="lt-hero-actions-sec">
+              <a href="#khoi-nguon" className={mobile ? "lt-hero-sec-link" : "lt-gift-link"}>
+                <Icon name="book-open" size={16} />
+                <span>Đọc câu chuyện</span>
+              </a>
+              <a href="#tra-noi-bat" onClick={go(TEAS.findIndex((t) => t.category === "qua-tang"))} className={mobile ? "lt-hero-sec-link" : "lt-gift-link"}>
+                <Icon name="gift" size={16} />
+                <span>Xem hộp quà biếu</span>
+              </a>
+            </div>
           </div>
           <div className="lt-hero-trust-bar">
             {trust.map((t) => (
