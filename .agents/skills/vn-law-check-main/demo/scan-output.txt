@@ -1,0 +1,28 @@
+Quét: demo/site
+
+[có]    FORM
+          index.html:41:<form 
+          index.html:43:type="email"
+[có]    TRACKING
+          index.html:7:googletagmanager.com
+          index.html:8:gtag(
+          index.html:10:connect.facebook.net
+[có]    COMMERCE
+          index.html:17:/cart"
+          index.html:17:Giỏ hàng
+          index.html:30:add-to-cart
+[có]    AUTH
+          index.html:18:/login
+          package.json:4:next-auth
+[không] MARKETPLACE
+[có]    AI
+          api/chat.js:4:api.openai.com
+[có]    FOREIGN_HOST
+          api/subscribe.js:1:firebase/firestore
+          package.json:4:"firebase"
+
+Gợi ý: mức 2, bán hàng/TMĐT. Áp dụng 01 + 02 + 04 (thêm 05/06 nếu có quảng cáo, hợp đồng điện tử)
+        + có dấu hiệu AI → thêm 07-ai-transparency
+        + có dấu hiệu host/dịch vụ nước ngoài → xem 01 mục D nếu có lưu dữ liệu cá nhân
+
+LEVEL=2 AI=yes FOREIGN_HOST=yes

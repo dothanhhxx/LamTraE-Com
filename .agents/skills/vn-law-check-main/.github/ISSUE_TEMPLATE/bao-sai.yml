@@ -1,0 +1,48 @@
+name: Báo nội dung sai
+description: Số điều sai, văn bản hết hiệu lực, mức phạt không khớp, diễn giải chưa chuẩn
+title: "[Sai] "
+labels: ["sai-noi-dung"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cảm ơn đã vào bắt lỗi giúp 🙏 Không cần biết code, chỉ ra chỗ sai và kèm link văn bản là đủ.
+  - type: input
+    id: vi-tri
+    attributes:
+      label: Sai ở đâu?
+      description: Tên file và mục, ví dụ "references/01-personal-data-protection.md, mục B"
+      placeholder: references/...
+    validations:
+      required: true
+  - type: textarea
+    id: hien-tai
+    attributes:
+      label: Repo đang ghi gì?
+      description: Dán nguyên câu đang sai
+    validations:
+      required: true
+  - type: textarea
+    id: dung
+    attributes:
+      label: Đúng phải là gì?
+    validations:
+      required: true
+  - type: input
+    id: nguon
+    attributes:
+      label: Link văn bản gốc
+      description: thuvienphapluat.vn, vbpl.vn, Công báo, hoặc bài phân tích của công ty luật
+      placeholder: https://
+    validations:
+      required: true
+  - type: dropdown
+    id: vai-tro
+    attributes:
+      label: Bạn là
+      options:
+        - Dev / người làm sản phẩm
+        - Luật sư / làm pháp chế
+        - Khác
+    validations:
+      required: false

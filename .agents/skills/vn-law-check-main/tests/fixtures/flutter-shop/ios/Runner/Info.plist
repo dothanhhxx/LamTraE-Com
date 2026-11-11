@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0"><dict>
+  <key>NSCameraUsageDescription</key><string>Chụp ảnh sản phẩm</string>
+  <key>NSLocationWhenInUseUsageDescription</key><string>Tìm cửa hàng gần bạn</string>
+</dict></plist>

@@ -1,0 +1,1 @@
+{ "name": "shop-ca-phe", "dependencies": { "next": "15.0.0", "next-auth": "5.0.0" } }

@@ -1,0 +1,7 @@
+name: cho_rau_sach
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_analytics: 11.0.0
+  google_mobile_ads: 5.1.0
+  image_picker: 1.1.0

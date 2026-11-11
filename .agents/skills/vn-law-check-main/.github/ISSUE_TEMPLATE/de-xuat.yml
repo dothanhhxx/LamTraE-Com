@@ -1,0 +1,26 @@
+name: Đề xuất bổ sung
+description: Luật/nghị định mới, lỗi hay gặp chưa có trong checklist, loại website chưa được tính tới
+title: "[Bổ sung] "
+labels: ["bo-sung"]
+body:
+  - type: textarea
+    id: noi-dung
+    attributes:
+      label: Cần bổ sung gì?
+      description: Ví dụ "Checklist chưa có quy định về website giáo dục trực tuyến"
+    validations:
+      required: true
+  - type: textarea
+    id: vi-du
+    attributes:
+      label: Ví dụ thực tế
+      description: Một tình huống trên website mà checklist hiện tại bỏ sót
+    validations:
+      required: false
+  - type: input
+    id: nguon
+    attributes:
+      label: Văn bản pháp luật liên quan (nếu biết)
+      placeholder: Số hiệu văn bản hoặc link
+    validations:
+      required: false

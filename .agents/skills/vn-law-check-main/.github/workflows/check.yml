@@ -1,0 +1,26 @@
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Các bản copy khớp với nguồn gốc
+        run: bash tools/sync.sh --check
+
+      - name: Script quét phân loại đúng các site mẫu
+        run: bash tests/run.sh
+
+      - name: SKILL.md frontmatter is valid YAML
+        run: |
+          python3 -c 'import yaml' 2>/dev/null || pip install --quiet pyyaml
+          python3 -c "import yaml; d = yaml.safe_load(open('SKILL.md', encoding='utf-8').read().split('---')[1]); assert d['name'] and d['description']"
+
+      - name: JSON của plugin hợp lệ
+        run: |
+          python3 -c "import json; [json.load(open(f)) for f in ['.claude-plugin/marketplace.json', 'plugins/vn-law-check/.claude-plugin/plugin.json']]"

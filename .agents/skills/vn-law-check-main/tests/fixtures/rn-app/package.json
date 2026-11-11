@@ -1,0 +1,9 @@
+{
+  "name": "hen-ho-cafe",
+  "dependencies": {
+    "expo": "52.0.0",
+    "react-native": "0.76.0",
+    "@react-native-firebase/analytics": "21.0.0",
+    "react-native-fbsdk-next": "13.0.0"
+  }
+}

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Studio ảnh</title>
+</head>
+<body>
+  <h1>Studio ảnh cưới</h1>
+  <form action="https://formspree.io/f/demo" method="post">
+    <input type="email" name="email" placeholder="Email">
+    <label><input type="checkbox" name="consent" required> Tôi đồng ý theo chính sách bảo mật</label>
+    <button>Gửi</button>
+  </form>
+  <div id="cookie-banner" hidden>
+    <button data-choice="reject">Từ chối</button>
+    <button data-choice="accept">Đồng ý</button>
+  </div>
+  <script>
+    const KEY = 'cookie_consent_v1';
+    function loadTrackers() {
+      const s = document.createElement('script');
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-TEST';
+      document.head.appendChild(s);
+    }
+    if (localStorage.getItem(KEY) === 'accept') loadTrackers();
+  </script>
+</body>
+</html>

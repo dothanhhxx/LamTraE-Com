@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mhfed.github.io/vn-law-check/sitemap.xml

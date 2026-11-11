@@ -1,0 +1,16 @@
+{
+  "name": "vn-law-check",
+  "owner": {
+    "name": "mhfed"
+  },
+  "metadata": {
+    "description": "Marketplace cho plugin audit website theo pháp luật Việt Nam (dữ liệu cá nhân, TMĐT, an ninh mạng, bảo vệ người tiêu dùng, quảng cáo, giao dịch điện tử, AI)."
+  },
+  "plugins": [
+    {
+      "name": "vn-law-check",
+      "source": "./plugins/vn-law-check",
+      "description": "Checklist + skill audit pháp lý website Việt Nam theo luật hiện hành (2025-2026)."
+    }
+  ]
+}

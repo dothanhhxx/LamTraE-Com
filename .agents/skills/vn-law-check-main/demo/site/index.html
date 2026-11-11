@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Cà phê Đồi Sương | rang mộc Cầu Đất</title>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DEMO123"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DEMO123');</script>
+  <!-- Facebook Pixel -->
+  <script>!function(f,b,e,v,n,t,s){n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};f._fbq=n;n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','000000');fbq('track','PageView');</script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <a href="/">Trang chủ</a>
+    <a href="/san-pham">Sản phẩm</a>
+    <a href="/cart">Giỏ hàng</a>
+    <a href="/login">Đăng nhập</a>
+  </nav>
+
+  <section class="hero">
+    <h1>Cà phê rang mộc Cầu Đất</h1>
+    <p class="flash">Flash sale còn <span id="countdown">00:59:59</span></p>
+  </section>
+
+  <section class="products">
+    <div class="card">
+      <h3>Arabica Cầu Đất 500g</h3>
+      <p class="price"><s>250.000đ</s> 185.000đ</p>
+      <button class="add-to-cart" data-id="1">Thêm vào giỏ</button>
+    </div>
+    <div class="card">
+      <h3>Robusta Honey 500g</h3>
+      <p class="price">140.000đ</p>
+      <button class="add-to-cart" data-id="2">Thêm vào giỏ</button>
+    </div>
+  </section>
+
+  <section class="newsletter">
+    <h2>Nhận ưu đãi qua email</h2>
+    <form action="/api/subscribe" method="POST">
+      <input type="text" name="name" placeholder="Họ tên">
+      <input type="email" name="email" placeholder="Email">
+      <input type="tel" name="phone" placeholder="Số điện thoại">
+      <label><input type="checkbox" name="marketing" checked> Tôi đồng ý nhận email khuyến mãi</label>
+      <button type="submit">Đăng ký</button>
+    </form>
+  </section>
+
+  <!-- Widget tư vấn -->
+  <div id="chat-widget">
+    <div class="chat-header"><img src="lan.jpg" alt=""> Chị Lan, tư vấn viên</div>
+    <div id="chat-log"></div>
+    <input id="chat-input" placeholder="Hỏi chị Lan về cà phê...">
+  </div>
+  <script src="chat-widget.js"></script>
+
+  <footer>
+    <p>Hộ kinh doanh Cà phê Đồi Sương, Đà Lạt, Lâm Đồng</p>
+    <p>Hotline: 0909 000 000</p>
+    <a href="/chinh-sach-bao-mat.html">Chính sách bảo mật</a>
+  </footer>
+</body>
+</html>

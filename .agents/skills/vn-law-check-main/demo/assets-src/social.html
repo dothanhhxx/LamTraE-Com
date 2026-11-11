@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1280px; height: 640px; overflow: hidden;
+    font-family: "Inter", sans-serif;
+    background: #142846;
+    color: #fff;
+    position: relative;
+  }
+  .wrap { position: absolute; inset: 0; padding: 72px 80px; display: grid; grid-template-columns: 1fr 420px; gap: 56px; align-items: center; }
+  .brand { display: flex; align-items: center; gap: 18px; margin-bottom: 30px; }
+  .brand img { width: 64px; height: 64px; }
+  .brand span { font-family: "DejaVu Sans Mono", monospace; font-size: 30px; font-weight: bold; letter-spacing: -.01em; }
+  h1 { font-size: 52px; line-height: 1.12; font-weight: 800; letter-spacing: -.025em; }
+  h1 em { font-style: normal; color: #ff6b62; }
+  .sub { margin-top: 22px; font-size: 21px; color: #b9c6db; line-height: 1.45; }
+  .tools { margin-top: 30px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .tools span { font-size: 15px; font-weight: 600; padding: 7px 14px; border-radius: 999px; background: rgba(255,255,255,.1); color: #e3e9f3; }
+
+  .card { background: #fff; color: #1b1f27; border-radius: 16px; padding: 24px 24px 18px; box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+  .card .eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #5d6675; font-weight: 700; margin-bottom: 12px; }
+  .it { display: grid; grid-template-columns: 12px 1fr; gap: 12px; padding: 11px 0; border-top: 1px solid #e4e7ec; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; margin-top: 5px; }
+  .r { background: #da251d; } .a { background: #e8a317; } .g { background: #2e9d5b; }
+  .t { font-size: 15px; font-weight: 600; line-height: 1.35; }
+  .c { font-size: 12.5px; color: #5d6675; margin-top: 3px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div>
+      <div class="brand"><img src="../../plugins/vn-law-check/.claude-plugin/icon.png" alt=""><span>vn-law-check</span></div>
+      <h1>Audit pháp lý website theo <em>luật Việt Nam</em> bằng AI agent</h1>
+      <p class="sub">Dữ liệu cá nhân · TMĐT · an&nbsp;ninh&nbsp;mạng · người&nbsp;tiêu&nbsp;dùng · quảng&nbsp;cáo · AI. Cập nhật theo luật mới 2025-2026</p>
+      <div class="tools"><span>Claude Code</span><span>Cursor</span><span>Copilot</span><span>Windsurf</span><span>Cline</span></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Ví dụ phát hiện</div>
+      <div class="it"><span class="dot r"></span><div><div class="t">Chính sách vẫn dẫn NĐ 13/2023 (hết hiệu lực)</div><div class="c">→ Luật 91/2025 + NĐ 356/2025</div></div></div>
+      <div class="it"><span class="dot r"></span><div><div class="t">Pixel chạy trước khi xin đồng ý</div><div class="c">Điều 28 Luật 91/2025</div></div></div>
+      <div class="it"><span class="dot r"></span><div><div class="t">Chatbot AI giả làm nhân viên thật</div><div class="c">Điều 11 Luật AI 134/2025</div></div></div>
+      <div class="it"><span class="dot g"></span><div><div class="t">Blog tĩnh → không cần audit</div><div class="c">tự quét, không hỏi lằng nhằng</div></div></div>
+    </div>
+  </div>
+</body>
+</html>

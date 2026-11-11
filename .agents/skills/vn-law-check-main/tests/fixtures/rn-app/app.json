@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Hẹn Hò Cafe",
+    "ios": {
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Ứng dụng cần vị trí",
+        "NSContactsUsageDescription": "Ứng dụng cần danh bạ"
+      }
+    },
+    "android": { "permissions": ["ACCESS_FINE_LOCATION", "READ_CONTACTS"] }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "vn-law-check",
+  "version": "1.5.3",
+  "description": "Audit website và mobile app theo pháp luật Việt Nam: dữ liệu cá nhân, thương mại điện tử, an ninh mạng, bảo vệ người tiêu dùng, quảng cáo trực tuyến, giao dịch điện tử, minh bạch AI.",
+  "author": {
+    "name": "mhfed"
+  },
+  "license": "MIT",
+  "icon": ".claude-plugin/icon.png"
+}
