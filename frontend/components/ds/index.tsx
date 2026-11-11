@@ -418,6 +418,7 @@ export function Dialog({
   children,
   sheet,
   maxWidth,
+  maxHeight,
 }: {
   open: boolean;
   onClose: () => void;
@@ -425,6 +426,7 @@ export function Dialog({
   children: ReactNode;
   sheet?: boolean;
   maxWidth?: number | string;
+  maxHeight?: number | string;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -443,6 +445,7 @@ export function Dialog({
       role="dialog"
       aria-modal
       aria-label={title}
+      className={`lt-dialog-container ${sheet ? "is-sheet" : ""}`}
       style={{
         position: "fixed",
         inset: 0,
@@ -450,29 +453,31 @@ export function Dialog({
         display: "flex",
         alignItems: sheet ? "flex-end" : "center",
         justifyContent: "center",
-        padding: sheet ? 0 : "20px 16px",
+        padding: sheet ? 0 : "16px 12px",
         overflow: "hidden",
       }}
     >
-      <div onClick={onClose} className="lt-fade" style={{ position: "absolute", inset: 0, background: "var(--overlay-scrim)" }} />
+      <div onClick={onClose} className="lt-fade" style={{ position: "absolute", inset: 0, background: "var(--overlay-scrim, rgba(13, 34, 25, 0.6))", backdropFilter: "blur(2px)" }} />
       <div
-        className="lt-rise"
+        className={`lt-rise lt-dialog-window ${sheet ? "is-sheet" : ""}`}
         style={{
           position: "relative",
           width: "100%",
           maxWidth: maxWidth ?? (sheet ? "100%" : 560),
-          maxHeight: sheet ? "90vh" : "88vh",
+          maxHeight: maxHeight ?? (sheet ? "92vh" : "90vh"),
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
           background: "#FFFFFF",
-          borderRadius: sheet ? "var(--radius-sheet) var(--radius-sheet) 0 0" : "12px",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0,0,0,0.08)",
+          borderRadius: sheet ? "var(--radius-sheet) var(--radius-sheet) 0 0" : "14px",
+          border: "1px solid var(--border-hairline, #DFD2BB)",
+          boxShadow: "0 25px 50px -12px rgba(13, 34, 25, 0.35), 0 0 0 1px rgba(188, 154, 108, 0.15)",
           fontFamily: "var(--font-ui)",
         }}
       >
         {title && (
           <div
+            className="lt-dialog-title-bar"
             style={{
               position: "sticky",
               top: 0,
@@ -482,13 +487,13 @@ export function Dialog({
               alignItems: "center",
               justifyContent: "space-between",
               gap: 12,
-              padding: "16px 20px",
+              padding: "16px 22px",
               background: "#FFFFFF",
-              borderBottom: "1px solid #E5E7EB",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.03)",
+              borderBottom: "1px solid var(--border-hairline, #DFD2BB)",
+              boxShadow: "0 2px 6px rgba(36, 52, 31, 0.03)",
             }}
           >
-            <span style={{ fontSize: 17, fontWeight: 600, color: "var(--text-strong)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <span style={{ fontSize: 18, fontWeight: 700, color: "var(--text-strong, #23201A)", fontFamily: "var(--font-display, serif)", letterSpacing: "0.01em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {title}
             </span>
             <IconButton icon="x" label="Đóng" onClick={onClose} />
@@ -499,6 +504,7 @@ export function Dialog({
             flex: 1,
             minHeight: 0,
             overflowY: "auto",
+            overflowX: "hidden",
             WebkitOverflowScrolling: "touch",
           }}
         >

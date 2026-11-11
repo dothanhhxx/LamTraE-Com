@@ -28,7 +28,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#F8F9FA", color: "#1A202C", fontFamily: "var(--font-ui)" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--bg-sunken, #FAF6EE)", color: "var(--text-strong, #23201A)", fontFamily: "var(--font-ui, var(--font-sans))" }}>
       {/* ─── 1. DESKTOP HEADER (≥ 900px) ─── */}
       <header className="lt-site-header lt-admin-header-desktop">
         <div className="lt-header-frame">
