@@ -106,7 +106,7 @@ function faqReply(question: string, products: Product[]): string {
   const product = products.find((p) => q.includes(norm(p.name).replace(/^tra /, "")));
   const askingAboutProduct = product && !/(khac nhau|so sanh|phi|ship|doi tra|thanh toan)/.test(q);
   if (product && askingAboutProduct) {
-    const price = p150(product);
+    const price = p200(product);
     const brew = product.brew ? `\n- Cách pha: ${product.brew.amount}, nước ${product.brew.temp}, ${product.brew.time}.` : "";
     return `**${product.name}**: ${product.note}. ${product.desc}\n- Giá: ${price}${brew}\n\nXem và đặt tại [${product.name}](/san-pham/${product.slug}).`;
   }
@@ -124,4 +124,4 @@ function faqReply(question: string, products: Product[]): string {
   return `Lam Trà chưa chắc đã hiểu đúng câu hỏi của bạn. Bạn có thể hỏi về loại trà, giá, cách pha, phí giao hàng hay mã giảm giá; hoặc nhắn Zalo ${STORE.phone} để được tư vấn trực tiếp nhé.`;
 }
 
-const p150 = (p: Product) => (p.fixed ? formatVND(p.base) : `từ ${formatVND(priceOf(p, "150", "1"))} (150g Hạng 1)`);
+const p200 = (p: Product) => (p.fixed ? formatVND(p.base) : `từ ${formatVND(priceOf(p, "200", "1"))} (hộp 200g Premium)`);

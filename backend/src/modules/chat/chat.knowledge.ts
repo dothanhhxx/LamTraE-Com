@@ -115,18 +115,18 @@ export const FAQS: Faq[] = [
   // ---------- Bổ sung từ dữ liệu hệ thống ----------
   {
     q: "Giá trà tính thế nào? Có những gói nào?",
-    a: `Mỗi loại trà có gói 150g, 300g, 500g và 2 hạng. Giá niêm yết là gói 150g Hạng 1; gói 300g bằng ${SIZE_FACTOR["300"]} lần, 500g bằng ${SIZE_FACTOR["500"]} lần (rẻ hơn tính theo gam). Hạng 2 bằng ${GRADE_FACTOR["2"] * 100}% giá Hạng 1. Hộp quà Trao Gửi có giá cố định.`,
-    keys: ["gia", "bao nhieu tien", "goi", "150g", "300g", "500g"],
+    a: `Mỗi loại trà có hộp 200g (bản Premium, là giá niêm yết), gói 100g và gói 500g, cùng 2 phẩm: Premium và Tiêu chuẩn. Gói 100g bằng ${SIZE_FACTOR["100"]} lần, 500g bằng ${SIZE_FACTOR["500"]} lần giá hộp 200g (500g rẻ hơn tính theo gam). Tiêu chuẩn bằng ${GRADE_FACTOR["2"] * 100}% giá Premium. Hộp quà Trao Gửi có giá cố định.`,
+    keys: ["gia", "bao nhieu tien", "goi", "100g", "200g", "500g", "premium"],
   },
   {
-    q: "Hạng 1 và Hạng 2 khác nhau thế nào?",
-    a: "Cùng một loại trà, sau khi sao được chia hạng. Hạng 1 cánh nhỏ, đều, hương đậm, hợp biếu tặng và thưởng trà. Hạng 2 cánh to, không đều bằng, vị nhẹ hơn, giá mềm hơn, hợp pha ấm lớn uống hằng ngày.",
-    keys: ["hang 1", "hang 2", "phan hang"],
+    q: "Premium và Tiêu chuẩn khác nhau thế nào?",
+    a: "Cùng một loại trà, sau khi sao được chia phẩm. Premium cánh nhỏ, đều, hương đậm, đóng hộp thiếc 200g, hợp biếu tặng và thưởng trà. Tiêu chuẩn cánh to, không đều bằng, vị nhẹ hơn, giá mềm hơn, hợp pha ấm lớn uống hằng ngày.",
+    keys: ["premium", "tieu chuan", "phan hang", "hang 1", "hang 2"],
   },
   {
-    q: "Nên mua gói 150g, 300g hay 500g?",
-    a: "Một người uống mỗi sáng dùng khoảng 150g mỗi tháng. Gói 300g, 500g có giá mỗi gam tốt hơn, nhưng nên chia ra hũ kín nhỏ để giữ hương. Mua lần đầu để thử thì chọn 150g.",
-    keys: ["mua goi nao", "150g hay", "dung bao lau"],
+    q: "Nên mua gói 100g, 200g hay 500g?",
+    a: "Một người uống mỗi sáng dùng khoảng 150–200g mỗi tháng, hộp 200g là vừa. Gói 500g có giá mỗi gam tốt hơn, nhưng nên chia ra hũ kín nhỏ để giữ hương. Mua lần đầu để thử thì chọn 100g.",
+    keys: ["mua goi nao", "100g hay", "200g hay", "dung bao lau"],
   },
   {
     q: "Phí giao hàng bao nhiêu?",
@@ -248,13 +248,13 @@ function variantLines(p: Product): string {
     const s = stockOf(p, "-", "-");
     return `Giá ${formatVND(p.base)}${s === 0 ? " (HẾT HÀNG)" : ""}`;
   }
-  return ["150", "300", "500"]
+  return ["100", "200", "500"]
     .map((size) => {
       const g1 = priceOf(p, size, "1");
       const g2 = priceOf(p, size, "2");
       const out1 = stockOf(p, size, "1") === 0 ? " hết hàng" : "";
       const out2 = stockOf(p, size, "2") === 0 ? " hết hàng" : "";
-      return `${size}g: Hạng 1 ${formatVND(g1)}${out1}, Hạng 2 ${formatVND(g2)}${out2}`;
+      return `${size}g: Premium ${formatVND(g1)}${out1}, Tiêu chuẩn ${formatVND(g2)}${out2}`;
     })
     .join("; ");
 }

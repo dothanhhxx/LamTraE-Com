@@ -14,9 +14,11 @@ export type QuoteInput = {
 export const formatVND = (n: number) =>
   new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(n);
 
-export const SIZE_FACTOR: Record<string, number> = { "150": 1, "300": 1.9, "500": 3 };
+// Giá niêm yết (base) là hộp 200g Premium; cùng hệ số với frontend/lib/products.ts.
+export const SIZE_FACTOR: Record<string, number> = { "100": 0.55, "200": 1, "500": 2.3 };
 export const GRADE_FACTOR: Record<string, number> = { "1": 1, "2": 0.75 };
-export const DEFAULT_SIZE = "150";
+export const GRADE_LABEL: Record<string, string> = { "1": "Premium", "2": "Tiêu chuẩn" };
+export const DEFAULT_SIZE = "200";
 export const DEFAULT_GRADE = "1";
 export const MAX_QTY = 99;
 
@@ -26,7 +28,7 @@ export function priceOf(p: Product, size = DEFAULT_SIZE, grade = DEFAULT_GRADE):
 }
 
 export function variantLabel(p: Product, size = DEFAULT_SIZE, grade = DEFAULT_GRADE): string {
-  return p.fixed ? "Hộp 3 món" : `${size}g · Hạng ${grade}`;
+  return p.fixed ? "Hộp 3 món" : `${size}g · ${GRADE_LABEL[grade] ?? "Hạng " + grade}`;
 }
 
 export const variantKey = (p: Product, size: string, grade: string) => (p.fixed ? "-|-" : `${size}|${grade}`);

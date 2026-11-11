@@ -7,6 +7,7 @@ export interface ContactMessage {
   name: string;
   phone: string;
   email?: string;
+  subject?: string;
   company?: string;
   quantity?: string;
   budget?: string;
