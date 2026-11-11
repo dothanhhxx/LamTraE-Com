@@ -571,49 +571,138 @@ export function ProductManager() {
                     return (
                       <tr key={p.slug} style={{ borderBottom: "1px solid var(--paper-200, #EEE4D2)", transition: "background 120ms ease" }}>
                         {/* Image Thumbnail with Click-to-Zoom */}
-                        <td style={{ padding: "12px 18px", width: 68 }}>
-                          <button
-                            type="button"
-                            onClick={() => setPreviewImage({ src: photo(p.ph), title: p.name, slug: p.slug })}
-                            title={`Bấm để xem ảnh phóng to: ${p.name}`}
-                            style={{
-                              width: 52,
-                              height: 52,
-                              borderRadius: 8,
-                              overflow: "hidden",
-                              border: "1.5px solid var(--border-hairline, #DFD2BB)",
-                              background: "var(--paper-50, #FCF8F1)",
-                              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-                              padding: 0,
-                              cursor: "pointer",
-                              position: "relative",
-                              display: "block",
-                            }}
-                          >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={photo(p.ph)}
-                              alt={p.name}
-                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                              onError={(e) => {
-                                (e.currentTarget as HTMLImageElement).src = "/assets/photos/moccau.jpg";
-                              }}
-                            />
-                            <span
-                              className="lt-thumb-zoom-overlay"
-                              style={{
-                                position: "absolute",
-                                inset: 0,
-                                background: "rgba(13, 34, 25, 0.45)",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                color: "#FFFFFF",
-                              }}
-                            >
-                              <Icon name="search" size={16} />
-                            </span>
-                          </button>
+                        <td style={{ padding: "12px 18px", width: p.standardPh ? 116 : 68 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <div style={{ position: "relative" }}>
+                              <button
+                                type="button"
+                                onClick={() => setPreviewImage({ src: photo(p.ph), title: `${p.name} (Premium)`, slug: p.slug })}
+                                title={`Bấm xem ảnh Premium: ${p.name}`}
+                                style={{
+                                  width: 48,
+                                  height: 48,
+                                  borderRadius: 7,
+                                  overflow: "hidden",
+                                  border: "1.5px solid var(--border-hairline, #DFD2BB)",
+                                  background: "var(--paper-50, #FCF8F1)",
+                                  boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                                  padding: 0,
+                                  cursor: "pointer",
+                                  position: "relative",
+                                  display: "block",
+                                }}
+                              >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={photo(p.ph)}
+                                  alt={`${p.name} Premium`}
+                                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                  onError={(e) => {
+                                    (e.currentTarget as HTMLImageElement).src = "/assets/photos/moccau.jpg";
+                                  }}
+                                />
+                                <span
+                                  className="lt-thumb-zoom-overlay"
+                                  style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    background: "rgba(13, 34, 25, 0.45)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    color: "#FFFFFF",
+                                  }}
+                                >
+                                  <Icon name="search" size={14} />
+                                </span>
+                              </button>
+                              {p.standardPh && (
+                                <span
+                                  style={{
+                                    position: "absolute",
+                                    bottom: -4,
+                                    right: -4,
+                                    fontSize: 9,
+                                    background: "#19241A",
+                                    color: "#DFBE89",
+                                    borderRadius: 4,
+                                    padding: "1px 3px",
+                                    lineHeight: 1,
+                                    border: "1px solid #DFBE89",
+                                    boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
+                                  }}
+                                  title="Ảnh phân hạng Premium"
+                                >
+                                  👑
+                                </span>
+                              )}
+                            </div>
+
+                            {p.standardPh && (
+                              <div style={{ position: "relative" }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setPreviewImage({ src: photo(p.standardPh!), title: `${p.name} (Tiêu chuẩn)`, slug: p.slug })}
+                                  title={`Bấm xem ảnh Tiêu chuẩn: ${p.name}`}
+                                  style={{
+                                    width: 48,
+                                    height: 48,
+                                    borderRadius: 7,
+                                    overflow: "hidden",
+                                    border: "1.5px solid #CBD5E1",
+                                    background: "var(--paper-50, #FCF8F1)",
+                                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                                    padding: 0,
+                                    cursor: "pointer",
+                                    position: "relative",
+                                    display: "block",
+                                  }}
+                                >
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={photo(p.standardPh)}
+                                    alt={`${p.name} Tiêu chuẩn`}
+                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                    onError={(e) => {
+                                      (e.currentTarget as HTMLImageElement).src = "/assets/photos/moccau.jpg";
+                                    }}
+                                  />
+                                  <span
+                                    className="lt-thumb-zoom-overlay"
+                                    style={{
+                                      position: "absolute",
+                                      inset: 0,
+                                      background: "rgba(13, 34, 25, 0.45)",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      color: "#FFFFFF",
+                                    }}
+                                  >
+                                    <Icon name="search" size={14} />
+                                  </span>
+                                </button>
+                                <span
+                                  style={{
+                                    position: "absolute",
+                                    bottom: -4,
+                                    right: -4,
+                                    fontSize: 9,
+                                    background: "#334155",
+                                    color: "#F8FAFC",
+                                    borderRadius: 4,
+                                    padding: "1px 3px",
+                                    lineHeight: 1,
+                                    border: "1px solid #94A3B8",
+                                    boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
+                                  }}
+                                  title="Ảnh phân hạng Tiêu chuẩn"
+                                >
+                                  🏷️
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </td>
 
                         {/* Name & Slug */}
@@ -679,6 +768,14 @@ export function ProductManager() {
                               {isSaving ? "..." : "Lưu"}
                             </button>
                           </div>
+                          {!p.fixed && (
+                            <div style={{ fontSize: 11.5, color: "var(--stone-600, #74684F)", marginTop: 5, display: "flex", alignItems: "center", gap: 4 }}>
+                              <span>🏷️ Tiêu chuẩn:</span>
+                              <strong style={{ color: "var(--reu-800, #24341F)" }}>
+                                {formatVND(p.standardBase || Math.round(ep.base * 0.75))}
+                              </strong>
+                            </div>
+                          )}
                         </td>
 
                         {/* Compare At inline */}
@@ -831,49 +928,132 @@ export function ProductManager() {
               return (
                 <div key={p.slug} className="lt-admin-card-item">
                   {/* Top: Photo thumbnail, Name, Category & Status */}
-                  <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                    <button
-                      type="button"
-                      onClick={() => setPreviewImage({ src: photo(p.ph), title: p.name, slug: p.slug })}
-                      title={`Bấm để xem ảnh phóng to: ${p.name}`}
-                      style={{
-                        width: 60,
-                        height: 60,
-                        borderRadius: 8,
-                        overflow: "hidden",
-                        border: "1.5px solid var(--border-hairline, #DFD2BB)",
-                        background: "var(--paper-50, #FCF8F1)",
-                        flexShrink: 0,
-                        padding: 0,
-                        cursor: "pointer",
-                        position: "relative",
-                        display: "block",
-                      }}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={photo(p.ph)}
-                        alt={p.name}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                        onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).src = "/assets/photos/moccau.jpg";
-                        }}
-                      />
-                      <span
-                        className="lt-thumb-zoom-overlay"
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          background: "rgba(13, 34, 25, 0.45)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: "#FFFFFF",
-                        }}
-                      >
-                        <Icon name="search" size={16} />
-                      </span>
-                    </button>
+                  <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                    <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                      <div style={{ position: "relative" }}>
+                        <button
+                          type="button"
+                          onClick={() => setPreviewImage({ src: photo(p.ph), title: `${p.name} (Premium)`, slug: p.slug })}
+                          title={`Bấm để xem ảnh Premium: ${p.name}`}
+                          style={{
+                            width: 52,
+                            height: 52,
+                            borderRadius: 8,
+                            overflow: "hidden",
+                            border: "1.5px solid var(--border-hairline, #DFD2BB)",
+                            background: "var(--paper-50, #FCF8F1)",
+                            padding: 0,
+                            cursor: "pointer",
+                            position: "relative",
+                            display: "block",
+                          }}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={photo(p.ph)}
+                            alt={`${p.name} Premium`}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = "/assets/photos/moccau.jpg";
+                            }}
+                          />
+                          <span
+                            className="lt-thumb-zoom-overlay"
+                            style={{
+                              position: "absolute",
+                              inset: 0,
+                              background: "rgba(13, 34, 25, 0.45)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "#FFFFFF",
+                            }}
+                          >
+                            <Icon name="search" size={14} />
+                          </span>
+                        </button>
+                        {p.standardPh && (
+                          <span
+                            style={{
+                              position: "absolute",
+                              bottom: -4,
+                              right: -4,
+                              fontSize: 9,
+                              background: "#19241A",
+                              color: "#DFBE89",
+                              borderRadius: 4,
+                              padding: "1px 3px",
+                              lineHeight: 1,
+                              border: "1px solid #DFBE89",
+                            }}
+                          >
+                            👑
+                          </span>
+                        )}
+                      </div>
+
+                      {p.standardPh && (
+                        <div style={{ position: "relative" }}>
+                          <button
+                            type="button"
+                            onClick={() => setPreviewImage({ src: photo(p.standardPh!), title: `${p.name} (Tiêu chuẩn)`, slug: p.slug })}
+                            title={`Bấm để xem ảnh Tiêu chuẩn: ${p.name}`}
+                            style={{
+                              width: 52,
+                              height: 52,
+                              borderRadius: 8,
+                              overflow: "hidden",
+                              border: "1.5px solid #CBD5E1",
+                              background: "var(--paper-50, #FCF8F1)",
+                              padding: 0,
+                              cursor: "pointer",
+                              position: "relative",
+                              display: "block",
+                            }}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={photo(p.standardPh)}
+                              alt={`${p.name} Tiêu chuẩn`}
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).src = "/assets/photos/moccau.jpg";
+                              }}
+                            />
+                            <span
+                              className="lt-thumb-zoom-overlay"
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                background: "rgba(13, 34, 25, 0.45)",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#FFFFFF",
+                              }}
+                            >
+                              <Icon name="search" size={14} />
+                            </span>
+                          </button>
+                          <span
+                            style={{
+                              position: "absolute",
+                              bottom: -4,
+                              right: -4,
+                              fontSize: 9,
+                              background: "#334155",
+                              color: "#F8FAFC",
+                              borderRadius: 4,
+                              padding: "1px 3px",
+                              lineHeight: 1,
+                              border: "1px solid #94A3B8",
+                            }}
+                          >
+                            🏷️
+                          </span>
+                        </div>
+                      )}
+                    </div>
 
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
@@ -958,6 +1138,13 @@ export function ProductManager() {
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12, color: "var(--stone-600)" }}>
                         <span>Giá niêm yết cũ:</span>
                         <span style={{ textDecoration: "line-through" }}>{formatVND(ep.compareAt)}</span>
+                      </div>
+                    )}
+
+                    {!p.fixed && (
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12, color: "var(--stone-600)" }}>
+                        <span>🏷️ Giá Tiêu chuẩn (200g):</span>
+                        <strong style={{ color: "var(--reu-800)" }}>{formatVND(p.standardBase || Math.round(ep.base * 0.75))}</strong>
                       </div>
                     )}
                   </div>

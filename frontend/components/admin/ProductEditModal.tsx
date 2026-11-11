@@ -24,13 +24,20 @@ export type ImageItem = {
 };
 
 const SAMPLE_PHOTOS = [
-  { value: "moccau", label: "Trà Móc Câu Tân Cương" },
-  { value: "nontom", label: "Trà Nõn Tôm Thượng Phẩm" },
-  { value: "sen", label: "Trà Đinh Sen Tây Hồ" },
-  { value: "dinhth", label: "Trà Đinh Thượng Hạng" },
-  { value: "hopqua", label: "Hộp quà biếu cao cấp" },
-  { value: "/assets/products/tra-thanh-nhiet-duong-tam-1.webp", label: "Trà Dưỡng Tâm Thanh Nhiệt" },
-  { value: "hero", label: "Đồi chè Tân Cương nắng sớm" },
+  { value: "moccau", label: "Trà Móc Câu Tân Cương (Hộp Premium)", tier: "premium" },
+  { value: "nontom", label: "Trà Nõn Tôm Thượng Phẩm (Hộp Premium)", tier: "premium" },
+  { value: "sen", label: "Trà Đinh Sen Tây Hồ (Hộp Premium)", tier: "premium" },
+  { value: "dinhth", label: "Trà Đinh Thượng Hạng (Hộp Premium)", tier: "premium" },
+  { value: "hopqua", label: "Hộp quà biếu cao cấp", tier: "premium" },
+  { value: "/assets/products/tra-thanh-nhiet-duong-tam-1.webp", label: "Trà Dưỡng Tâm Thanh Nhiệt", tier: "premium" },
+  { value: "hero", label: "Đồi chè Tân Cương nắng sớm", tier: "premium" },
+  // Ảnh mẫu phân hạng Tiêu chuẩn (hộp phổ thông / túi giấy):
+  { value: "/assets/products/tra-dinh-sen-7.webp", label: "Trà Đinh Sen (Túi kraft Tiêu chuẩn)", tier: "standard" },
+  { value: "/assets/products/tra-dinh-sen-6.webp", label: "Trà Đinh Sen (Túi xanh Tiêu chuẩn)", tier: "standard" },
+  { value: "/assets/products/tra-moc-cau-pho-thong.webp", label: "Trà Móc Câu (Hộp phổ thông Tiêu chuẩn)", tier: "standard" },
+  { value: "/assets/products/tra-non-tom-pho-thong.webp", label: "Trà Nõn Tôm (Hộp phổ thông Tiêu chuẩn)", tier: "standard" },
+  { value: "/assets/products/tra-dinh-pho-thong.webp", label: "Trà Đinh (Hộp phổ thông Tiêu chuẩn)", tier: "standard" },
+  { value: "/assets/products/tra-nhai-pho-thong.webp", label: "Trà Nhài (Hộp phổ thông Tiêu chuẩn)", tier: "standard" },
 ];
 
 export function ProductEditModal({
@@ -54,28 +61,36 @@ export function ProductEditModal({
   const [note, setNote] = useState("");
   const [base, setBase] = useState<number | string>(180000);
   const [compareAt, setCompareAt] = useState<number | string>("");
+  const [standardBase, setStandardBase] = useState<number | string>("");
   const [fixed, setFixed] = useState(false);
   const [origin, setOrigin] = useState("Tân Cương · Thái Nguyên");
   const [desc, setDesc] = useState("");
   const [active, setActive] = useState(true);
 
-  // Gallery Images List: index 0 is primary (ph), rest are gallery
-  const [images, setImages] = useState<ImageItem[]>([]);
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+  // Images state for each tier: Premium & Tiêu chuẩn
+  const [premiumImages, setPremiumImages] = useState<ImageItem[]>([]);
+  const [standardImages, setStandardImages] = useState<ImageItem[]>([]);
+  const [imageTab, setImageTab] = useState<"premium" | "standard" | "both">("premium");
+
+  // Drag & drop state per tier
+  const [draggedItem, setDraggedItem] = useState<{ tier: "premium" | "standard"; index: number } | null>(null);
+  const [dragOverItem, setDragOverItem] = useState<{ tier: "premium" | "standard"; index: number } | null>(null);
+
+  // Lightbox preview state
+  const [previewState, setPreviewState] = useState<{ tier: "premium" | "standard"; index: number } | null>(null);
   const [lightboxZoomed, setLightboxZoomed] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   // Mobile Touch Drag & Drop states
-  const [touchDragIndex, setTouchDragIndex] = useState<number | null>(null);
+  const [touchDragState, setTouchDragState] = useState<{ tier: "premium" | "standard"; index: number } | null>(null);
   const [touchOverIndex, setTouchOverIndex] = useState<number | null>(null);
   const touchStateRef = useRef<{
+    tier: "premium" | "standard";
     startIndex: number;
     currentIndex: number;
     active: boolean;
-  }>({ startIndex: -1, currentIndex: -1, active: false });
+  }>({ tier: "premium", startIndex: -1, currentIndex: -1, active: false });
 
   // Lightbox mobile touch swipe
   const [lightboxTouchStartX, setLightboxTouchStartX] = useState<number | null>(null);
@@ -84,13 +99,18 @@ export function ProductEditModal({
     setMounted(true);
   }, []);
 
-  // File upload state & dropzone
-  const multiFileInputRef = useRef<HTMLInputElement>(null);
-  const [isDropOver, setIsDropOver] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  // File upload state & dropzone for both tiers
+  const premiumFileInputRef = useRef<HTMLInputElement>(null);
+  const standardFileInputRef = useRef<HTMLInputElement>(null);
+  const [premiumDropOver, setPremiumDropOver] = useState(false);
+  const [standardDropOver, setStandardDropOver] = useState(false);
+  const [uploadingTier, setUploadingTier] = useState<"premium" | "standard" | null>(null);
   const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
-  const [showSamplePicker, setShowSamplePicker] = useState(false);
-  const [customUrlInput, setCustomUrlInput] = useState("");
+
+  const [showPremiumSamplePicker, setShowPremiumSamplePicker] = useState(false);
+  const [showStandardSamplePicker, setShowStandardSamplePicker] = useState(false);
+  const [premiumUrlInput, setPremiumUrlInput] = useState("");
+  const [standardUrlInput, setStandardUrlInput] = useState("");
 
   // Brew guide
   const [temp, setTemp] = useState("80 – 85°C");
@@ -117,27 +137,42 @@ export function ProductEditModal({
       setNote(product.note || "");
       setBase(product.base || 0);
       setCompareAt(product.compareAt || "");
+      setStandardBase(product.standardBase || "");
       setFixed(!!product.fixed);
       setOrigin(product.origin || "Tân Cương · Thái Nguyên");
       setDesc(product.desc || "");
       setActive(product.active !== false);
 
-      // Rebuild image list
-      const list: ImageItem[] = [];
+      // Rebuild premium images list (ph + gallery)
+      const pList: ImageItem[] = [];
       if (product.ph) {
-        list.push({ id: `img-main-${Date.now()}`, url: product.ph, alt: product.name });
+        pList.push({ id: `img-prem-main-${Date.now()}`, url: product.ph, alt: `${product.name} (Premium)` });
       }
       if (Array.isArray(product.gallery)) {
         product.gallery.forEach((g, idx) => {
           if (g.ph && g.ph !== product.ph) {
-            list.push({ id: `img-gal-${idx}-${Date.now()}`, url: g.ph, alt: g.alt || `${product.name} ảnh ${idx + 2}` });
+            pList.push({ id: `img-prem-gal-${idx}-${Date.now()}`, url: g.ph, alt: g.alt || `${product.name} ảnh ${idx + 2}` });
           }
         });
       }
-      if (list.length === 0) {
-        list.push({ id: `img-def-${Date.now()}`, url: "moccau", alt: product.name });
+      if (pList.length === 0) {
+        pList.push({ id: `img-def-${Date.now()}`, url: "moccau", alt: product.name });
       }
-      setImages(list);
+      setPremiumImages(pList);
+
+      // Rebuild standard images list (standardPh + standardGallery)
+      const sList: ImageItem[] = [];
+      if (product.standardPh) {
+        sList.push({ id: `img-std-main-${Date.now()}`, url: product.standardPh, alt: `${product.name} (Tiêu chuẩn)` });
+      }
+      if (Array.isArray(product.standardGallery)) {
+        product.standardGallery.forEach((g, idx) => {
+          if (g.ph && g.ph !== product.standardPh) {
+            sList.push({ id: `img-std-gal-${idx}-${Date.now()}`, url: g.ph, alt: g.alt || `${product.name} tiêu chuẩn ảnh ${idx + 2}` });
+          }
+        });
+      }
+      setStandardImages(sList);
 
       if (product.brew) {
         setTemp(product.brew.temp || "");
@@ -157,11 +192,13 @@ export function ProductEditModal({
       setNote("");
       setBase(200000);
       setCompareAt("");
+      setStandardBase("");
       setFixed(false);
       setOrigin("Tân Cương · Thái Nguyên");
       setDesc("");
       setActive(true);
-      setImages([{ id: `img-new-0`, url: "moccau", alt: "Ảnh sản phẩm mới" }]);
+      setPremiumImages([{ id: `img-new-0`, url: "moccau", alt: "Ảnh sản phẩm mới" }]);
+      setStandardImages([]);
       setTemp("80 – 85°C");
       setAmount("5g cho ấm 150ml");
       setTime("Tráng trà, hãm 25 giây");
@@ -172,34 +209,47 @@ export function ProductEditModal({
     }
     setError(null);
     setSuccessNotice(null);
-    setShowSamplePicker(false);
-    setPreviewIndex(null);
+    setShowPremiumSamplePicker(false);
+    setShowStandardSamplePicker(false);
+    setPreviewState(null);
   }, [product, open]);
+
+  // Active list helper for lightbox
+  const activeLightboxImages = previewState ? (previewState.tier === "premium" ? premiumImages : standardImages) : [];
 
   // Lightbox keyboard navigation (Esc, ArrowLeft, ArrowRight) with capture-phase isolation
   useEffect(() => {
-    if (previewIndex === null) {
+    if (!previewState) {
       setLightboxZoomed(false);
       setCopiedUrl(false);
       return;
     }
+    const currentList = previewState.tier === "premium" ? premiumImages : standardImages;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        setPreviewIndex(null);
+        setPreviewState(null);
       } else if (e.key === "ArrowLeft") {
         e.preventDefault();
-        setPreviewIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : images.length - 1));
+        setPreviewState((prev) => {
+          if (!prev) return null;
+          const newIdx = prev.index > 0 ? prev.index - 1 : currentList.length - 1;
+          return { tier: prev.tier, index: newIdx };
+        });
       } else if (e.key === "ArrowRight") {
         e.preventDefault();
-        setPreviewIndex((prev) => (prev !== null && prev < images.length - 1 ? prev + 1 : 0));
+        setPreviewState((prev) => {
+          if (!prev) return null;
+          const newIdx = prev.index < currentList.length - 1 ? prev.index + 1 : 0;
+          return { tier: prev.tier, index: newIdx };
+        });
       }
     };
     window.addEventListener("keydown", onKey, true);
     return () => window.removeEventListener("keydown", onKey, true);
-  }, [previewIndex, images.length]);
+  }, [previewState, premiumImages, standardImages]);
 
   // Generate slug automatically from name
   const handleGenerateSlug = (text = name) => {
@@ -217,8 +267,8 @@ export function ProductEditModal({
     }
   };
 
-  // ─── BATCH IMAGE UPLOAD (Max 10 images / batch) ───
-  const processBatchUpload = async (files: FileList | File[]) => {
+  // ─── BATCH IMAGE UPLOAD (Max 10 images / batch for each tier) ───
+  const processBatchUpload = async (files: FileList | File[], targetTier: "premium" | "standard") => {
     const rawFiles = Array.from(files).filter((f) => f.type.startsWith("image/"));
     if (rawFiles.length === 0) {
       setError("Vui lòng chọn ít nhất một tệp định dạng hình ảnh (JPG, PNG, WebP...).");
@@ -232,7 +282,7 @@ export function ProductEditModal({
     }
 
     const filesToUpload = rawFiles.slice(0, 10);
-    setUploading(true);
+    setUploadingTier(targetTier);
     setUploadProgress({ current: 0, total: filesToUpload.length });
 
     const newItems: ImageItem[] = [];
@@ -253,9 +303,9 @@ export function ProductEditModal({
         const data = await res.json().catch(() => ({ ok: false }));
         if (data.ok && data.url) {
           newItems.push({
-            id: `upload_${Date.now()}_${i}_${Math.random().toString(36).slice(2, 7)}`,
+            id: `upload_${targetTier}_${Date.now()}_${i}_${Math.random().toString(36).slice(2, 7)}`,
             url: data.url,
-            alt: file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "),
+            alt: `${name.trim() || "Trà"} (${targetTier === "premium" ? "Premium" : "Tiêu chuẩn"}) ${file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ")}`,
           });
         } else {
           // Fallback to Data URL for instant preview if backend storage is offline
@@ -266,9 +316,9 @@ export function ProductEditModal({
           });
           if (dataUrl) {
             newItems.push({
-              id: `data_${Date.now()}_${i}`,
+              id: `data_${targetTier}_${Date.now()}_${i}`,
               url: dataUrl,
-              alt: file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "),
+              alt: `${name.trim() || "Trà"} (${targetTier === "premium" ? "Premium" : "Tiêu chuẩn"})`,
             });
           }
         }
@@ -278,82 +328,103 @@ export function ProductEditModal({
     }
 
     if (newItems.length > 0) {
-      setImages((prev) => {
-        // If current images only has 1 placeholder, replace it
-        if (prev.length === 1 && prev[0].url === "moccau" && !isEditing) {
-          return newItems;
-        }
-        return [...prev, ...newItems];
-      });
-      setSuccessNotice(`Đã thêm thành công ${newItems.length} ảnh mới.`);
+      if (targetTier === "premium") {
+        setPremiumImages((prev) => {
+          if (prev.length === 1 && prev[0].url === "moccau" && !isEditing) {
+            return newItems;
+          }
+          return [...prev, ...newItems];
+        });
+      } else {
+        setStandardImages((prev) => [...prev, ...newItems]);
+      }
+      setSuccessNotice(`Đã thêm thành công ${newItems.length} ảnh vào phân hạng ${targetTier === "premium" ? "Premium" : "Tiêu chuẩn"}.`);
       setTimeout(() => setSuccessNotice(null), 3000);
     }
 
-    setUploading(false);
+    setUploadingTier(null);
     setUploadProgress(null);
-    if (multiFileInputRef.current) {
-      multiFileInputRef.current.value = "";
+    if (targetTier === "premium" && premiumFileInputRef.current) {
+      premiumFileInputRef.current.value = "";
+    }
+    if (targetTier === "standard" && standardFileInputRef.current) {
+      standardFileInputRef.current.value = "";
     }
   };
 
-  // Dropzone drag events
-  const handleDropzoneOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDropOver(true);
-  };
-
-  const handleDropzoneLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDropOver(false);
-  };
-
-  const handleDropzoneDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDropOver(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      processBatchUpload(e.dataTransfer.files);
-    }
-  };
-
-  // ─── DRAG & DROP REORDERING OF EXISTING IMAGES ───
-  const handleDragStart = (e: React.DragEvent, index: number) => {
-    setDraggedIndex(index);
+  // ─── DRAG & DROP REORDERING & TRANSFER ───
+  const handleDragStart = (e: React.DragEvent, index: number, tier: "premium" | "standard") => {
+    setDraggedItem({ tier, index });
     e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", index.toString());
+    e.dataTransfer.setData("text/plain", JSON.stringify({ tier, index }));
   };
 
-  const handleDragOver = (e: React.DragEvent, index: number) => {
+  const handleDragOver = (e: React.DragEvent, index: number, tier: "premium" | "standard") => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
-    if (dragOverIndex !== index) {
-      setDragOverIndex(index);
+    if (!dragOverItem || dragOverItem.tier !== tier || dragOverItem.index !== index) {
+      setDragOverItem({ tier, index });
     }
   };
 
-  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+  const handleDrop = (e: React.DragEvent, dropIndex: number, targetTier: "premium" | "standard") => {
     e.preventDefault();
-    if (draggedIndex === null || draggedIndex === dropIndex) {
-      setDraggedIndex(null);
-      setDragOverIndex(null);
+    if (!draggedItem) {
+      setDraggedItem(null);
+      setDragOverItem(null);
       return;
     }
-    const updated = [...images];
-    const [moved] = updated.splice(draggedIndex, 1);
-    updated.splice(dropIndex, 0, moved);
-    setImages(updated);
-    setDraggedIndex(null);
-    setDragOverIndex(null);
+
+    // Dragged within the same tier
+    if (draggedItem.tier === targetTier) {
+      if (draggedItem.index === dropIndex) {
+        setDraggedItem(null);
+        setDragOverItem(null);
+        return;
+      }
+      const setter = targetTier === "premium" ? setPremiumImages : setStandardImages;
+      setter((prev) => {
+        const updated = [...prev];
+        const [moved] = updated.splice(draggedItem.index, 1);
+        updated.splice(dropIndex, 0, moved);
+        return updated;
+      });
+    } else {
+      // Dragged across tiers (from Premium to Standard or vice versa)
+      const sourceList = draggedItem.tier === "premium" ? premiumImages : standardImages;
+      const itemToMove = sourceList[draggedItem.index];
+      if (itemToMove) {
+        if (draggedItem.tier === "premium") {
+          setPremiumImages((prev) => prev.filter((_, i) => i !== draggedItem.index));
+          setStandardImages((prev) => {
+            const updated = [...prev];
+            updated.splice(dropIndex, 0, itemToMove);
+            return updated;
+          });
+        } else {
+          setStandardImages((prev) => prev.filter((_, i) => i !== draggedItem.index));
+          setPremiumImages((prev) => {
+            const updated = [...prev];
+            updated.splice(dropIndex, 0, itemToMove);
+            return updated;
+          });
+        }
+      }
+    }
+
+    setDraggedItem(null);
+    setDragOverItem(null);
   };
 
   const handleDragEnd = () => {
-    setDraggedIndex(null);
-    setDragOverIndex(null);
+    setDraggedItem(null);
+    setDragOverItem(null);
   };
 
-  // ─── TOUCH DRAG & DROP FOR MOBILE TOUCHSCREENS ───
-  const handleTouchStart = (e: React.TouchEvent, index: number) => {
-    touchStateRef.current = { startIndex: index, currentIndex: index, active: true };
-    setTouchDragIndex(index);
+  // ─── TOUCH DRAG & DROP FOR MOBILE ───
+  const handleTouchStart = (e: React.TouchEvent, index: number, tier: "premium" | "standard") => {
+    touchStateRef.current = { tier, startIndex: index, currentIndex: index, active: true };
+    setTouchDragState({ tier, index });
     setTouchOverIndex(index);
     if (typeof window !== "undefined" && window.navigator && "vibrate" in window.navigator) {
       try {
@@ -370,7 +441,8 @@ export function ProductEditModal({
     const card = elem?.closest("[data-image-index]");
     if (card) {
       const idxStr = card.getAttribute("data-image-index");
-      if (idxStr !== null) {
+      const tierStr = card.getAttribute("data-image-tier");
+      if (idxStr !== null && tierStr === touchStateRef.current.tier) {
         const overIdx = parseInt(idxStr, 10);
         if (!isNaN(overIdx) && overIdx !== touchStateRef.current.currentIndex) {
           touchStateRef.current.currentIndex = overIdx;
@@ -382,9 +454,10 @@ export function ProductEditModal({
 
   const handleTouchEnd = () => {
     if (!touchStateRef.current.active) return;
-    const { startIndex, currentIndex } = touchStateRef.current;
+    const { tier, startIndex, currentIndex } = touchStateRef.current;
     if (startIndex !== -1 && currentIndex !== -1 && startIndex !== currentIndex) {
-      setImages((prev) => {
+      const setter = tier === "premium" ? setPremiumImages : setStandardImages;
+      setter((prev) => {
         const updated = [...prev];
         const [moved] = updated.splice(startIndex, 1);
         updated.splice(currentIndex, 0, moved);
@@ -398,20 +471,19 @@ export function ProductEditModal({
         } catch {}
       }
     }
-    touchStateRef.current = { startIndex: -1, currentIndex: -1, active: false };
-    setTouchDragIndex(null);
+    touchStateRef.current = { tier: "premium", startIndex: -1, currentIndex: -1, active: false };
+    setTouchDragState(null);
     setTouchOverIndex(null);
   };
 
   const handleTouchCancel = () => {
-    touchStateRef.current = { startIndex: -1, currentIndex: -1, active: false };
-    setTouchDragIndex(null);
+    touchStateRef.current = { tier: "premium", startIndex: -1, currentIndex: -1, active: false };
+    setTouchDragState(null);
     setTouchOverIndex(null);
   };
 
-  // Catch touch releases outside the handle
   useEffect(() => {
-    if (touchDragIndex === null) return;
+    if (touchDragState === null) return;
     const onGlobalTouchEnd = () => handleTouchEnd();
     const onGlobalTouchCancel = () => handleTouchCancel();
     window.addEventListener("touchend", onGlobalTouchEnd);
@@ -420,7 +492,7 @@ export function ProductEditModal({
       window.removeEventListener("touchend", onGlobalTouchEnd);
       window.removeEventListener("touchcancel", onGlobalTouchCancel);
     };
-  }, [touchDragIndex]);
+  }, [touchDragState]);
 
   // Lightbox touch swipe handlers
   const handleLightboxTouchStart = (e: React.TouchEvent) => {
@@ -428,81 +500,116 @@ export function ProductEditModal({
   };
 
   const handleLightboxTouchEnd = (e: React.TouchEvent) => {
-    if (lightboxTouchStartX === null) return;
+    if (lightboxTouchStartX === null || !previewState) return;
+    const currentList = previewState.tier === "premium" ? premiumImages : standardImages;
     const touchEndX = e.changedTouches[0].clientX;
     const diff = touchEndX - lightboxTouchStartX;
     if (Math.abs(diff) > 45) {
       if (diff > 0) {
         // Swipe Right -> Ảnh trước
-        setPreviewIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : images.length - 1));
+        setPreviewState((prev) => (prev ? { tier: prev.tier, index: prev.index > 0 ? prev.index - 1 : currentList.length - 1 } : null));
       } else {
         // Swipe Left -> Ảnh kế tiếp
-        setPreviewIndex((prev) => (prev !== null && prev < images.length - 1 ? prev + 1 : 0));
+        setPreviewState((prev) => (prev ? { tier: prev.tier, index: prev.index < currentList.length - 1 ? prev.index + 1 : 0 } : null));
       }
     }
     setLightboxTouchStartX(null);
   };
 
-  // Fast reorder / action controls
-  const handleSetPrimary = (index: number) => {
+  // Reorder & action controls
+  const handleSetPrimary = (index: number, tier: "premium" | "standard") => {
     if (index === 0) return;
-    const updated = [...images];
-    const [item] = updated.splice(index, 1);
-    updated.unshift(item);
-    setImages(updated);
+    const setter = tier === "premium" ? setPremiumImages : setStandardImages;
+    setter((prev) => {
+      const updated = [...prev];
+      const [item] = updated.splice(index, 1);
+      updated.unshift(item);
+      return updated;
+    });
   };
 
-  const handleMove = (index: number, direction: -1 | 1) => {
+  const handleMove = (index: number, direction: -1 | 1, tier: "premium" | "standard") => {
+    const list = tier === "premium" ? premiumImages : standardImages;
     const target = index + direction;
-    if (target < 0 || target >= images.length) return;
-    const updated = [...images];
-    const tempItem = updated[index];
-    updated[index] = updated[target];
-    updated[target] = tempItem;
-    setImages(updated);
+    if (target < 0 || target >= list.length) return;
+    const setter = tier === "premium" ? setPremiumImages : setStandardImages;
+    setter((prev) => {
+      const updated = [...prev];
+      const tempItem = updated[index];
+      updated[index] = updated[target];
+      updated[target] = tempItem;
+      return updated;
+    });
   };
 
-  const handleDeleteImage = (index: number) => {
-    if (images.length <= 1) {
-      if (confirm("Đây là ảnh duy nhất của sản phẩm. Bạn có chắc muốn xóa không?")) {
-        setImages([]);
-        setPreviewIndex(null);
+  const handleDeleteImage = (index: number, tier: "premium" | "standard") => {
+    const list = tier === "premium" ? premiumImages : standardImages;
+    if (tier === "premium" && list.length <= 1) {
+      if (confirm("Đây là ảnh Premium duy nhất. Bạn có chắc muốn xóa không?")) {
+        setPremiumImages([]);
+        setPreviewState(null);
       }
       return;
     }
-    if (previewIndex !== null) {
-      if (previewIndex === index) {
-        setPreviewIndex(null);
-      } else if (previewIndex > index) {
-        setPreviewIndex(previewIndex - 1);
+    if (previewState && previewState.tier === tier) {
+      if (previewState.index === index) {
+        setPreviewState(null);
+      } else if (previewState.index > index) {
+        setPreviewState({ tier, index: previewState.index - 1 });
       }
     }
-    setImages((prev) => prev.filter((_, i) => i !== index));
+    const setter = tier === "premium" ? setPremiumImages : setStandardImages;
+    setter((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleAddSample = (sampleUrl: string, sampleLabel: string) => {
-    setImages((prev) => [
-      ...prev,
-      {
-        id: `sample_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-        url: sampleUrl,
-        alt: sampleLabel,
-      },
-    ]);
-    setShowSamplePicker(false);
+  // Move an image between Premium and Standard tiers
+  const handleMoveTier = (index: number, fromTier: "premium" | "standard") => {
+    const sourceList = fromTier === "premium" ? premiumImages : standardImages;
+    const item = sourceList[index];
+    if (!item) return;
+
+    if (fromTier === "premium") {
+      setPremiumImages((prev) => prev.filter((_, i) => i !== index));
+      setStandardImages((prev) => [...prev, item]);
+      setSuccessNotice(`Đã chuyển ảnh sang phân hạng Tiêu chuẩn.`);
+    } else {
+      setStandardImages((prev) => prev.filter((_, i) => i !== index));
+      setPremiumImages((prev) => [...prev, item]);
+      setSuccessNotice(`Đã chuyển ảnh sang phân hạng Premium.`);
+    }
+    setTimeout(() => setSuccessNotice(null), 2500);
   };
 
-  const handleAddCustomUrl = () => {
-    if (!customUrlInput.trim()) return;
-    setImages((prev) => [
-      ...prev,
-      {
-        id: `url_${Date.now()}`,
-        url: customUrlInput.trim(),
-        alt: name.trim() || "Ảnh sản phẩm",
-      },
-    ]);
-    setCustomUrlInput("");
+  const handleAddSample = (sampleUrl: string, sampleLabel: string, tier: "premium" | "standard") => {
+    const newItem: ImageItem = {
+      id: `sample_${tier}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      url: sampleUrl,
+      alt: sampleLabel,
+    };
+    if (tier === "premium") {
+      setPremiumImages((prev) => [...prev, newItem]);
+      setShowPremiumSamplePicker(false);
+    } else {
+      setStandardImages((prev) => [...prev, newItem]);
+      setShowStandardSamplePicker(false);
+    }
+  };
+
+  const handleAddCustomUrl = (tier: "premium" | "standard") => {
+    const url = tier === "premium" ? premiumUrlInput.trim() : standardUrlInput.trim();
+    if (!url) return;
+    const newItem: ImageItem = {
+      id: `url_${tier}_${Date.now()}`,
+      url,
+      alt: `${name.trim() || "Trà"} (${tier === "premium" ? "Premium" : "Tiêu chuẩn"})`,
+    };
+    if (tier === "premium") {
+      setPremiumImages((prev) => [...prev, newItem]);
+      setPremiumUrlInput("");
+    } else {
+      setStandardImages((prev) => [...prev, newItem]);
+      setStandardUrlInput("");
+    }
   };
 
   // Toggle helpers
@@ -533,16 +640,26 @@ export function ProductEditModal({
       return;
     }
 
-    if (images.length === 0) {
-      setError("Vui lòng thêm ít nhất 1 ảnh đại diện cho sản phẩm.");
+    if (premiumImages.length === 0) {
+      setError("Vui lòng thêm ít nhất 1 ảnh đại diện cho phân hạng Premium.");
       return;
     }
 
-    const primaryPhoto = images[0].url;
-    const galleryPhotos = images.slice(1).map((img, i) => ({
+    const primaryPhoto = premiumImages[0].url;
+    const galleryPhotos = premiumImages.slice(1).map((img, i) => ({
       ph: img.url,
       alt: img.alt || `${name.trim()} ảnh ${i + 2}`,
     }));
+
+    const standardPhoto = standardImages[0]?.url || undefined;
+    const standardGalleryPhotos = standardImages.length > 1
+      ? standardImages.slice(1).map((img, i) => ({
+          ph: img.url,
+          alt: img.alt || `${name.trim()} tiêu chuẩn ảnh ${i + 2}`,
+        }))
+      : undefined;
+
+    const numStandardBase = standardBase ? Number(standardBase) : undefined;
 
     setSaving(true);
     try {
@@ -554,10 +671,13 @@ export function ProductEditModal({
         note: note.trim(),
         base: numBase,
         compareAt: compareAt ? Number(compareAt) : undefined,
+        standardBase: numStandardBase,
         fixed,
         origin: origin.trim(),
         ph: primaryPhoto,
         gallery: galleryPhotos,
+        standardPh: standardPhoto,
+        standardGallery: standardGalleryPhotos,
         desc: desc.trim(),
         active,
         purposes: purposes as Product["purposes"],
@@ -596,6 +716,451 @@ export function ProductEditModal({
     } finally {
       setSaving(false);
     }
+  };
+
+  const renderTierBlock = (tier: "premium" | "standard") => {
+    const isPremium = tier === "premium";
+    const list = isPremium ? premiumImages : standardImages;
+    const fileRef = isPremium ? premiumFileInputRef : standardFileInputRef;
+    const isDropOver = isPremium ? premiumDropOver : standardDropOver;
+    const isUploading = uploadingTier === tier;
+    const showSamplePicker = isPremium ? showPremiumSamplePicker : showStandardSamplePicker;
+    const setShowSamplePicker = isPremium ? setShowPremiumSamplePicker : setShowStandardSamplePicker;
+    const customUrlInput = isPremium ? premiumUrlInput : standardUrlInput;
+    const setCustomUrlInput = isPremium ? setPremiumUrlInput : setStandardUrlInput;
+    const title = isPremium ? "👑 Phân hạng Premium (Cao cấp)" : "🏷️ Phân hạng Tiêu chuẩn (Hàng ngày)";
+    const subDesc = isPremium
+      ? "Ảnh hiển thị mặc định và khi khách chọn gói Premium / Hương đậm trên website"
+      : "Ảnh hiển thị khi khách chọn gói Tiêu chuẩn / Hộp giấy trên website";
+    const targetLabel = isPremium ? "Tiêu chuẩn" : "Premium";
+
+    const borderColor = isPremium ? "#E2CFA8" : "#B8D6BF";
+    const headerBg = isPremium ? "linear-gradient(to right, #FCF8F1, #FFFFFF)" : "linear-gradient(to right, #F3F8F4, #FFFFFF)";
+    const dropzoneBorder = isDropOver
+      ? (isPremium ? "#B58C4F" : "#2D5034")
+      : (isPremium ? "rgba(188, 154, 108, 0.45)" : "rgba(45, 80, 52, 0.35)");
+
+    return (
+      <div
+        key={tier}
+        style={{
+          borderRadius: 10,
+          border: `1.5px solid ${borderColor}`,
+          background: isPremium ? "#FFFDF9" : "#FBFDFB",
+          padding: "12px 14px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+        }}
+      >
+        {/* Tier Header */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8, paddingBottom: 8, borderBottom: `1px solid ${borderColor}`, background: headerBg, margin: "-12px -14px 10px -14px", padding: "10px 14px", borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: isPremium ? "var(--reu-800)" : "#24341F", display: "flex", alignItems: "center", gap: 6 }}>
+              <span>{title}</span>
+            </div>
+            <div style={{ fontSize: 11, color: "var(--stone-600)", marginTop: 2 }}>{subDesc}</div>
+          </div>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              color: isPremium ? "#94723F" : "#2D5034",
+              background: isPremium ? "#FBF3E4" : "#EDF5EF",
+              padding: "2px 8px",
+              borderRadius: 999,
+              border: `1px solid ${isPremium ? "#DFBE89" : "#B8D6BF"}`,
+            }}
+          >
+            {list.length} ảnh
+          </span>
+        </div>
+
+        {/* Dropzone */}
+        <div
+          className={`lt-admin-dropzone ${isDropOver ? "is-dragover" : ""}`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            if (isPremium) setPremiumDropOver(true);
+            else setStandardDropOver(true);
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            if (isPremium) setPremiumDropOver(false);
+            else setStandardDropOver(false);
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            if (isPremium) setPremiumDropOver(false);
+            else setStandardDropOver(false);
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+              processBatchUpload(e.dataTransfer.files, tier);
+            }
+          }}
+          onClick={() => fileRef.current?.click()}
+          style={{
+            borderColor: dropzoneBorder,
+            padding: "14px 12px",
+            minHeight: 88,
+            marginBottom: 8,
+          }}
+        >
+          <div style={{ width: 34, height: 34, borderRadius: "50%", background: isPremium ? "rgba(188, 154, 108, 0.18)" : "rgba(45, 80, 52, 0.14)", display: "flex", alignItems: "center", justifyContent: "center", color: isPremium ? "var(--reu-800)" : "#2D5034" }}>
+            <Icon name="upload" size={17} />
+          </div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: isPremium ? "var(--reu-800)" : "#2D5034" }}>
+            {isUploading
+              ? `Đang tải ${uploadProgress ? `${uploadProgress.current}/${uploadProgress.total}` : ""} ảnh cho ${isPremium ? "Premium" : "Tiêu chuẩn"}...`
+              : `Kéo & thả ảnh vào đây hoặc bấm tải lên`}
+          </div>
+          <div style={{ fontSize: 11, color: "var(--stone-600)" }}>
+            Thêm ảnh cho phân hạng <strong>{isPremium ? "Premium" : "Tiêu chuẩn"}</strong> (JPG, PNG, WebP)
+          </div>
+        </div>
+
+        {/* Preset Picker & URL Input */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 10 }}>
+          <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              onClick={() => setShowSamplePicker(!showSamplePicker)}
+              style={{
+                padding: "5px 10px",
+                borderRadius: 6,
+                border: "1px solid var(--border-hairline)",
+                background: showSamplePicker ? "var(--paper-200)" : "#FFFFFF",
+                fontSize: 11.5,
+                color: "var(--stone-800)",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                fontWeight: 500,
+              }}
+            >
+              <Icon name="star" size={12} color={isPremium ? "var(--tra-500)" : "#2D5034"} />
+              <span>{showSamplePicker ? "Đóng kho ảnh mẫu" : `Chọn ảnh mẫu cho ${isPremium ? "Premium" : "Tiêu chuẩn"}`}</span>
+            </button>
+          </div>
+
+          {showSamplePicker && (
+            <div style={{ background: "var(--paper-50)", border: "1px solid var(--border-hairline)", borderRadius: 8, padding: "8px 10px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5, maxHeight: 180, overflowY: "auto" }}>
+              {SAMPLE_PHOTOS.filter((s) => (isPremium ? s.tier === "premium" || !s.tier : s.tier === "standard" || !s.tier)).map((s) => (
+                <button
+                  key={s.value}
+                  type="button"
+                  onClick={() => handleAddSample(s.value, s.label, tier)}
+                  style={{
+                    padding: "5px 7px",
+                    borderRadius: 5,
+                    border: "1px solid #DFD2BB",
+                    background: "#FFFFFF",
+                    fontSize: 11,
+                    textAlign: "left",
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    color: "var(--stone-900)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                  }}
+                  title={s.label}
+                >
+                  <span style={{ width: 18, height: 18, borderRadius: 3, backgroundImage: `url('${photo(s.value)}')`, backgroundSize: "cover", flexShrink: 0 }} />
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>+ {s.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Custom URL Input */}
+          <div style={{ display: "flex", gap: 6 }}>
+            <input
+              type="text"
+              placeholder={`Dán đường dẫn ảnh /assets/... cho ${isPremium ? "Premium" : "Tiêu chuẩn"}`}
+              value={customUrlInput}
+              onChange={(e) => setCustomUrlInput(e.target.value)}
+              className="lt-admin-input"
+              style={{ height: 30, fontSize: 11.5 }}
+            />
+            <button
+              type="button"
+              onClick={() => handleAddCustomUrl(tier)}
+              style={{
+                height: 30,
+                padding: "0 10px",
+                borderRadius: 6,
+                border: "1px solid var(--border-hairline)",
+                background: "#FFFFFF",
+                fontSize: 11.5,
+                fontWeight: 600,
+                color: isPremium ? "var(--reu-800)" : "#2D5034",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Thêm
+            </button>
+          </div>
+        </div>
+
+        {/* List of Images */}
+        <div style={{ fontSize: 11.5, fontWeight: 600, color: "var(--stone-800)", marginBottom: 6, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span>Ảnh phân hạng {isPremium ? "Premium" : "Tiêu chuẩn"} ({list.length}):</span>
+          {list.length > 1 && (
+            <span style={{ fontSize: 10.5, color: "var(--stone-500)", fontWeight: 400 }}>
+              Kéo thả hoặc bấm ↑ ↓ để đổi vị trí
+            </span>
+          )}
+        </div>
+
+        {list.length === 0 ? (
+          <div style={{ padding: "16px 12px", textAlign: "center", background: "var(--paper-50)", borderRadius: 7, border: "1px dashed var(--border-hairline)", color: "var(--stone-600)", fontSize: 11.5 }}>
+            {isPremium
+              ? "Chưa có ảnh Premium. Vui lòng tải ảnh lên hoặc chọn ảnh mẫu."
+              : "Chưa có ảnh riêng cho Tiêu chuẩn. Thêm ảnh để khi khách bấm \"Tiêu chuẩn\" trên trang mua hàng sẽ thấy hộp này."}
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: "360px", overflowY: "auto", overflowX: "hidden", paddingRight: 2 }}>
+            {list.map((item, index) => {
+              const isPrimary = index === 0;
+              const isDragged = draggedItem?.tier === tier && draggedItem.index === index;
+              const isOver = dragOverItem?.tier === tier && dragOverItem.index === index;
+              const isTouchDragging = touchDragState?.tier === tier && touchDragState.index === index;
+              const isTouchOver = touchStateRef.current.tier === tier && touchOverIndex === index && touchDragState?.index !== index;
+
+              return (
+                <div
+                  key={item.id}
+                  data-image-index={index}
+                  data-image-tier={tier}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, index, tier)}
+                  onDragOver={(e) => handleDragOver(e, index, tier)}
+                  onDrop={(e) => handleDrop(e, index, tier)}
+                  onDragEnd={handleDragEnd}
+                  className={`lt-admin-image-card ${isPrimary ? "is-primary" : ""} ${isDragged ? "is-dragged" : ""} ${isOver ? "is-dragover" : ""} ${isTouchDragging ? "is-touch-dragging" : ""} ${isTouchOver ? "is-touch-over" : ""}`}
+                  style={{
+                    background: isPrimary
+                      ? (isPremium ? "linear-gradient(to right, #FFFDF8, #FFFFFF)" : "linear-gradient(to right, #F5FAF6, #FFFFFF)")
+                      : "#FFFFFF",
+                    borderColor: isPrimary
+                      ? (isPremium ? "#DFBE89" : "#B8D6BF")
+                      : "var(--border-hairline)",
+                  }}
+                >
+                  <div className="lt-admin-image-card-main">
+                    <div
+                      className={`lt-admin-drag-handle ${isTouchDragging ? "is-active" : ""}`}
+                      onTouchStart={(e) => handleTouchStart(e, index, tier)}
+                      onTouchMove={handleTouchMove}
+                      onTouchEnd={handleTouchEnd}
+                      onTouchCancel={handleTouchCancel}
+                      title="Kéo thả để đổi thứ tự"
+                      style={{
+                        color: isPrimary ? (isPremium ? "var(--tra-500)" : "#2D5034") : "var(--stone-500)",
+                        cursor: isTouchDragging ? "grabbing" : "grab",
+                        userSelect: "none",
+                        touchAction: "none",
+                      }}
+                    >
+                      ⋮⋮
+                    </div>
+
+                    <button
+                      type="button"
+                      draggable={false}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPreviewState({ tier, index });
+                      }}
+                      title="Bấm để phóng to xem ảnh"
+                      style={{
+                        width: 48,
+                        height: 48,
+                        minWidth: 48,
+                        borderRadius: 6,
+                        border: isPrimary ? (isPremium ? "1.5px solid #DFBE89" : "1.5px solid #B8D6BF") : "1px solid var(--border-hairline)",
+                        background: "#FAF8F5",
+                        backgroundImage: `url('${photo(item.url)}')`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        flexShrink: 0,
+                        position: "relative",
+                        cursor: "zoom-in",
+                        padding: 0,
+                        overflow: "hidden",
+                      }}
+                    >
+                      <span className="lt-thumb-zoom-overlay">
+                        <Icon name="search" size={14} />
+                      </span>
+                    </button>
+
+                    <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
+                        {isPrimary ? (
+                          <span
+                            style={{
+                              fontSize: 10.5,
+                              fontWeight: 700,
+                              color: isPremium ? "#94723F" : "#2D5034",
+                              background: isPremium ? "#FBF3E4" : "#EDF5EF",
+                              border: `1px solid ${isPremium ? "#DFBE89" : "#B8D6BF"}`,
+                              padding: "1px 6px",
+                              borderRadius: 4,
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 3,
+                            }}
+                          >
+                            ⭐ #1 Ảnh bìa {isPremium ? "Premium" : "Tiêu chuẩn"}
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              fontSize: 10.5,
+                              fontWeight: 600,
+                              color: "var(--stone-600)",
+                              background: "var(--paper-100)",
+                              border: "1px solid var(--border-hairline)",
+                              padding: "1px 6px",
+                              borderRadius: 4,
+                            }}
+                          >
+                            #{index + 1} Ảnh phụ
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPreviewState({ tier, index });
+                        }}
+                        title={`Xem ảnh lớn: ${item.url}`}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          padding: 0,
+                          textAlign: "left",
+                          fontSize: 11,
+                          color: "var(--stone-700)",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          cursor: "zoom-in",
+                          display: "block",
+                          width: "100%",
+                        }}
+                      >
+                        <code style={{ textDecoration: "underline", textDecorationStyle: "dotted" }}>
+                          {item.url.length > 32 ? `${item.url.slice(0, 29)}...` : item.url}
+                        </code>
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteImage(index, tier);
+                      }}
+                      title="Xóa ảnh này"
+                      className="lt-admin-card-quick-del"
+                    >
+                      <Icon name="trash-2" size={14} />
+                    </button>
+                  </div>
+
+                  {/* Toolbar */}
+                  <div className="lt-admin-image-toolbar" style={{ paddingTop: 4, borderTop: "1px solid var(--paper-200, #EEE4D2)", display: "flex", gap: 5, flexWrap: "wrap", alignItems: "center" }}>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPreviewState({ tier, index });
+                      }}
+                      className="lt-admin-toolbar-btn"
+                      title="Xem phóng to"
+                    >
+                      <Icon name="search" size={12} />
+                      <span>Xem</span>
+                    </button>
+
+                    {!isPrimary && (
+                      <button
+                        type="button"
+                        onClick={() => handleSetPrimary(index, tier)}
+                        className="lt-admin-toolbar-btn lt-admin-btn-primary-set"
+                        title="Đặt làm ảnh bìa cho phân hạng này"
+                      >
+                        ⭐ Làm bìa
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      disabled={index === 0}
+                      onClick={() => handleMove(index, -1, tier)}
+                      className="lt-admin-toolbar-btn lt-admin-btn-move"
+                      title="Lên trước"
+                    >
+                      ↑ Lên
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={index === list.length - 1}
+                      onClick={() => handleMove(index, 1, tier)}
+                      className="lt-admin-toolbar-btn lt-admin-btn-move"
+                      title="Xuống sau"
+                    >
+                      ↓ Xuống
+                    </button>
+
+                    {/* Quick Move Across Tiers */}
+                    <button
+                      type="button"
+                      onClick={() => handleMoveTier(index, tier)}
+                      style={{
+                        padding: "3px 8px",
+                        borderRadius: 5,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        border: "1px solid var(--border-hairline)",
+                        background: isPremium ? "#F3F8F4" : "#FCF8F1",
+                        color: isPremium ? "#2D5034" : "#94723F",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 3,
+                        transition: "all 120ms ease",
+                      }}
+                      title={`Chuyển ảnh này sang phân hạng ${targetLabel}`}
+                    >
+                      <span>⇄ Sang {targetLabel}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteImage(index, tier)}
+                      className="lt-admin-toolbar-btn lt-admin-btn-delete"
+                      title="Xóa ảnh"
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <Icon name="trash-2" size={12} />
+                      <span>Xóa</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -723,22 +1288,54 @@ export function ProductEditModal({
                 <span>2. Giá bán & Trạng thái kinh doanh</span>
               </h3>
 
-              <div className="lt-admin-grid-2">
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 14 }}>
                 <div>
-                  <label className="lt-admin-label">Giá bán cơ sở (VND) *</label>
+                  <label className="lt-admin-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span>👑 Giá cơ sở Premium (VND) *</span>
+                  </label>
                   <input
                     type="number"
                     step={1000}
                     inputMode="numeric"
                     required
-                    placeholder="VD: 250000"
+                    placeholder="VD: 559000"
                     value={base}
                     onChange={(e) => setBase(e.target.value)}
                     className="lt-admin-input"
                     style={{ fontSize: 15, fontWeight: 700, color: "var(--reu-800, #24341F)" }}
                   />
                   <span style={{ fontSize: 11, color: "var(--stone-600, #74684F)", marginTop: 3, display: "block" }}>
-                    Giá tiêu chuẩn cho hộp 200g Premium (hoặc trọn set)
+                    Giá cho hộp 200g Premium (hoặc trọn set)
+                  </span>
+                </div>
+
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                    <label className="lt-admin-label" style={{ margin: 0, display: "flex", alignItems: "center", gap: 6 }}>
+                      <span>🏷️ Giá cơ sở Tiêu chuẩn (VND)</span>
+                    </label>
+                    {Number(base) > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setStandardBase(Math.round(Number(base) * 0.75 / 1000) * 1000)}
+                        style={{ fontSize: 11, color: "var(--tra-600, #94723F)", background: "transparent", border: 0, cursor: "pointer", fontWeight: 600, textDecoration: "underline", padding: 0 }}
+                      >
+                        = 75% ({Math.round(Number(base) * 0.75 / 1000 * 1000).toLocaleString("vi-VN")}₫)
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    type="number"
+                    step={1000}
+                    inputMode="numeric"
+                    placeholder={Number(base) > 0 ? `Tự động: ${(Math.round(Number(base) * 0.75 / 1000) * 1000).toLocaleString("vi-VN")}₫` : "VD: 419000"}
+                    value={standardBase}
+                    onChange={(e) => setStandardBase(e.target.value)}
+                    className="lt-admin-input"
+                    style={{ fontSize: 15, fontWeight: 600, color: "var(--reu-700, #2D5034)" }}
+                  />
+                  <span style={{ fontSize: 11, color: "var(--stone-600, #74684F)", marginTop: 3, display: "block" }}>
+                    {standardBase ? "Đang đặt giá riêng cho Tiêu chuẩn" : `Để trống sẽ tự động tính = 75% giá Premium`}
                   </span>
                 </div>
 
@@ -948,437 +1545,111 @@ export function ProductEditModal({
             </div>
           </div>
 
-          {/* ════════════ RIGHT COLUMN: MEDIA GALLERY & DRAG-DROP REORDER ════════════ */}
+          {/* ════════════ RIGHT COLUMN: MEDIA GALLERY BY TIER (PREMIUM & TIÊU CHUẨN) ════════════ */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {/* Hidden multi-file inputs */}
+            <input
+              type="file"
+              ref={premiumFileInputRef}
+              multiple
+              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  processBatchUpload(e.target.files, "premium");
+                }
+              }}
+            />
+            <input
+              type="file"
+              ref={standardFileInputRef}
+              multiple
+              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  processBatchUpload(e.target.files, "standard");
+                }
+              }}
+            />
+
             <div className="lt-admin-form-section" style={{ position: "sticky", top: 12 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8, paddingBottom: 8, borderBottom: "1px solid var(--paper-200, #EEE4D2)" }}>
-                <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "var(--reu-800)", display: "flex", alignItems: "center", gap: 7 }}>
-                  <Icon name="sliders-horizontal" size={17} color="var(--tra-500)" />
-                  <span>Bộ sưu tập ảnh sản phẩm</span>
-                </h3>
-                <span style={{ fontSize: 11.5, fontWeight: 600, color: "var(--tra-600)", background: "var(--paper-100)", padding: "2px 8px", borderRadius: 999, border: "1px solid var(--border-hairline)" }}>
-                  {images.length} ảnh
-                </span>
-              </div>
-
-              <p style={{ margin: "2px 0 6px", fontSize: 12, color: "var(--stone-600)", lineHeight: 1.5 }}>
-                💡 <strong>Kéo & thả</strong> các thẻ ảnh để đổi thứ tự. Ảnh đầu tiên <strong>(#1)</strong> luôn là <strong>ảnh đại diện (ảnh bìa)</strong> hiển thị chính trên website.
-              </p>
-
-              {/* ─── MULTI-FILE DROPZONE (Up to 10 images / batch) ─── */}
-              <input
-                type="file"
-                ref={multiFileInputRef}
-                multiple
-                accept="image/png,image/jpeg,image/webp,image/svg+xml"
-                style={{ display: "none" }}
-                onChange={(e) => {
-                  if (e.target.files && e.target.files.length > 0) {
-                    processBatchUpload(e.target.files);
-                  }
-                }}
-              />
-
-              <div
-                className={`lt-admin-dropzone ${isDropOver ? "is-dragover" : ""}`}
-                onDragOver={handleDropzoneOver}
-                onDragLeave={handleDropzoneLeave}
-                onDrop={handleDropzoneDrop}
-                onClick={() => multiFileInputRef.current?.click()}
-              >
-                <div style={{ width: 42, height: 42, borderRadius: "50%", background: "rgba(188, 154, 108, 0.18)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--reu-800)" }}>
-                  <Icon name="upload" size={20} />
+              {/* Header */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8, paddingBottom: 10, borderBottom: "1px solid var(--paper-200, #EEE4D2)" }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "var(--reu-800)", display: "flex", alignItems: "center", gap: 7 }}>
+                    <Icon name="sliders-horizontal" size={17} color="var(--tra-500)" />
+                    <span>Bộ sưu tập ảnh theo phân hạng</span>
+                  </h3>
+                  <p style={{ margin: "3px 0 0", fontSize: 11.5, color: "var(--stone-600)" }}>
+                    Quản lý ảnh riêng cho từng dòng sản phẩm hiển thị trên trang mua hàng
+                  </p>
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--reu-800)" }}>
-                  {uploading
-                    ? `Đang xử lý ${uploadProgress ? `${uploadProgress.current}/${uploadProgress.total}` : ""} ảnh...`
-                    : "Kéo & thả nhiều ảnh vào đây hoặc bấm tải lên"}
-                </div>
-                <div style={{ fontSize: 11.5, color: "var(--stone-600)" }}>
-                  Hỗ trợ tải tối đa <strong>10 ảnh / 1 lần</strong> (JPG, PNG, WebP)
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#94723F", background: "#FBF3E4", padding: "3px 8px", borderRadius: 999, border: "1px solid #DFBE89" }}>
+                    👑 {premiumImages.length} Premium
+                  </span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#2D5034", background: "#EDF5EF", padding: "3px 8px", borderRadius: 999, border: "1px solid #B8D6BF" }}>
+                    🏷️ {standardImages.length} Tiêu chuẩn
+                  </span>
                 </div>
               </div>
 
-              {/* ─── QUICK PRESET & CUSTOM URL PICKER ─── */}
-              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginTop: 2 }}>
+              {/* Segmented Switcher / Tabs */}
+              <div style={{ display: "flex", padding: 3, borderRadius: 8, background: "var(--paper-100, #F7F0E3)", border: "1px solid var(--border-hairline, #DFD2BB)", marginTop: 10, gap: 4 }}>
                 <button
                   type="button"
-                  onClick={() => setShowSamplePicker(!showSamplePicker)}
+                  onClick={() => setImageTab("premium")}
                   style={{
-                    padding: "6px 12px",
-                    borderRadius: 6,
-                    border: "1px solid var(--border-hairline)",
-                    background: showSamplePicker ? "var(--paper-200)" : "#FFFFFF",
-                    fontSize: 12,
-                    color: "var(--stone-800)",
-                    cursor: "pointer",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 6,
-                    fontWeight: 500,
+                    flex: 1, padding: "7px 10px", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer", border: "none",
+                    background: imageTab === "premium" ? "#FFFFFF" : "transparent",
+                    color: imageTab === "premium" ? "var(--reu-800)" : "var(--stone-600)",
+                    boxShadow: imageTab === "premium" ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+                    transition: "all 120ms ease", display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
                   }}
                 >
-                  <Icon name="star" size={13} color="var(--tra-500)" />
-                  <span>{showSamplePicker ? "Đóng kho ảnh mẫu" : "Thêm từ kho ảnh mẫu Lam Trà"}</span>
+                  <span>👑 Ảnh Premium</span>
+                  <span style={{ fontSize: 10.5, opacity: 0.85, background: imageTab === "premium" ? "#FBF3E4" : "transparent", padding: "1px 5px", borderRadius: 999 }}>
+                    ({premiumImages.length})
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setImageTab("standard")}
+                  style={{
+                    flex: 1, padding: "7px 10px", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer", border: "none",
+                    background: imageTab === "standard" ? "#FFFFFF" : "transparent",
+                    color: imageTab === "standard" ? "#2D5034" : "var(--stone-600)",
+                    boxShadow: imageTab === "standard" ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+                    transition: "all 120ms ease", display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                  }}
+                >
+                  <span>🏷️ Ảnh Tiêu chuẩn</span>
+                  <span style={{ fontSize: 10.5, opacity: 0.85, background: imageTab === "standard" ? "#EDF5EF" : "transparent", padding: "1px 5px", borderRadius: 999 }}>
+                    ({standardImages.length})
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setImageTab("both")}
+                  style={{
+                    padding: "7px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer", border: "none",
+                    background: imageTab === "both" ? "#FFFFFF" : "transparent",
+                    color: imageTab === "both" ? "var(--reu-800)" : "var(--stone-600)",
+                    boxShadow: imageTab === "both" ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+                    transition: "all 120ms ease", display: "flex", alignItems: "center", justifyContent: "center", gap: 4,
+                  }}
+                >
+                  <span>📋 Cả hai</span>
                 </button>
               </div>
 
-              {showSamplePicker && (
-                <div style={{ background: "var(--paper-50)", border: "1px solid var(--border-hairline)", borderRadius: 8, padding: "10px 12px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-                  {SAMPLE_PHOTOS.map((s) => (
-                    <button
-                      key={s.value}
-                      type="button"
-                      onClick={() => handleAddSample(s.value, s.label)}
-                      style={{
-                        padding: "6px 8px",
-                        borderRadius: 6,
-                        border: "1px solid #DFD2BB",
-                        background: "#FFFFFF",
-                        fontSize: 11.5,
-                        textAlign: "left",
-                        cursor: "pointer",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        color: "var(--stone-900)",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 6,
-                      }}
-                      title={s.label}
-                    >
-                      <span style={{ width: 18, height: 18, borderRadius: 3, backgroundImage: `url('${photo(s.value)}')`, backgroundSize: "cover", flexShrink: 0 }} />
-                      <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>+ {s.label}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* Custom URL Input */}
-              <div style={{ display: "flex", gap: 6 }}>
-                <input
-                  type="text"
-                  placeholder="Hoặc dán đường dẫn ảnh /assets/..."
-                  value={customUrlInput}
-                  onChange={(e) => setCustomUrlInput(e.target.value)}
-                  className="lt-admin-input"
-                  style={{ height: 32, fontSize: 12 }}
-                />
-                <button
-                  type="button"
-                  onClick={handleAddCustomUrl}
-                  style={{
-                    height: 32,
-                    padding: "0 10px",
-                    borderRadius: 6,
-                    border: "1px solid var(--border-hairline)",
-                    background: "#FFFFFF",
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: "var(--reu-800)",
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  Thêm
-                </button>
-              </div>
-
-              {/* ─── REORDERABLE IMAGES LIST ─── */}
-              <div style={{ marginTop: 8 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "var(--stone-800)", marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 6 }}>
-                  <span>Danh sách ảnh hiện có ({images.length}):</span>
-                  {images.length > 1 && (
-                    <span style={{ fontSize: 11, color: "var(--tra-600)", fontWeight: 500 }}>
-                      Kéo thả thẻ ảnh hoặc chạm nút ↑ ↓ để đổi vị trí
-                    </span>
-                  )}
-                </div>
-
-                {/* Touch dragging live position hint banner on mobile */}
-                {touchDragIndex !== null && (
-                  <div
-                    style={{
-                      padding: "8px 12px",
-                      borderRadius: 8,
-                      background: "linear-gradient(135deg, #19241A, #24341F)",
-                      color: "#F7F0E3",
-                      fontSize: 12.5,
-                      fontWeight: 600,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      boxShadow: "0 4px 12px rgba(25, 36, 26, 0.3)",
-                      marginBottom: 10,
-                      border: "1px solid #DFBE89",
-                    }}
-                  >
-                    <span>
-                      Đang kéo ảnh <strong>#{touchDragIndex + 1}</strong>
-                    </span>
-                    <span>
-                      ➔ Vị trí mới: <strong style={{ color: "#DFBE89" }}>#{touchOverIndex !== null ? touchOverIndex + 1 : touchDragIndex + 1}</strong>
-                    </span>
-                  </div>
-                )}
-
-                {images.length === 0 ? (
-                  <div style={{ padding: "24px 16px", textAlign: "center", background: "var(--paper-50)", borderRadius: 8, border: "1px dashed var(--border-hairline)", color: "var(--stone-600)", fontSize: 12.5 }}>
-                    Chưa có ảnh nào. Vui lòng kéo ảnh vào khung phía trên hoặc chọn ảnh mẫu.
-                  </div>
-                ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10, maxHeight: "420px", overflowY: "auto", overflowX: "hidden", paddingRight: 4, paddingBottom: 6 }}>
-                    {images.map((item, index) => {
-                      const isPrimary = index === 0;
-                      const isDragged = draggedIndex === index;
-                      const isOver = dragOverIndex === index;
-                      const isTouchDragging = touchDragIndex === index;
-                      const isTouchOver = touchOverIndex === index && touchDragIndex !== index;
-
-                      return (
-                        <div
-                          key={item.id}
-                          data-image-index={index}
-                          draggable
-                          onDragStart={(e) => handleDragStart(e, index)}
-                          onDragOver={(e) => handleDragOver(e, index)}
-                          onDrop={(e) => handleDrop(e, index)}
-                          onDragEnd={handleDragEnd}
-                          className={`lt-admin-image-card ${isPrimary ? "is-primary" : ""} ${isDragged ? "is-dragged" : ""} ${isOver ? "is-dragover" : ""} ${isTouchDragging ? "is-touch-dragging" : ""} ${isTouchOver ? "is-touch-over" : ""}`}
-                          style={{
-                            background: isPrimary ? "linear-gradient(to right, #FFFDF9, #FFFFFF)" : "#FFFFFF",
-                          }}
-                        >
-                          {/* Header Row: Drag Handle + Thumbnail + Info + Top-Right Quick Delete Button */}
-                          <div className="lt-admin-image-card-main">
-                            {/* Drag Handle Icon - Supports mouse drag and mobile touch drag */}
-                            <div
-                              className={`lt-admin-drag-handle ${isTouchDragging ? "is-active" : ""}`}
-                              onTouchStart={(e) => handleTouchStart(e, index)}
-                              onTouchMove={handleTouchMove}
-                              onTouchEnd={handleTouchEnd}
-                              onTouchCancel={handleTouchCancel}
-                              title="Kéo thả để đổi thứ tự (Chạm giữ và kéo trên điện thoại)"
-                              aria-label="Kéo thả đổi thứ tự"
-                              style={{
-                                color: isPrimary ? "var(--tra-500)" : "var(--stone-500)",
-                                cursor: isTouchDragging ? "grabbing" : "grab",
-                                userSelect: "none",
-                                WebkitUserSelect: "none",
-                                touchAction: "none",
-                              }}
-                            >
-                              ⋮⋮
-                            </div>
-
-                            {/* Image Thumbnail with Click-to-Zoom */}
-                            <button
-                              type="button"
-                              draggable={false}
-                              onMouseDown={(e) => e.stopPropagation()}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setPreviewIndex(index);
-                              }}
-                              title="Bấm để phóng to xem ảnh"
-                              style={{
-                                width: 52,
-                                height: 52,
-                                minWidth: 52,
-                                borderRadius: 7,
-                                border: isPrimary ? "1.5px solid var(--tra-400)" : "1px solid var(--border-hairline)",
-                                background: "#FAF8F5",
-                                backgroundImage: `url('${photo(item.url)}')`,
-                                backgroundSize: "cover",
-                                backgroundPosition: "center",
-                                flexShrink: 0,
-                                boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-                                position: "relative",
-                                cursor: "zoom-in",
-                                padding: 0,
-                                overflow: "hidden",
-                              }}
-                            >
-                              <span
-                                className="lt-thumb-zoom-overlay"
-                                style={{
-                                  position: "absolute",
-                                  inset: 0,
-                                  background: "rgba(13, 34, 25, 0.55)",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  color: "#FFFFFF",
-                                }}
-                              >
-                                <Icon name="search" size={16} />
-                              </span>
-                              <span
-                                style={{
-                                  position: "absolute",
-                                  bottom: 2,
-                                  right: 2,
-                                  background: "rgba(13, 34, 25, 0.7)",
-                                  borderRadius: 3,
-                                  padding: "1px 3px",
-                                  color: "#F7F0E3",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  fontSize: 9,
-                                  lineHeight: 1,
-                                }}
-                                title="Bấm để phóng to"
-                              >
-                                <Icon name="search" size={9} />
-                              </span>
-                            </button>
-
-                            {/* Info and Tags */}
-                            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                                {isPrimary ? (
-                                  <span
-                                    style={{
-                                      fontSize: 11,
-                                      fontWeight: 700,
-                                      color: "#94723F",
-                                      background: "#FBF3E4",
-                                      border: "1px solid #DFBE89",
-                                      padding: "2px 8px",
-                                      borderRadius: 4,
-                                      display: "inline-flex",
-                                      alignItems: "center",
-                                      gap: 4,
-                                    }}
-                                  >
-                                    ⭐ #1 Ảnh bìa chính
-                                  </span>
-                                ) : (
-                                  <span
-                                    style={{
-                                      fontSize: 11,
-                                      fontWeight: 600,
-                                      color: "var(--stone-600)",
-                                      background: "var(--paper-100)",
-                                      border: "1px solid var(--border-hairline)",
-                                      padding: "2px 7px",
-                                      borderRadius: 4,
-                                    }}
-                                  >
-                                    #{index + 1} Ảnh phụ
-                                  </span>
-                                )}
-                              </div>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setPreviewIndex(index);
-                                }}
-                                title={`Xem ảnh lớn: ${item.url}`}
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  padding: 0,
-                                  textAlign: "left",
-                                  fontSize: 11.5,
-                                  color: "var(--stone-700)",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                  cursor: "zoom-in",
-                                  display: "block",
-                                  width: "100%",
-                                }}
-                              >
-                                <code style={{ textDecoration: "underline", textDecorationStyle: "dotted" }}>
-                                  {item.url.length > 34 ? `${item.url.slice(0, 31)}...` : item.url}
-                                </code>
-                              </button>
-                            </div>
-
-                            {/* Dedicated Top-Right Quick Delete Button */}
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteImage(index);
-                              }}
-                              title="Xóa ảnh này ngay"
-                              aria-label={`Xóa ảnh ${index + 1}`}
-                              className="lt-admin-card-quick-del"
-                            >
-                              <Icon name="trash-2" size={15} />
-                            </button>
-                          </div>
-
-                          {/* Control Toolbar with Mobile-Friendly Touch Targets */}
-                          <div className="lt-admin-image-toolbar">
-                            {/* Preview Button */}
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setPreviewIndex(index);
-                              }}
-                              title="Bấm xem ảnh phóng to"
-                              className="lt-admin-toolbar-btn"
-                            >
-                              <Icon name="search" size={13} />
-                              <span>Xem</span>
-                            </button>
-
-                            {/* Make primary */}
-                            {!isPrimary && (
-                              <button
-                                type="button"
-                                onClick={() => handleSetPrimary(index)}
-                                title="Đặt làm ảnh bìa chính (#1)"
-                                className="lt-admin-toolbar-btn lt-admin-btn-primary-set"
-                              >
-                                ⭐ Làm bìa
-                              </button>
-                            )}
-
-                            {/* Move Up */}
-                            <button
-                              type="button"
-                              disabled={index === 0}
-                              onClick={() => handleMove(index, -1)}
-                              title={index === 0 ? "Đã ở vị trí đầu tiên" : "Di chuyển lên trước"}
-                              className="lt-admin-toolbar-btn lt-admin-btn-move"
-                            >
-                              ↑ Lên
-                            </button>
-
-                            {/* Move Down */}
-                            <button
-                              type="button"
-                              disabled={index === images.length - 1}
-                              onClick={() => handleMove(index, 1)}
-                              title={index === images.length - 1 ? "Đã ở vị trí cuối cùng" : "Di chuyển xuống sau"}
-                              className="lt-admin-toolbar-btn lt-admin-btn-move"
-                            >
-                              ↓ Xuống
-                            </button>
-
-                            {/* Delete single image */}
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteImage(index)}
-                              title="Xóa ảnh này khỏi sản phẩm"
-                              className="lt-admin-toolbar-btn lt-admin-btn-delete"
-                            >
-                              <Icon name="trash-2" size={13} />
-                              <span>Xóa ảnh</span>
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+              {/* Render Sections */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 12 }}>
+                {(imageTab === "premium" || imageTab === "both") && renderTierBlock("premium")}
+                {(imageTab === "standard" || imageTab === "both") && renderTierBlock("standard")}
               </div>
             </div>
           </div>
@@ -1386,48 +1657,50 @@ export function ProductEditModal({
 
         {/* ════════════ STICKY LUXURY MODAL FOOTER ════════════ */}
         <div className="lt-admin-modal-footer">
-          <div className="lt-admin-footer-preview">
-            <span style={{ flexShrink: 0, fontWeight: 500 }}>Ảnh đại diện:</span>
-            {images[0] ? (
-              <button
-                type="button"
-                onClick={() => setPreviewIndex(0)}
-                title="Bấm để xem ảnh phóng to"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 7,
-                  fontWeight: 600,
-                  color: "var(--reu-800)",
-                  background: "transparent",
-                  border: 0,
-                  cursor: "pointer",
-                  padding: 0,
-                  minWidth: 0,
-                  overflow: "hidden",
-                }}
-              >
-                <span
-                  style={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: 4,
-                    backgroundImage: `url('${photo(images[0].url)}')`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    border: "1px solid var(--border-hairline)",
-                    display: "inline-block",
-                    flexShrink: 0,
-                  }}
-                />
-                <span style={{ textDecoration: "underline", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {images[0].url}
-                </span>
-                <Icon name="search" size={13} color="var(--tra-500)" />
-              </button>
-            ) : (
-              <span style={{ color: "#DC2626" }}>Chưa có ảnh</span>
-            )}
+          <div className="lt-admin-footer-preview" style={{ gap: 16, flexWrap: "wrap" }}>
+            {/* Premium cover */}
+            <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+              <span style={{ flexShrink: 0, fontSize: 12, fontWeight: 700, color: "var(--reu-800)" }}>👑 Bìa Premium:</span>
+              {premiumImages[0] ? (
+                <button
+                  type="button"
+                  onClick={() => setPreviewState({ tier: "premium", index: 0 })}
+                  title="Bấm để xem ảnh phóng to"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 5, fontWeight: 600, color: "var(--reu-800)", background: "transparent", border: 0, cursor: "pointer", padding: 0, minWidth: 0 }}
+                >
+                  <span
+                    style={{ width: 22, height: 22, borderRadius: 4, backgroundImage: `url('${photo(premiumImages[0].url)}')`, backgroundSize: "cover", backgroundPosition: "center", border: "1px solid #DFBE89", display: "inline-block", flexShrink: 0 }}
+                  />
+                  <span style={{ fontSize: 11.5, textDecoration: "underline", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {premiumImages[0].url}
+                  </span>
+                </button>
+              ) : (
+                <span style={{ fontSize: 11.5, color: "#DC2626" }}>Chưa có</span>
+              )}
+            </div>
+
+            {/* Standard cover */}
+            <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+              <span style={{ flexShrink: 0, fontSize: 12, fontWeight: 700, color: "#2D5034" }}>🏷️ Bìa Tiêu chuẩn:</span>
+              {standardImages[0] ? (
+                <button
+                  type="button"
+                  onClick={() => setPreviewState({ tier: "standard", index: 0 })}
+                  title="Bấm để xem ảnh phóng to"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 5, fontWeight: 600, color: "#2D5034", background: "transparent", border: 0, cursor: "pointer", padding: 0, minWidth: 0 }}
+                >
+                  <span
+                    style={{ width: 22, height: 22, borderRadius: 4, backgroundImage: `url('${photo(standardImages[0].url)}')`, backgroundSize: "cover", backgroundPosition: "center", border: "1px solid #B8D6BF", display: "inline-block", flexShrink: 0 }}
+                  />
+                  <span style={{ fontSize: 11.5, textDecoration: "underline", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {standardImages[0].url}
+                  </span>
+                </button>
+              ) : (
+                <span style={{ fontSize: 11.5, color: "var(--stone-500)", fontStyle: "italic" }}>(Chưa đặt ảnh riêng)</span>
+              )}
+            </div>
           </div>
 
           <div className="lt-admin-footer-actions">
@@ -1453,7 +1726,7 @@ export function ProductEditModal({
       </form>
 
       {/* ════════════ FULL-SIZE IMAGE PREVIEW LIGHTBOX ════════════ */}
-      {mounted && previewIndex !== null && images[previewIndex] && createPortal(
+      {mounted && previewState !== null && activeLightboxImages[previewState.index] && createPortal(
         <div
           role="dialog"
           aria-modal
@@ -1471,7 +1744,7 @@ export function ProductEditModal({
             animation: "ltFade .18s ease-out",
           }}
           onClick={(e) => {
-            if (e.target === e.currentTarget) setPreviewIndex(null);
+            if (e.target === e.currentTarget) setPreviewState(null);
           }}
         >
           {/* Lightbox Topbar */}
@@ -1493,17 +1766,30 @@ export function ProductEditModal({
                 style={{
                   fontSize: 11.5,
                   fontWeight: 700,
-                  color: previewIndex === 0 ? "#DFBE89" : "#F7F0E3",
-                  background: previewIndex === 0 ? "rgba(188, 154, 108, 0.25)" : "rgba(255, 255, 255, 0.1)",
-                  border: `1px solid ${previewIndex === 0 ? "#DFBE89" : "rgba(255, 255, 255, 0.2)"}`,
+                  color: previewState.tier === "premium" ? "#DFBE89" : "#B8D6BF",
+                  background: previewState.tier === "premium" ? "rgba(188, 154, 108, 0.25)" : "rgba(45, 80, 52, 0.3)",
+                  border: `1px solid ${previewState.tier === "premium" ? "#DFBE89" : "#B8D6BF"}`,
                   padding: "3px 10px",
                   borderRadius: 999,
                 }}
               >
-                {previewIndex === 0 ? "⭐ #1 Ảnh bìa chính" : `#${previewIndex + 1} Ảnh phụ`}
+                {previewState.tier === "premium" ? "👑 Phân hạng Premium" : "🏷️ Phân hạng Tiêu chuẩn"}
+              </span>
+              <span
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 600,
+                  color: "#F7F0E3",
+                  background: "rgba(255, 255, 255, 0.1)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  padding: "3px 10px",
+                  borderRadius: 999,
+                }}
+              >
+                {previewState.index === 0 ? "⭐ #1 Ảnh bìa" : `#${previewState.index + 1} Ảnh phụ`}
               </span>
               <span style={{ fontSize: 13, color: "var(--tra-300, #D9BF94)" }}>
-                ({previewIndex + 1} / {images.length})
+                ({previewState.index + 1} / {activeLightboxImages.length})
               </span>
               <code
                 style={{
@@ -1518,7 +1804,7 @@ export function ProductEditModal({
                   whiteSpace: "nowrap",
                 }}
               >
-                {images[previewIndex].url}
+                {activeLightboxImages[previewState.index].url}
               </code>
             </div>
 
@@ -1527,7 +1813,7 @@ export function ProductEditModal({
               <button
                 type="button"
                 onClick={() => {
-                  navigator.clipboard.writeText(images[previewIndex].url);
+                  navigator.clipboard.writeText(activeLightboxImages[previewState.index].url);
                   setCopiedUrl(true);
                   setTimeout(() => setCopiedUrl(false), 2000);
                 }}
@@ -1570,10 +1856,10 @@ export function ProductEditModal({
                 <span>{lightboxZoomed ? "Vừa khung" : "100%"}</span>
               </button>
 
-              {previewIndex !== 0 && (
+              {previewState.index !== 0 && (
                 <button
                   type="button"
-                  onClick={() => handleSetPrimary(previewIndex)}
+                  onClick={() => handleSetPrimary(previewState.index, previewState.tier)}
                   style={{
                     padding: "6px 14px",
                     borderRadius: 6,
@@ -1585,12 +1871,12 @@ export function ProductEditModal({
                     cursor: "pointer",
                   }}
                 >
-                  ⭐ Đặt làm ảnh chính
+                  ⭐ Đặt làm ảnh bìa {previewState.tier === "premium" ? "Premium" : "Tiêu chuẩn"}
                 </button>
               )}
 
               <a
-                href={photo(images[previewIndex].url)}
+                href={photo(activeLightboxImages[previewState.index].url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -1612,7 +1898,7 @@ export function ProductEditModal({
 
               <button
                 type="button"
-                onClick={() => setPreviewIndex(null)}
+                onClick={() => setPreviewState(null)}
                 style={{
                   width: 36,
                   height: 36,
@@ -1633,7 +1919,7 @@ export function ProductEditModal({
             </div>
           </div>
 
-          {/* Lightbox Center Stage with Mobile Touch Swipe Navigation */}
+          {/* Lightbox Center Stage with Touch Swipe */}
           <div
             onTouchStart={handleLightboxTouchStart}
             onTouchEnd={handleLightboxTouchEnd}
@@ -1647,16 +1933,16 @@ export function ProductEditModal({
               overflow: lightboxZoomed ? "auto" : "hidden",
             }}
             onClick={(e) => {
-              if (e.target === e.currentTarget) setPreviewIndex(null);
+              if (e.target === e.currentTarget) setPreviewState(null);
             }}
           >
             {/* Prev button */}
-            {images.length > 1 && (
+            {activeLightboxImages.length > 1 && (
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setPreviewIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : images.length - 1));
+                  setPreviewState((prev) => (prev ? { tier: prev.tier, index: prev.index > 0 ? prev.index - 1 : activeLightboxImages.length - 1 } : null));
                 }}
                 style={{
                   position: "fixed",
@@ -1696,15 +1982,15 @@ export function ProductEditModal({
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={photo(images[previewIndex].url)}
-                alt={images[previewIndex].alt || name}
+                src={photo(activeLightboxImages[previewState.index].url)}
+                alt={activeLightboxImages[previewState.index].alt || name}
                 onClick={() => setLightboxZoomed((prev) => !prev)}
                 style={{
                   maxWidth: lightboxZoomed ? "none" : "100%",
                   maxHeight: lightboxZoomed ? "none" : "72vh",
                   objectFit: "contain",
                   borderRadius: 12,
-                  border: "2px solid rgba(188, 154, 108, 0.4)",
+                  border: `2px solid ${previewState.tier === "premium" ? "rgba(188, 154, 108, 0.4)" : "rgba(45, 80, 52, 0.4)"}`,
                   boxShadow: "0 25px 60px rgba(0, 0, 0, 0.65)",
                   cursor: lightboxZoomed ? "zoom-out" : "zoom-in",
                   userSelect: "none",
@@ -1714,12 +2000,12 @@ export function ProductEditModal({
             </div>
 
             {/* Next button */}
-            {images.length > 1 && (
+            {activeLightboxImages.length > 1 && (
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setPreviewIndex((prev) => (prev !== null && prev < images.length - 1 ? prev + 1 : 0));
+                  setPreviewState((prev) => (prev ? { tier: prev.tier, index: prev.index < activeLightboxImages.length - 1 ? prev.index + 1 : 0 } : null));
                 }}
                 style={{
                   position: "fixed",
@@ -1749,7 +2035,7 @@ export function ProductEditModal({
           </div>
 
           {/* Bottom Thumbnails Carousel */}
-          {images.length > 1 && (
+          {activeLightboxImages.length > 1 && (
             <div
               style={{
                 padding: "12px 20px",
@@ -1762,13 +2048,13 @@ export function ProductEditModal({
                 overflowX: "auto",
               }}
             >
-              {images.map((img, idx) => {
-                const isActive = idx === previewIndex;
+              {activeLightboxImages.map((img, idx) => {
+                const isActive = idx === previewState.index;
                 return (
                   <button
                     key={img.id}
                     type="button"
-                    onClick={() => setPreviewIndex(idx)}
+                    onClick={() => setPreviewState({ tier: previewState.tier, index: idx })}
                     style={{
                       width: 50,
                       height: 50,
