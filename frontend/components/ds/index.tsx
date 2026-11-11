@@ -559,11 +559,19 @@ export function ProductCard({
           </span>
         )}
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <Link href={href} className="lt-card-name" style={{ fontSize: 15, fontWeight: 500, lineHeight: 1.3, color: "var(--text-strong)", textDecoration: "none" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+        <Link href={href} className="lt-card-name" style={{ fontSize: 14.5, fontWeight: 600, lineHeight: 1.3, color: "var(--text-strong)", textDecoration: "none" }}>
           {name}
         </Link>
-        {note && <span style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.4 }}>{note}</span>}
+        {note && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 4, margin: "1px 0" }}>
+            {note.split(/[,;·–—]/).slice(0, 2).map((k) => k.trim()).filter(Boolean).map((k) => (
+              <span key={k} style={{ fontSize: 11, padding: "2px 6px", borderRadius: 4, background: "rgba(188, 154, 108, 0.12)", color: "var(--reu-700)", border: "1px solid rgba(188, 154, 108, 0.22)", lineHeight: 1.25 }}>
+                {k}
+              </span>
+            ))}
+          </div>
+        )}
         {rating != null && <Rating value={rating} count={reviews} size={12} />}
         <div style={{ marginTop: 2 }}>
           <Price value={price} compareAt={compareAt} />

@@ -23,14 +23,10 @@ export default function HomeClosing() {
               Theo dõi hành trình từ những nương chè Tân Cương, câu chuyện người làm trà đến những khoảnh khắc thưởng trà cùng Lam Trà.
             </p>
             <div className="lt-follow-actions">
-              <a href={SITE.tiktok} target="_blank" rel="noopener noreferrer" className="lt-follow-btn">
-                <Icon name="tiktok" size={18} />
-                Theo dõi Lam Trà trên TikTok
-                <Icon name="external-link" size={16} />
-              </a>
-              <a href={SITE.facebook} target="_blank" rel="noopener noreferrer" className="lt-follow-link">
+              <a href={SITE.facebook} target="_blank" rel="noopener noreferrer" className="lt-follow-btn">
                 <Icon name="facebook" size={18} />
-                Fanpage Facebook
+                <span>Theo dõi Lam Trà trên Fanpage Facebook</span>
+                <Icon name="external-link" size={16} />
               </a>
             </div>
           </div>
@@ -58,10 +54,17 @@ export default function HomeClosing() {
               ))}
             </ul>
           </div>
-          <p className="lt-service-note">
-            Bạn đang tìm trà cho mình hay một món quà?{" "}
-            <a href={zaloLink()} target="_blank" rel="noopener noreferrer">Nhắn Zalo để Lam Trà cùng chọn nhé</a>.
-          </p>
+          <div className="lt-service-note">
+            <span className="lt-service-note-icon" aria-hidden="true">
+              <Icon name="message-circle" size={16} />
+            </span>
+            <span className="lt-service-note-text">
+              Bạn đang tìm trà cho mình hay một món quà?{" "}
+              <a href={zaloLink()} target="_blank" rel="noopener noreferrer" className="lt-service-note-link">
+                Nhắn Zalo để Lam Trà cùng chọn nhé <Icon name="arrow-right" size={13} />
+              </a>
+            </span>
+          </div>
         </div>
       </section>
     </>

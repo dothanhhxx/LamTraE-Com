@@ -76,14 +76,16 @@ export default function StoryPage() {
       <section aria-labelledby="gia-tri" className="lt-bg-ink">
         <div className="lt-container" style={{ paddingTop: "clamp(48px,6vw,80px)", paddingBottom: "clamp(48px,6vw,80px)" }}>
           <h2 id="gia-tri" style={{ margin: "0 0 28px", fontSize: "clamp(22px,2.2vw,28px)", lineHeight: 1.25, fontWeight: 500, color: "var(--text-strong)" }}>Điều Lam Trà giữ trong từng gói trà</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))", gap: 12 }}>
             {VALUES.map((v) => (
-              <div key={v.title} style={{ padding: 24, border: "1px solid var(--border-hairline)", borderRadius: 6, background: "var(--surface-card)", display: "flex", flexDirection: "column", gap: 10 }}>
-                <span style={{ width: 44, height: 44, borderRadius: 999, border: "1px solid var(--border-strong)", color: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Icon name={v.icon} size={20} />
-                </span>
-                <h3 style={{ margin: 0, fontSize: 17, fontWeight: 500, color: "var(--text-strong)" }}>{v.title}</h3>
-                <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--text-body)" }}>{v.text}</p>
+              <div key={v.title} style={{ padding: "clamp(14px, 2.5vw, 22px)", border: "1px solid var(--border-hairline)", borderRadius: 10, background: "var(--surface-card)", display: "flex", flexDirection: "column", gap: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ width: 36, height: 36, borderRadius: "50%", border: "1px solid var(--border-strong)", color: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Icon name={v.icon} size={18} />
+                  </span>
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "var(--text-strong)" }}>{v.title}</h3>
+                </div>
+                <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.55, color: "var(--text-body)" }}>{v.text}</p>
               </div>
             ))}
           </div>

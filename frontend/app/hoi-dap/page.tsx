@@ -5,17 +5,17 @@ import JsonLd from "@/components/shell/JsonLd";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { zaloLink } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Hỏi đáp", description: "Hạn dùng, cách bảo quản, phân biệt Hạng 1 và Hạng 2, giao hàng, thanh toán VietQR và đổi trả tại Lam Trà." };
+export const metadata: Metadata = { title: "Hỏi đáp", description: "Hạn dùng, cách bảo quản, phân biệt Premium và Tiêu chuẩn, giao hàng, thanh toán VietQR và đổi trả tại Lam Trà." };
 
 const FAQ: { group: string; items: [string, string][] }[] = [
   {
     group: "Về trà",
     items: [
-      ["Hạng 1 và Hạng 2 khác nhau thế nào?", "Cùng một loại trà, sau khi sao được chia hạng. Hạng 1 cánh nhỏ, đều, hương đậm, hợp biếu tặng và thưởng trà. Hạng 2 cánh to và không đều hơn, vị nhẹ hơn, giá mềm hơn, hợp pha ấm lớn uống hằng ngày."],
+      ["Premium và Tiêu chuẩn khác nhau thế nào?", "Cùng một loại trà, sau khi sao được chia phẩm. Premium cánh nhỏ, đều, hương đậm, đóng hộp thiếc 200g, hợp biếu tặng và thưởng trà. Tiêu chuẩn cánh to và không đều hơn, vị nhẹ hơn, giá mềm hơn, hợp pha ấm lớn uống hằng ngày."],
       ["Trà để được bao lâu?", "Hạn dùng 12 tháng kể từ ngày đóng gói, in trên mỗi túi. Trà ngon nhất trong 6 tháng đầu, riêng trà sen nên dùng sớm để giữ hương."],
       ["Bảo quản trà thế nào?", "Ép hết không khí trong túi zip sau mỗi lần dùng, để nơi khô mát, tránh nắng và tránh để gần đồ có mùi như cà phê, gia vị. Gói lớn nên chia ra hũ kín nhỏ."],
       ["Trà có hương liệu hay phẩm màu không?", "Không. Trà xanh chỉ có búp chè sao tay. Trà sen được ướp bằng gạo sen tươi, không dùng tinh dầu hay hương sen tổng hợp."],
-      ["Mua 150g hay 300g thì hợp?", "Một người uống mỗi sáng dùng khoảng 150g mỗi tháng. Gói 300g và 500g có giá mỗi gam tốt hơn, nhưng nên chia nhỏ để giữ hương."],
+      ["Mua 100g, 200g hay 500g thì hợp?", "Một người uống mỗi sáng dùng khoảng 150–200g mỗi tháng, hộp 200g là vừa. Gói 500g có giá mỗi gam tốt hơn, nhưng nên chia nhỏ để giữ hương. Mua thử lần đầu thì chọn 100g."],
     ],
   },
   {
