@@ -227,3 +227,19 @@ export const POSTS: Post[] = [
 export const getPost = (slug: string) => POSTS.find((p) => p.slug === slug);
 
 export const formatDate = (iso: string) => iso.split("-").reverse().join("/");
+
+export type TalkItem = {
+  slug: string;
+  tag: string;
+};
+
+// Các bài Trà đàm tiêu biểu: từ câu chuyện Festival, nghệ thuật pha trà, bảo quản đến văn hóa và hồ sơ xuất xứ
+export const FEATURED_TALKS: TalkItem[] = [
+  { slug: "lam-tra-tai-festival-tra-quoc-te-thai-nguyen", tag: "Festival Trà Quốc tế" },
+  { slug: "cach-pha-tra-thai-nguyen", tag: "Góc pha trà" },
+  { slug: "bao-quan-tra-xanh", tag: "Giữ hương trà" },
+  { slug: "mot-am-tra-pha-duoc-bao-nhieu-lan", tag: "Hỏi đáp thưởng trà" },
+  { slug: "chen-tra-dau-cau-chuyen", tag: "Văn hóa Việt" },
+  { slug: "minh-bach-nguon-goc-an-tam-chat-luong", tag: "Hồ sơ chứng nhận" },
+];
+

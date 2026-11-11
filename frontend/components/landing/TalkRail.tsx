@@ -3,23 +3,11 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ds";
-import { POSTS } from "@/lib/posts";
+import { FEATURED_TALKS, type TalkItem, POSTS } from "@/lib/posts";
 import { photo } from "@/lib/products";
 
-export type TalkItem = {
-  slug: string;
-  tag: string;
-};
-
-// Các bài Trà đàm tiêu biểu: từ câu chuyện Festival, nghệ thuật pha trà, bảo quản đến văn hóa và hồ sơ xuất xứ
-export const FEATURED_TALKS: TalkItem[] = [
-  { slug: "lam-tra-tai-festival-tra-quoc-te-thai-nguyen", tag: "Festival Trà Quốc tế" },
-  { slug: "cach-pha-tra-thai-nguyen", tag: "Góc pha trà" },
-  { slug: "bao-quan-tra-xanh", tag: "Giữ hương trà" },
-  { slug: "mot-am-tra-pha-duoc-bao-nhieu-lan", tag: "Hỏi đáp thưởng trà" },
-  { slug: "chen-tra-dau-cau-chuyen", tag: "Văn hóa Việt" },
-  { slug: "minh-bach-nguon-goc-an-tam-chat-luong", tag: "Hồ sơ chứng nhận" },
-];
+export type { TalkItem };
+export { FEATURED_TALKS };
 
 /**
  * Dải trượt bài viết "Trà đàm":

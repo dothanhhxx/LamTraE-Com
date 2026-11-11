@@ -4,8 +4,8 @@ import { ProductImage, SectionTitle } from "@/components/ds";
 import { TeaGrid } from "@/components/catalog/TeaCard";
 import JsonLd from "@/components/shell/JsonLd";
 import { Breadcrumbs } from "@/components/shell/PageHeader";
-import TalkRail, { FEATURED_TALKS } from "@/components/landing/TalkRail";
-import { POSTS, formatDate, getPost } from "@/lib/posts";
+import TalkRail from "@/components/landing/TalkRail";
+import { POSTS, FEATURED_TALKS, formatDate, getPost } from "@/lib/posts";
 import { getProduct, photo, type Product } from "@/lib/products";
 import { SITE } from "@/lib/site";
 
