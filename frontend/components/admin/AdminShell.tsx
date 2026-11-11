@@ -40,19 +40,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
           {/* Left Brand Badge */}
           <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-            <Link href="/quan-tri/don-hang" className="lt-header-logo-box" style={{ textDecoration: "none" }}>
-              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, borderRadius: 6, background: "rgba(188, 154, 108, 0.16)", border: "1px solid rgba(188, 154, 108, 0.3)" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/assets/lam-tra-emblem.svg" alt="" style={{ height: 34, width: "auto" }} />
-              </span>
-              <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
-                <span style={{ fontSize: 18.5, fontWeight: 800, letterSpacing: "0.08em", color: "#F7F0E3", fontFamily: "var(--font-display, serif)" }}>
-                  LAM TRÀ
-                </span>
-                <span style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--tra-300)", fontWeight: 600 }}>
-                  QUẢN TRỊ VIÊN
-                </span>
-              </span>
+            <Link href="/quan-tri/don-hang" aria-label="Lam Trà – Trang chủ Quản trị" className="lt-header-logo-box">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/assets/lam-tra-emblem.svg" alt="Lam Trà" width={70} height={63} />
             </Link>
 
             <span style={{ width: 1, height: 32, background: "rgba(188, 154, 108, 0.35)", margin: "0 4px" }} />
@@ -172,19 +162,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           }}
         >
           {/* Logo brand */}
-          <Link href="/quan-tri/don-hang" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: 6, background: "rgba(188, 154, 108, 0.18)", border: "1px solid rgba(188, 154, 108, 0.35)" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/lam-tra-emblem.svg" alt="" style={{ height: 24, width: "auto" }} />
-            </span>
-            <div style={{ lineHeight: 1.15 }}>
-              <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: "0.06em", color: "#F7F0E3", fontFamily: "var(--font-display, serif)" }}>
-                LAM TRÀ
-              </div>
-              <div style={{ fontSize: 9.5, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--tra-300)", fontWeight: 600 }}>
-                QUẢN TRỊ VIÊN
-              </div>
-            </div>
+          <Link href="/quan-tri/don-hang" aria-label="Lam Trà – Trang chủ Quản trị" className="lt-header-logo-box" style={{ width: 44, height: 52, margin: 0 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/assets/lam-tra-emblem.svg" alt="Lam Trà" style={{ width: 32, height: "auto" }} />
           </Link>
 
           {/* Quick actions */}
