@@ -4,6 +4,7 @@ import { ProductImage, SectionTitle } from "@/components/ds";
 import { TeaGrid } from "@/components/catalog/TeaCard";
 import JsonLd from "@/components/shell/JsonLd";
 import { Breadcrumbs } from "@/components/shell/PageHeader";
+import TalkRail, { FEATURED_TALKS } from "@/components/landing/TalkRail";
 import { POSTS, formatDate, getPost } from "@/lib/posts";
 import { getProduct, photo, type Product } from "@/lib/products";
 import { SITE } from "@/lib/site";
@@ -45,6 +46,18 @@ export default async function PostPage({ params }: Props) {
                 <figure className="lt-figure">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={b.img.src} alt={b.img.alt} width={b.img.w} height={b.img.h} loading="lazy" decoding="async" />
+                  {b.img.caption && <figcaption>{b.img.caption}</figcaption>}
+                </figure>
+              )}
+              {b.gallery && (
+                <figure className="lt-gallery" data-n={b.gallery.items.length}>
+                  <div className="lt-gallery-grid">
+                    {b.gallery.items.map((f) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img key={f.src} src={f.src} alt={f.alt} width={f.w} height={f.h} loading="lazy" decoding="async" />
+                    ))}
+                  </div>
+                  {b.gallery.caption && <figcaption>{b.gallery.caption}</figcaption>}
                 </figure>
               )}
               {b.p && <p>{b.p}</p>}
@@ -62,6 +75,10 @@ export default async function PostPage({ params }: Props) {
             <TeaGrid products={products} />
           </section>
         )}
+        <section style={{ marginTop: 72 }}>
+          <SectionTitle eyebrow="Trà đàm" title="Chuyện trà tiếp theo" />
+          <TalkRail items={FEATURED_TALKS.filter((t) => t.slug !== post.slug)} />
+        </section>
       </div>
     </article>
   );

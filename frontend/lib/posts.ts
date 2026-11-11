@@ -1,6 +1,7 @@
 // Bài viết "Trà đàm". Tĩnh trong code; sau này có thể chuyển sang CMS.
-export type Figure = { src: string; alt: string; w: number; h: number };
-export type Block = { h?: string; img?: Figure; p?: string; list?: string[] };
+export type Figure = { src: string; alt: string; w: number; h: number; caption?: string };
+/** Một khối bài viết. `img` là ảnh đơn full chiều rộng; `gallery` xếp 2 hoặc 4 ảnh vuông thành lưới. */
+export type Block = { h?: string; img?: Figure; gallery?: { items: Figure[]; caption?: string }; p?: string; list?: string[] };
 
 // Ảnh hành trình (đã cắt bỏ khung, logo, chữ trong ảnh gốc)
 export const JOURNEY_PHOTOS = {
@@ -19,9 +20,41 @@ export const STORY_PHOTOS = {
   chungNhan: { src: "/assets/chung-nhan/tong-hop.webp", alt: "Giấy chứng nhận cơ sở đủ điều kiện an toàn thực phẩm, Giấy chứng nhận VietGAP và Giấy chứng nhận đăng ký hợp tác xã của Hợp tác xã Chè Thanh Huyền Trà", w: 1254, h: 1104 },
 };
 const S = STORY_PHOTOS;
+
+// Ảnh Lam Trà tại Festival Trà Quốc tế Thái Nguyên (đã cắt khung logo quanh viền ảnh gốc)
+const FESTIVAL = "/assets/tra-dam/festival-2026";
+export const FESTIVAL_PHOTOS = {
+  khaiMac: { src: `${FESTIVAL}/khai-mac.webp`, alt: "Lễ khai mạc Festival Trà Quốc tế Thái Nguyên, các đại biểu đi giữa hàng cờ hoa", w: 1440, h: 720 },
+  phatBieu: { src: `${FESTIVAL}/phat-bieu.webp`, alt: "Đại diện tỉnh Thái Nguyên phát biểu tại lễ khai mạc Festival", w: 1440, h: 720, caption: "Lễ khai mạc Festival Trà Quốc tế Thái Nguyên" },
+  gianHang: { src: `${FESTIVAL}/gian-hang.webp`, alt: "Gian hàng Lam Trà với standee Chè Tân Cương – Thái Nguyên và bốn hộp trà", w: 1080, h: 1080 },
+  doiNgu1: { src: `${FESTIVAL}/doi-ngu-1.webp`, alt: "Thành viên Lam Trà cầm hộp trà bên standee tại gian hàng", w: 1080, h: 1080 },
+  doiNgu2: { src: `${FESTIVAL}/doi-ngu-2.webp`, alt: "Thành viên Lam Trà giới thiệu hộp trà tại gian hàng", w: 1080, h: 1080 },
+  doiNgu3: { src: `${FESTIVAL}/doi-ngu-3.webp`, alt: "Thành viên Lam Trà đứng bên gian hàng Festival", w: 1080, h: 1080 },
+  doiNgu4: { src: `${FESTIVAL}/doi-ngu-4.webp`, alt: "Thành viên Lam Trà cầm hộp trà trước standee gian hàng", w: 1080, h: 1080 },
+  hopTra: { src: `${FESTIVAL}/hop-tra.webp`, alt: "Hộp thiếc Trà Thái Nguyên của Lam Trà trên bàn trưng bày", w: 1080, h: 1080 },
+  sanKhauDem: { src: `${FESTIVAL}/san-khau-dem.webp`, alt: "Hộp trà Lam Trà trước sân khấu Festival về đêm", w: 1080, h: 1080, caption: "Hộp trà Lam Trà trước sân khấu Festival về đêm" },
+};
+const F = FESTIVAL_PHOTOS;
 export type Post = { slug: string; title: string; excerpt: string; date: string; ph: string; readMin: number; related: string[]; body: Block[] };
 
 export const POSTS: Post[] = [
+  {
+    slug: "lam-tra-tai-festival-tra-quoc-te-thai-nguyen",
+    title: "Lam Trà có mặt tại Festival Trà Quốc tế Thái Nguyên",
+    excerpt: "Lam Trà mang trà Tân Cương đến Festival Trà Quốc tế Thái Nguyên, sự kiện tôn vinh văn hóa trà, để gặp gỡ những người yêu trà và kể tiếp câu chuyện về vùng đất, con người làm trà.",
+    date: "2026-11-11", ph: F.khaiMac.src, readMin: 2, related: ["tra-non-tom", "tra-moc-cau", "tra-nhai", "tra-dinh-sen"],
+    body: [
+      { p: "Hành trình lan tỏa tinh hoa trà Việt tiếp tục được viết nên khi Lam Trà có mặt tại Festival Trà Quốc tế Thái Nguyên, sự kiện tôn vinh văn hóa trà, kết nối những giá trị truyền thống và mở ra cơ hội giao lưu, quảng bá ngành trà đến gần hơn với công chúng." },
+      { img: F.phatBieu },
+      { p: "Đến với Festival lần này, Lam Trà mang theo những sản phẩm trà mang đậm dấu ấn vùng đất Thái Nguyên, đặc biệt là trà Tân Cương, nơi hội tụ điều kiện tự nhiên và kinh nghiệm làm trà được gìn giữ qua nhiều thế hệ." },
+      { gallery: { items: [F.gianHang, F.hopTra], caption: "Gian hàng Lam Trà và hộp trà Tân Cương trên bàn trưng bày" } },
+      { p: "Đây không chỉ là dịp để Lam Trà giới thiệu các dòng sản phẩm của mình, mà còn là cơ hội gặp gỡ, giao lưu cùng những người yêu trà, những đơn vị hoạt động trong ngành trà và cùng nhau lan tỏa giá trị của trà Việt." },
+      { gallery: { items: [F.doiNgu1, F.doiNgu2, F.doiNgu3, F.doiNgu4], caption: "Đội ngũ Lam Trà tại gian hàng" } },
+      { p: "Mỗi búp trà là một câu chuyện về vùng đất, con người và sự tận tâm phía sau từng công đoạn. Lam Trà mong muốn những câu chuyện ấy sẽ tiếp tục được kể, được gìn giữ và đến gần hơn với người thưởng trà." },
+      { img: F.sanKhauDem },
+      { p: "Lam Trà – Tea & Beyond. Gìn giữ vị trà, lan tỏa hồn Việt." },
+    ],
+  },
   {
     slug: "minh-bach-nguon-goc-an-tam-chat-luong",
     title: "Minh bạch nguồn gốc, an tâm chất lượng",
@@ -173,7 +206,7 @@ export const POSTS: Post[] = [
       { h: "Trà Đinh", p: "Chỉ lấy phần búp nhỏ nhất ở đầu ngọn, khi còn cuộn chặt như chiếc đinh. Cánh trà nhỏ, nhọn, phủ lông tơ trắng. Nước xanh ánh vàng nhạt, vị đậm sâu, hậu ngọt rất lâu." },
       { h: "Trà Nõn Tôm", p: "Hái một tôm một lá: búp non và lá non ngay dưới búp. Cánh trà nhỏ, đều, cong nhẹ như con tôm. Nước xanh trong, vị thanh, dễ uống." },
       { h: "Trà Móc Câu", p: "Hái một tôm hai lá. Khi sao, cánh trà xoăn lại như lưỡi câu. Đây là loại phổ biến nhất, vị chát dịu rồi ngọt, hợp uống hằng ngày." },
-      { h: "Còn Hạng 1 và Hạng 2?", p: "Ở Lam Trà, cùng một loại trà được chia hạng sau khi sao. Hạng 1 là phần cánh đều, đẹp, hương đậm. Hạng 2 cánh to và không đều hơn, vị nhẹ hơn, giá mềm hơn, hợp pha ấm lớn mỗi ngày." },
+      { h: "Còn Premium và Tiêu chuẩn?", p: "Ở Lam Trà, cùng một loại trà được chia phẩm sau khi sao. Premium là phần cánh đều, đẹp, hương đậm, đóng hộp thiếc 200g. Tiêu chuẩn cánh to và không đều hơn, vị nhẹ hơn, giá mềm hơn, hợp pha ấm lớn mỗi ngày." },
       { h: "Phân biệt nhanh", list: ["Nhìn cánh: Đinh nhỏ và thẳng nhất, Móc Câu xoăn nhất", "Nhìn nước: Đinh và Nõn Tôm trong hơn Móc Câu", "Nếm: Đinh đậm, Nõn Tôm thanh, Móc Câu chát dịu"] },
     ],
   },

@@ -1,18 +1,13 @@
 import Link from "next/link";
-import { Button, Icon, ProductImage, Rating, SectionTitle } from "@/components/ds";
+import { Button, Icon, Rating, SectionTitle } from "@/components/ds";
 import { TeaGrid } from "@/components/catalog/TeaCard";
 import { POSTS } from "@/lib/posts";
-import { CATEGORIES, PRODUCTS, getProduct, photo, type Product } from "@/lib/products";
+import { PRODUCTS, getProduct, photo, type Product } from "@/lib/products";
 import { TESTIMONIALS } from "@/lib/reviews";
 import { PhotoBand, TeaSprig } from "@/components/shell/PhotoBand";
 import HomeClosing from "@/components/landing/HomeClosing";
-
-// 3 bài Trà đàm tiêu biểu ở Trang chủ: từ đồi chè, đến cách pha, đến bảo quản
-const TALKS = [
-  { slug: "thai-nguyen-noi-huong-tra-ke-chuyen", tag: "Vùng chè Tân Cương" },
-  { slug: "cach-pha-tra-thai-nguyen", tag: "Góc pha trà" },
-  { slug: "bao-quan-tra-xanh", tag: "Giữ hương trà" },
-];
+import CategoryRail from "@/components/landing/CategoryRail";
+import TalkRail from "@/components/landing/TalkRail";
 
 const section = { paddingTop: "clamp(40px,5vw,64px)", paddingBottom: "clamp(40px,5vw,64px)" } as const;
 
@@ -26,33 +21,7 @@ export default function HomeSections({ products }: { products?: Product[] } = {}
     <>
       <section aria-labelledby="danh-muc" className="lt-container" style={{ ...section, paddingTop: 0 }}>
         <SectionTitle id="danh-muc" eyebrow="Danh mục" title="Chọn theo gu trà" action={<Link href="/san-pham" style={{ fontSize: 14 }}>Xem tất cả</Link>} />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 16 }}>
-          {CATEGORIES.map((c) => (
-            <Link key={c.slug} href={`/san-pham?danh-muc=${c.slug}`} className="lt-card" style={{ position: "relative", display: "block", borderRadius: 6, overflow: "hidden", textDecoration: "none" }}>
-              <span className="lt-card-photo" style={{ display: "block" }}>
-                <ProductImage src={photo(c.ph)} alt="" ratio="4 / 3" />
-              </span>
-              <span style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(25,36,26,.82) 0%, rgba(25,36,26,.1) 60%)" }} />
-              <span style={{ position: "absolute", left: 18, right: 18, bottom: 16, display: "flex", flexDirection: "column", gap: 4, color: "var(--logo-cream)" }}>
-                <span
-                  style={{
-                    fontSize: "clamp(21px, 2vw, 25px)",
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 600,
-                    letterSpacing: "0.02em",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                  }}
-                >
-                  {c.name}
-                  <Icon name="arrow-right" size={16} />
-                </span>
-                <span style={{ fontSize: 13, lineHeight: 1.45, color: "var(--reu-100)" }}>{c.desc}</span>
-              </span>
-            </Link>
-          ))}
-        </div>
+        <CategoryRail />
       </section>
 
       <section aria-labelledby="ban-chay" className="lt-bg-veil">
@@ -99,29 +68,7 @@ export default function HomeSections({ products }: { products?: Product[] } = {}
           <h2 id="tra-dam">Hiểu trà để thưởng trà</h2>
           <p>Ghé đồi chè, tìm một cách pha vừa vị và giữ trọn hương trà cho những buổi thưởng trà mỗi ngày.</p>
         </header>
-        <ul className="lt-talk-grid">
-          {TALKS.map(({ slug, tag }) => {
-            const p = POSTS.find((x) => x.slug === slug);
-            if (!p) return null;
-            return (
-              <li key={slug}>
-                <Link href={`/tra-dam/${slug}`} className="lt-talk-card">
-                  <span className="lt-talk-photo">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={photo(p.ph)} alt="" loading="lazy" decoding="async" />
-                    <span className="lt-talk-tag"><Icon name="leaf" size={14} />{tag}</span>
-                  </span>
-                  <span className="lt-talk-body">
-                    <span className="lt-talk-meta"><Icon name="clock" size={14} />{p.readMin} phút đọc</span>
-                    <span className="lt-talk-title">{p.title}</span>
-                    <span className="lt-talk-excerpt">{p.excerpt}</span>
-                    <span className="lt-talk-more">Đọc thêm<Icon name="arrow-right" size={16} /></span>
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        <TalkRail />
         <div className="lt-talk-all">
           <Link href="/tra-dam">Xem tất cả bài Trà đàm</Link>
         </div>
