@@ -36,6 +36,8 @@ services:
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
       # Trợ lý AI (chatbot); để trống thì bot trả lời theo bộ câu hỏi mẫu
+      - key: GEMINI_API_KEY
+        sync: false
       - key: ANTHROPIC_API_KEY
         sync: false
       - key: BACKEND_INTERNAL_PORT

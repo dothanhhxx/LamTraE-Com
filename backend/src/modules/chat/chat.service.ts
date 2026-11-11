@@ -47,16 +47,60 @@ export function sanitizeHistory(raw: unknown): ChatTurn[] {
 
 export async function reply(history: ChatTurn[]): Promise<{ text: string; source: "ai" | "faq" }> {
   const products = await ProductService.getAllProducts(false);
-  if (!ENV.ANTHROPIC_API_KEY) {
+  const provider = ENV.GEMINI_API_KEY ? "gemini" : ENV.ANTHROPIC_API_KEY ? "claude" : null;
+  if (!provider) {
     return { text: faqReply(history[history.length - 1].content, products), source: "faq" };
   }
   try {
-    return { text: await aiReply(history, products), source: "ai" };
+    const text = provider === "gemini" ? await geminiReply(history, products) : await aiReply(history, products);
+    return { text, source: "ai" };
   } catch (err) {
     if (err instanceof Anthropic.APIError) console.error(`[chat] Claude API ${err.status}:`, err.message);
-    else console.error("[chat] Lỗi gọi Claude:", err);
+    else console.error(`[chat] Lỗi gọi ${provider === "gemini" ? "Gemini" : "Claude"}:`, err);
     return { text: faqReply(history[history.length - 1].content, products), source: "faq" };
   }
+}
+
+const REFUSAL = `Câu này Lam Trà chưa hỗ trợ được. Bạn hỏi mình về trà, cách pha hay đặt hàng nhé, hoặc nhắn Zalo ${STORE.phone}.`;
+
+type GeminiResponse = {
+  candidates?: { content?: { parts?: { text?: string; thought?: boolean }[] }; finishReason?: string }[];
+  promptFeedback?: { blockReason?: string };
+  error?: { code?: number; message?: string };
+};
+
+async function geminiReply(history: ChatTurn[], products: Product[]): Promise<string> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(ENV.GEMINI_MODEL)}:generateContent`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": ENV.GEMINI_API_KEY },
+    signal: AbortSignal.timeout(30_000),
+    body: JSON.stringify({
+      systemInstruction: {
+        parts: [{ text: `${STATIC_SYSTEM}
+
+# DỮ LIỆU: SẢN PHẨM ĐANG BÁN (giá và tồn kho hiện tại)
+${catalogText(products)}` }],
+      },
+      // Gemini dùng vai "model" thay cho "assistant"
+      contents: history.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
+      generationConfig: { maxOutputTokens: 2048, temperature: 0.6 },
+    }),
+  });
+  const data = (await res.json().catch(() => ({}))) as GeminiResponse;
+  if (!res.ok) throw new Error(`Gemini API ${res.status}: ${data.error?.message ?? res.statusText}`);
+
+  if (data.promptFeedback?.blockReason) return REFUSAL;
+  const candidate = data.candidates?.[0];
+  if (candidate?.finishReason && ["SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST", "SPII"].includes(candidate.finishReason)) {
+    return REFUSAL;
+  }
+  const text = (candidate?.content?.parts ?? [])
+    .flatMap((p) => (!p.thought && p.text ? [p.text] : []))
+    .join("")
+    .trim();
+  if (!text) throw new Error(`Gemini trả về rỗng (finishReason: ${candidate?.finishReason ?? "?"})`);
+  return text;
 }
 
 async function aiReply(history: ChatTurn[], products: Product[]): Promise<string> {
@@ -73,9 +117,7 @@ async function aiReply(history: ChatTurn[], products: Product[]): Promise<string
     messages: history,
   });
 
-  if (response.stop_reason === "refusal") {
-    return `Câu này Lam Trà chưa hỗ trợ được. Bạn hỏi mình về trà, cách pha hay đặt hàng nhé, hoặc nhắn Zalo ${STORE.phone}.`;
-  }
+  if (response.stop_reason === "refusal") return REFUSAL;
   const text = response.content
     .flatMap((b) => (b.type === "text" ? [b.text] : []))
     .join("")
