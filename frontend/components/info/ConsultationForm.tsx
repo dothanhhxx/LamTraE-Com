@@ -460,15 +460,18 @@ export function ConsultationForm() {
           </div>
 
           {/* Honeypot spam trap */}
-          <input
-            tabIndex={-1}
-            autoComplete="off"
-            aria-hidden="true"
-            name="website"
-            value={formData.website}
-            onChange={handleChange}
-            style={{ position: "absolute", left: -9999, opacity: 0, width: 1, height: 1 }}
-          />
+          <div aria-hidden="true" style={{ display: "none" }}>
+            <input
+              tabIndex={-1}
+              autoComplete="off"
+              data-lpignore="true"
+              data-1p-ignore
+              data-bwignore
+              data-form-type="other"
+              value={formData.website}
+              onChange={(e) => setFormData((prev) => ({ ...prev, website: e.target.value }))}
+            />
+          </div>
 
           {failure && (
             <div

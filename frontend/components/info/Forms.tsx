@@ -46,7 +46,9 @@ function MessageForm({ type, fields, submitLabel, done }: { type: string; fields
           </div>
         );
       })}
-      <input tabIndex={-1} autoComplete="off" aria-hidden name="website" value={v.website ?? ""} onChange={set("website")} style={{ position: "absolute", left: -9999, opacity: 0, width: 1, height: 1 }} />
+      <div aria-hidden style={{ display: "none" }}>
+        <input tabIndex={-1} autoComplete="off" data-lpignore="true" data-1p-ignore data-bwignore data-form-type="other" value={v.website ?? ""} onChange={set("website")} />
+      </div>
       <div style={{ gridColumn: "1 / -1", display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-start" }}>
         {failure && <span role="alert" style={{ fontSize: 13, color: "var(--danger)" }}>{failure}</span>}
         <Button type="submit" disabled={busy} iconRight={busy ? undefined : "arrow-right"}>{busy ? "Đang gửi…" : submitLabel}</Button>

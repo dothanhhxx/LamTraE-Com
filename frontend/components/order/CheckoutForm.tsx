@@ -162,7 +162,10 @@ export default function CheckoutForm() {
           </div>
           <Input label="Email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} error={errors["buyer.email"]} hint="Không bắt buộc. Để nhận hóa đơn và cập nhật đơn." />
           {/* Bẫy bot: người thật không nhìn thấy ô này */}
-          <input tabIndex={-1} autoComplete="off" aria-hidden value={website} onChange={(e) => setWebsite(e.target.value)} name="website" style={{ position: "absolute", left: -9999, width: 1, height: 1, opacity: 0 }} />
+          {/* display:none + không có name để autofill của trình duyệt/trình quản lý mật khẩu không điền vào. */}
+          <div aria-hidden style={{ display: "none" }}>
+            <input tabIndex={-1} autoComplete="off" data-lpignore="true" data-1p-ignore data-bwignore data-form-type="other" value={website} onChange={(e) => setWebsite(e.target.value)} />
+          </div>
         </Step>
 
         <Step n={2} title="Giao tới">
