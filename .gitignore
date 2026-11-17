@@ -24,3 +24,7 @@ yarn-error.log*
 backend/data/
 backend/uploads/
 backend/backups/
+
+# Tệp raw Insta360 dung lượng lớn (chỉ commit bản WebP đã ghép trong frontend/public/assets/pano)
+Camera01/
+

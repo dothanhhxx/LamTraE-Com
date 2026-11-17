@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Button, Icon } from "@/components/ds";
+import { TeaFieldPanorama } from "@/components/info/TeaFieldPanorama";
 import { JOURNEY_PHOTOS as J, type Figure } from "@/lib/posts";
 
 export const JOURNEY: { title: string; text: string; img?: Figure }[] = [
@@ -177,6 +178,8 @@ export function CoreStoryChapters({ showFullLink = false }: { showFullLink?: boo
           </ol>
         </div>
       </section>
+
+      <TeaFieldPanorama defaultScene="xuong-che" />
 
       <Chapter
         id="cai-ten"

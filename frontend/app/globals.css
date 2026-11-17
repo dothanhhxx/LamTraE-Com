@@ -6240,3 +6240,648 @@ button:hover .lt-thumb-zoom-overlay,
     animation: lt-rise 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 }
+
+/* ---------- Không gian thực tế 360° (TeaFieldPanorama — Xưởng sao & Nương chè) ---------- */
+.lt-pano-section {
+  position: relative;
+  padding: clamp(32px, 5vw, 64px) 0;
+  background: linear-gradient(180deg, rgba(250, 246, 238, 0.65) 0%, rgba(245, 239, 230, 0.9) 100%);
+  border-top: 1px solid rgba(188, 154, 108, 0.22);
+  border-bottom: 1px solid rgba(188, 154, 108, 0.22);
+}
+
+.lt-pano-section.is-compact {
+  padding: clamp(20px, 3.5vw, 40px) 0;
+  background: transparent;
+  border-top: none;
+  border-bottom: none;
+}
+
+.lt-pano-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px 32px;
+  margin-bottom: clamp(18px, 2.5vw, 26px);
+}
+
+.lt-pano-title-group {
+  max-width: 640px;
+}
+
+.lt-pano-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(36, 52, 31, 0.08);
+  border: 1px solid rgba(188, 154, 108, 0.38);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--reu-700, #2A3A23);
+  margin-bottom: 10px;
+}
+
+.lt-pano-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4F6B3A;
+  box-shadow: 0 0 0 3px rgba(79, 107, 58, 0.25);
+}
+
+.lt-pano-heading {
+  margin: 0 0 8px;
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--reu-800, #24341F);
+}
+
+.lt-pano-heading span {
+  color: var(--tra-500, #94723F);
+}
+
+.lt-pano-desc {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--stone-700, #544B3B);
+}
+
+.lt-pano-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lt-pano-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 16px 8px 12px;
+  border-radius: 14px;
+  background: #FAF8F5;
+  border: 1.5px solid rgba(188, 154, 108, 0.35);
+  color: var(--reu-800, #24341F);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lt-pano-tab:hover {
+  border-color: var(--tra-400, #BC9A6C);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -10px rgba(36, 52, 31, 0.2);
+}
+
+.lt-pano-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.lt-pano-tab.is-active {
+  background: var(--reu-800, #24341F);
+  border-color: var(--tra-400, #BC9A6C);
+  color: #FDEDD8;
+  box-shadow: 0 12px 26px -12px rgba(25, 36, 26, 0.45);
+}
+
+.lt-pano-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  background: rgba(188, 154, 108, 0.18);
+  color: var(--tra-600, #7D5F33);
+  flex-shrink: 0;
+}
+
+.lt-pano-tab.is-active .lt-pano-tab-badge {
+  background: var(--tra-400, #BC9A6C);
+  color: #19241A;
+}
+
+.lt-pano-tab-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lt-pano-tab-text strong {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.lt-pano-tab-text small {
+  font-size: 11.5px;
+  opacity: 0.78;
+}
+
+.lt-pano-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  min-height: 400px;
+  max-height: 600px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #141E15;
+  border: 1.5px solid rgba(188, 154, 108, 0.45);
+  box-shadow:
+    0 24px 52px -24px rgba(25, 36, 26, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+
+.lt-pano-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.lt-pano-stage:focus-visible {
+  outline: 3px solid var(--tra-400, #BC9A6C);
+  outline-offset: -3px;
+}
+
+.lt-pano-poster {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.lt-pano-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: contrast(1.03) saturate(1.04);
+  transition: transform 0.7s ease;
+}
+
+.lt-pano-frame:hover .lt-pano-poster img {
+  transform: scale(1.02);
+}
+
+.lt-pano-frame[data-status="ready"] .lt-pano-poster {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.lt-pano-poster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 55%, rgba(20, 30, 21, 0.12) 0%, rgba(15, 24, 16, 0.58) 100%),
+    linear-gradient(180deg, rgba(15, 24, 16, 0.48) 0%, rgba(15, 24, 16, 0.08) 35%, rgba(15, 24, 16, 0.62) 100%);
+}
+
+.lt-pano-topbar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.lt-pano-scene-pill {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(20, 32, 22, 0.84);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(188, 154, 108, 0.45);
+  color: #FDEDD8;
+  font-size: 12.5px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.lt-pano-scene-pill svg {
+  color: var(--tra-300, #D9BF94);
+  flex-shrink: 0;
+}
+
+.lt-pano-scene-pill strong {
+  color: var(--tra-300, #D9BF94);
+  font-weight: 600;
+}
+
+.lt-pano-reset-btn {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(20, 32, 22, 0.84);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(188, 154, 108, 0.45);
+  color: #FDEDD8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.lt-pano-reset-btn:hover {
+  background: rgba(36, 52, 31, 0.95);
+  border-color: #BC9A6C;
+}
+
+.lt-pano-cta {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.lt-pano-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 22px 12px 14px;
+  border-radius: 999px;
+  background: rgba(25, 36, 26, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid var(--tra-400, #BC9A6C);
+  color: #FDEDD8;
+  cursor: pointer;
+  text-align: left;
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.42),
+    0 0 0 6px rgba(188, 154, 108, 0.16);
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.lt-pano-open:hover {
+  transform: translateY(-2px) scale(1.01);
+  background: rgba(36, 52, 31, 0.96);
+  box-shadow:
+    0 22px 46px rgba(0, 0, 0, 0.5),
+    0 0 0 8px rgba(188, 154, 108, 0.24);
+}
+
+.lt-pano-open:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(217, 191, 148, 0.55);
+}
+
+.lt-pano-open-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D9BF94 0%, #BC9A6C 100%);
+  color: #19241A;
+  flex-shrink: 0;
+}
+
+.lt-pano-open-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lt-pano-open-copy strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: #FDEDD8;
+}
+
+.lt-pano-open-copy small {
+  font-size: 12px;
+  color: var(--tra-300, #D9BF94);
+}
+
+.lt-pano-error {
+  margin: 12px 0 0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba(166, 64, 47, 0.92);
+  color: #FFFFFF;
+  font-size: 13px;
+}
+
+.lt-pano-hint {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(20, 32, 22, 0.82);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(188, 154, 108, 0.4);
+  color: #FDEDD8;
+  font-size: 12.5px;
+  font-weight: 500;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Marker точка trên không gian 360° */
+.lt-pano-spot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.lt-pano-spot > span {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #BC9A6C;
+  border: 2.5px solid #FDEDD8;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.lt-pano-spot > span::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid rgba(253, 237, 216, 0.75);
+  animation: lt-pano-pulse 2.2s infinite ease-out;
+}
+
+.lt-pano-spot:hover > span {
+  transform: scale(1.2);
+  background: #D9BF94;
+}
+
+@keyframes lt-pano-pulse {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: scale(1.65);
+    opacity: 0;
+  }
+}
+
+/* Thẻ thuyết minh chi tiết khi chọn 1 điểm */
+.lt-pano-card {
+  position: absolute;
+  left: 20px;
+  bottom: 52px;
+  z-index: 5;
+  width: min(380px, calc(100% - 40px));
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: rgba(22, 36, 24, 0.94);
+  backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(188, 154, 108, 0.55);
+  color: #FDEDD8;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.5);
+}
+
+.lt-pano-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 28px;
+  margin-bottom: 8px;
+}
+
+.lt-pano-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(188, 154, 108, 0.22);
+  color: var(--tra-300, #D9BF94);
+  flex-shrink: 0;
+}
+
+.lt-pano-card h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #FDEDD8;
+  line-height: 1.3;
+}
+
+.lt-pano-card p {
+  margin: 0 0 12px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: rgba(253, 237, 216, 0.88);
+}
+
+.lt-pano-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tra-300, #D9BF94);
+  text-decoration: none;
+}
+
+.lt-pano-card-link:hover {
+  text-decoration: underline;
+}
+
+.lt-pano-card-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(188, 154, 108, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #FDEDD8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.lt-pano-card-close:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* Thanh chọn nhanh các điểm thuyết minh bên dưới khung 360° */
+.lt-pano-spots-wrap {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+
+.lt-pano-spots-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--stone-600, #74684F);
+}
+
+.lt-pano-spots {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lt-pano-spots button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  background: #FFFFFF;
+  border: 1px solid rgba(188, 154, 108, 0.42);
+  color: var(--reu-800, #24341F);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.lt-pano-spots button:hover {
+  border-color: var(--tra-500, #94723F);
+  background: #FAF6EE;
+  transform: translateY(-1px);
+}
+
+.lt-pano-spots button.is-active,
+.lt-pano-spots button[aria-pressed="true"] {
+  background: var(--reu-700, #2A3A23);
+  border-color: var(--tra-400, #BC9A6C);
+  color: #FDEDD8;
+}
+
+.lt-pano-spot-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(188, 154, 108, 0.2);
+  color: var(--tra-600, #7D5F33);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.lt-pano-spots button.is-active .lt-pano-spot-num,
+.lt-pano-spots button[aria-pressed="true"] .lt-pano-spot-num {
+  background: var(--tra-400, #BC9A6C);
+  color: #19241A;
+}
+
+/* Chế độ toàn màn hình trên điện thoại */
+.lt-pano-frame.is-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  max-height: none;
+  height: 100dvh;
+  border-radius: 0;
+  border: none;
+}
+
+.lt-pano-sheet-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(20, 32, 22, 0.9);
+  border: 1.5px solid #BC9A6C;
+  color: #FDEDD8;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 719px) {
+  .lt-pano-frame:not(.is-sheet) {
+    aspect-ratio: 4 / 3;
+    min-height: 320px;
+  }
+
+  .lt-pano-open {
+    padding: 10px 16px 10px 12px;
+  }
+
+  .lt-pano-open-copy small {
+    display: none;
+  }
+
+  .lt-pano-tabs {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lt-pano-tab {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lt-pano-spot > span::after {
+    animation: none;
+  }
+}

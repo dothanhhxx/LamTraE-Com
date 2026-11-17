@@ -1,4 +1,5 @@
 import { Icon } from "@/components/ds";
+import { TeaFieldPanorama } from "@/components/info/TeaFieldPanorama";
 import { SITE, telLink } from "@/lib/site";
 
 export function VisitTeaRegionSection() {
@@ -194,6 +195,9 @@ export function VisitTeaRegionSection() {
             </div>
           </div>
         </div>
+      </div>
+      <div style={{ marginTop: "clamp(20px, 3.5vw, 36px)" }}>
+        <TeaFieldPanorama defaultScene="xuong-che" compact />
       </div>
     </section>
   );
