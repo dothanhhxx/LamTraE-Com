@@ -144,19 +144,19 @@ export function DigitalTechPage() {
 
   return (
     <div className="lt-tech-page">
-      {/* 1. HERO: ỨNG DỤNG CÔNG NGHỆ SỐ + 4 THẺ TRỤ CỘT */}
-      <section className="lt-tech-hero" aria-labelledby="cong-nghe-so-title">
+      {/* 1. HERO: ỨNG DỤNG CÔNG NGHỆ + 4 THẺ TRỤ CỘT */}
+      <section className="lt-tech-hero" aria-labelledby="cong-nghe-title">
         <div className="lt-container">
           <div className="lt-tech-hero-head">
             <div className="lt-tech-eyebrow">
-              <span>ỨNG DỤNG CÔNG NGHỆ SỐ</span>
+              <span>ỨNG DỤNG CÔNG NGHỆ</span>
               <span className="lt-tech-eyebrow-line" aria-hidden="true" />
             </div>
-            <h1 id="cong-nghe-so-title" className="lt-tech-main-title">
-              CÔNG NGHỆ SỐ <span>LAM TRÀ</span>
+            <h1 id="cong-nghe-title" className="lt-tech-main-title">
+              CÔNG NGHỆ <span>LAM TRÀ</span>
             </h1>
             <p className="lt-tech-main-lead">
-              Ứng dụng công nghệ số trong trải nghiệm 360°, quản lý chất lượng và kể chuyện Trà Tân Cương —
+              Ứng dụng công nghệ trong trải nghiệm 360°, quản lý chất lượng và kể chuyện Trà Tân Cương —
               để mỗi chén trà không chỉ ngon mà còn minh bạch, gần gũi và giàu giá trị văn hóa.
             </p>
           </div>
@@ -397,10 +397,10 @@ export function DigitalTechPage() {
             </Link>
           </div>
 
-          {/* Banner kết: HÀNH TRÌNH CÔNG NGHỆ SỐ LAM TRÀ */}
+          {/* Banner kết: HÀNH TRÌNH CÔNG NGHỆ LAM TRÀ */}
           <div className="lt-tech-closing-card">
             <span className="lt-tech-closing-eyebrow">KHÁM PHÁ THÊM</span>
-            <h2>HÀNH TRÌNH CÔNG NGHỆ SỐ LAM TRÀ</h2>
+            <h2>HÀNH TRÌNH CÔNG NGHỆ LAM TRÀ</h2>
             <p>
               Cùng chúng tôi khám phá những câu chuyện, hình ảnh 360° và công nghệ đằng sau mỗi chén trà —
               trên trang chứng nhận hoặc Fanpage chính thức của Lam Trà.

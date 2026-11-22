@@ -44,7 +44,7 @@ export const NAV = [
   { label: "Câu chuyện", href: "/cau-chuyen" },
   { label: "Sản phẩm", href: "/san-pham" },
   { label: "Chứng nhận", href: "/chung-nhan" },
-  { label: "Công nghệ số", href: "/cong-nghe-so" },
+  { label: "Công Nghệ", href: "/cong-nghe" },
   { label: "Trà đàm", href: "/tra-dam" },
   { label: "Liên hệ", href: "/lien-he" },
 ];
