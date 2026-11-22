@@ -1,14 +1,12 @@
 "use client";
 
-import "@photo-sphere-viewer/core/index.css";
-import "@photo-sphere-viewer/markers-plugin/index.css";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Viewer } from "@photo-sphere-viewer/core";
 import type { MarkersPlugin } from "@photo-sphere-viewer/markers-plugin";
 import { Icon } from "@/components/ds";
 
-export type SceneId = "xuong-che" | "nuong-che";
+export type SceneId = "nguon-goc" | "quy-trinh" | "minh-bach";
 
 type Spot = {
   id: string;
@@ -21,11 +19,13 @@ type Spot = {
   pitch: string;
 };
 
-type SceneConfig = {
+type PillarSceneConfig = {
   id: SceneId;
-  badge: string;
-  title: string;
-  subtitle: string;
+  step: string;
+  pillarTitle: string;
+  pillarCaption: string;
+  spaceName: string;
+  callouts: string[];
   icon: string;
   pano: { big: string; small: string };
   poster: { wide: string; tall: string; alt: string };
@@ -33,75 +33,19 @@ type SceneConfig = {
   spots: Spot[];
 };
 
-/* Hai góc thực tế 360° ghép từ file Insta360 (.insp) tại HTX Chè Thanh Huyền Trà:
-   - Xưởng sao chế biến: Camera01/IMG_20181002_235206_00_007.insp
-   - Nương chè trung du: Camera01/IMG_20181002_222703_00_002.insp
-   Bản 8K cho màn hình lớn, 4K cho điện thoại (tránh vượt giới hạn texture GPU di động). */
-const SCENES: Record<SceneId, SceneConfig> = {
-  "xuong-che": {
-    id: "xuong-che",
-    badge: "Không gian 01 · Xưởng chế biến",
-    title: "Xưởng sao & vò chè",
-    subtitle: "Bên trong khu vực làm héo, băng chuyền nạp búp tươi, tôn quay diệt men và dàn cối vò chè truyền thống.",
-    icon: "Flame",
-    pano: {
-      big: "/assets/pano/xuong-che-8k.webp",
-      small: "/assets/pano/xuong-che-4k.webp",
-    },
-    poster: {
-      wide: "/assets/pano/xuong-poster-wide.webp",
-      tall: "/assets/pano/xuong-poster-tall.webp",
-      alt: "Không gian xưởng chế biến chè Lam Trà với búp chè tươi trải sàn làm héo, băng chuyền nạp lá và tôn quay diệt men",
-    },
-    start: { yaw: "-128deg", pitch: "-8deg", zoom: 48 },
-    spots: [
-      {
-        id: "lam-heo",
-        title: "Sàn rải & nong làm héo búp tươi",
-        text: "Búp chè vừa hái từ đồi về được rải đều trên nong tre và sàn thoáng khí, đảo nhẹ tay để thoát bớt hơi nước sương sớm, giúp lá dẻo mềm trước khi đưa vào lò mà không bị gãy nát.",
-        href: "/cau-chuyen#hanh-trinh",
-        cta: "Xem 5 công đoạn làm trà",
-        icon: "leaf",
-        yaw: "-148deg",
-        pitch: "-18deg",
-      },
-      {
-        id: "bang-chuyen",
-        title: "Băng chuyền nạp búp chè",
-        text: "Sau khi đạt độ héo vừa tới, búp chè xanh non được đưa lên băng chuyền tự động theo định lượng đều đặn, chuyển thẳng vào buồng nhiệt diệt men.",
-        href: "/san-pham",
-        cta: "Khám phá các dòng trà",
-        icon: "package",
-        yaw: "118deg",
-        pitch: "-10deg",
-      },
-      {
-        id: "ton-quay",
-        title: "Lò tôn quay diệt men & lấy hương",
-        text: "Trống quay bằng thép truyền nhiệt đều ở ngưỡng 260–280°C giúp khóa men oxy hóa đúng thời điểm, giữ màu nước xanh ánh vàng và đánh thức hương cốm non đặc trưng của trà Tân Cương.",
-        href: "/tra-dam",
-        cta: "Đọc thêm tại Trà đàm",
-        icon: "thermometer",
-        yaw: "-82deg",
-        pitch: "-6deg",
-      },
-      {
-        id: "coi-vo",
-        title: "Dàn máy vò tạo hình cánh trà",
-        text: "Chè sau khi diệt men được đưa sang dàn cối vò lực ép vừa phải để cuộn xoăn cánh trà thành hình móc câu săn chắc và giúp dịch trà tiết nhẹ ra bề mặt, khi pha dậy vị đậm đà.",
-        href: "/chung-nhan",
-        cta: "Hồ sơ chất lượng VietGAP",
-        icon: "shield-check",
-        yaw: "38deg",
-        pitch: "-14deg",
-      },
-    ],
-  },
-  "nuong-che": {
-    id: "nuong-che",
-    badge: "Không gian 02 · Vùng nguyên liệu",
-    title: "Nương chè Thanh Huyền Trà",
-    subtitle: "Đồi chè trung du Tân Cương ngập nắng sớm nơi những búp chè non đạt chuẩn VietGAP được thu hái thủ công.",
+/* Ba điểm chính kể câu chuyện chất lượng & quy trình làm chè bằng ảnh 360° thực tế (Insta360 .insp):
+   01. Nguồn gốc tự nhiên (Camera01/IMG_20181002_222703_00_002.insp)
+   02. Quy trình chế biến (Camera01/IMG_20181002_235206_00_007.insp)
+   03. Trải nghiệm minh bạch (Camera01/IMG_20181003_012355_00_012.insp) */
+export const PANO_SCENES: Record<SceneId, PillarSceneConfig> = {
+  "nguon-goc": {
+    id: "nguon-goc",
+    step: "01",
+    pillarTitle: "Nguồn gốc tự nhiên",
+    pillarCaption:
+      "Không gian đồi chè và vùng nguyên liệu sạch chuẩn VietGAP, khẳng định yếu tố tự nhiên, không sử dụng hóa chất.",
+    spaceName: "Nương chè HTX Thanh Huyền Trà",
+    callouts: ["Chuẩn VietGAP", "Không hóa chất", "Hái tay sương sớm"],
     icon: "leaf",
     pano: {
       big: "/assets/pano/nuong-che-8k.webp",
@@ -110,50 +54,191 @@ const SCENES: Record<SceneId, SceneConfig> = {
     poster: {
       wide: "/assets/pano/poster-wide.webp",
       tall: "/assets/pano/poster-tall.webp",
-      alt: "Nhân viên Lam Trà đội nón lá đứng trước biển HTX Chè Thanh Huyền Trà, giữa nương chè xanh Tân Cương",
+      alt: "Không gian đồi chè tự nhiên tại HTX Chè Thanh Huyền Trà, Tân Cương, Thái Nguyên",
     },
     start: { yaw: "-88deg", pitch: "-8deg", zoom: 50 },
     spots: [
       {
         id: "htx",
-        title: "HTX Chè Thanh Huyền Trà",
-        text: "Đơn vị chế biến chè Lam Trà hợp tác, có chứng nhận cơ sở đủ điều kiện an toàn thực phẩm và chứng nhận VietGAP cho vùng chè búp tươi.",
+        title: "Vùng nguyên liệu sạch HTX Thanh Huyền Trà",
+        text: "Đơn vị hợp tác sản xuất chính thức của Lam Trà tại Tân Cương, có chứng nhận VietGAP cho vùng chè búp tươi và nhật ký canh tác kiểm soát nghiêm ngặt.",
         href: "/chung-nhan",
-        cta: "Xem hồ sơ chứng nhận",
+        cta: "Xem hồ sơ chứng nhận VietGAP",
         icon: "shield-check",
         yaw: "-121deg",
         pitch: "-14deg",
       },
       {
         id: "nuong",
-        title: "Nương chè trung du Tân Cương",
-        text: "Hàng chè được tỉa thấp ngang hông để hái tay chuẩn 1 tôm 1–2 lá non, rồi chuyển ngay về xưởng làm héo, diệt men, vò và sao lấy hương.",
+        title: "Luống chè tỉa tán hái tay búp non",
+        text: "Hàng chè được tỉa thấp ngang hông để hái thủ công từng búp 1 tôm 1–2 lá non khi sương sớm vừa tan, giữ nguyên độ tươi và dưỡng chất tự nhiên.",
         href: "/san-pham",
-        cta: "Xem các loại trà",
+        cta: "Khám phá các dòng trà",
         icon: "leaf",
         yaw: "-48deg",
         pitch: "-20deg",
+      },
+      {
+        id: "sinh-thai",
+        title: "Hệ sinh thái tự nhiên · Không hóa chất",
+        text: "Đất trung du pha cát tơi xốp bao quanh bởi núi đồi tự nhiên, chăm bón bằng phân hữu cơ vi sinh, không dùng thuốc diệt cỏ hay hóa chất kích tăng trưởng.",
+        href: "/cau-chuyen#vung-dat",
+        cta: "Tìm hiểu thổ nhưỡng Tân Cương",
+        icon: "circle-check",
+        yaw: "95deg",
+        pitch: "-6deg",
+      },
+    ],
+  },
+  "quy-trinh": {
+    id: "quy-trinh",
+    step: "02",
+    pillarTitle: "Quy trình chế biến",
+    pillarCaption:
+      "Toàn cảnh nhà máy xử lý và các công đoạn sản xuất chè thực tế: làm héo, nạp băng chuyền, diệt men tôn quay và vò chè.",
+    spaceName: "Xưởng sao & vò chè thực tế",
+    callouts: ["Làm héo tự nhiên", "Tôn quay 260–280°C", "Dàn cối vò chè"],
+    icon: "thermometer",
+    pano: {
+      big: "/assets/pano/xuong-che-8k.webp",
+      small: "/assets/pano/xuong-che-4k.webp",
+    },
+    poster: {
+      wide: "/assets/pano/xuong-poster-wide.webp",
+      tall: "/assets/pano/xuong-poster-tall.webp",
+      alt: "Toàn cảnh nhà máy xử lý và các công đoạn sản xuất chè thực tế tại xưởng",
+    },
+    start: { yaw: "-128deg", pitch: "-8deg", zoom: 48 },
+    spots: [
+      {
+        id: "lam-heo",
+        title: "Công đoạn 1 · Rải sàn & nong tre làm héo",
+        text: "Búp chè tươi vừa thu hái được rải đều trên nong tre và sàn thoáng khí, đảo nhẹ tay để thoát hơi nước sương sớm, giúp lá dẻo mềm trước khi sao mà không bị gãy nát.",
+        href: "/cau-chuyen#hanh-trinh",
+        cta: "Xem 5 công đoạn làm trà",
+        icon: "leaf",
+        yaw: "-148deg",
+        pitch: "-18deg",
+      },
+      {
+        id: "bang-chuyen",
+        title: "Công đoạn 2 · Băng chuyền nạp búp định lượng",
+        text: "Sau khi đạt độ héo vừa tới và dậy mùi hương thanh mát, búp chè được đưa lên băng chuyền inox sạch sẽ để cấp đều đặn vào buồng nhiệt diệt men.",
+        href: "/san-pham",
+        cta: "Xem sản phẩm trà nguyên búp",
+        icon: "package",
+        yaw: "118deg",
+        pitch: "-10deg",
+      },
+      {
+        id: "ton-quay",
+        title: "Công đoạn 3 · Lò tôn quay diệt men & lấy hương",
+        text: "Trống quay bằng thép truyền nhiệt ổn định ở ngưỡng 260–280°C giúp khóa men oxy hóa đúng thời điểm, giữ màu nước xanh ánh vàng và đánh thức hương cốm non tự nhiên.",
+        href: "/tra-dam",
+        cta: "Đọc bí quyết sao trà tại Trà đàm",
+        icon: "thermometer",
+        yaw: "-82deg",
+        pitch: "-6deg",
+      },
+      {
+        id: "coi-vo",
+        title: "Công đoạn 4 · Dàn máy vò tạo hình cánh trà",
+        text: "Chè sau khi diệt men được đưa sang dàn cối vò với lực ép vừa phải để cuộn xoăn cánh trà thành hình móc câu săn chắc, giúp dịch trà tiết nhẹ ra bề mặt để khi pha dậy vị đậm đà.",
+        href: "/chung-nhan",
+        cta: "Chứng nhận cơ sở đủ điều kiện ATTP",
+        icon: "shield-check",
+        yaw: "38deg",
+        pitch: "-14deg",
+      },
+    ],
+  },
+  "minh-bach": {
+    id: "minh-bach",
+    step: "03",
+    pillarTitle: "Trải nghiệm minh bạch",
+    pillarCaption:
+      "Cho phép người xem tự do quan sát mọi góc độ từ chứng nhận, bàn cân định lượng đến bàn thẩm định để củng cố niềm tin.",
+    spaceName: "Phòng kiểm định, đóng gói & thưởng trà",
+    callouts: ["Xoay 360° mọi góc độ", "Cân đúng định lượng", "Thẩm định từng mẻ"],
+    icon: "shield-check",
+    pano: {
+      big: "/assets/pano/phong-tra-8k.webp",
+      small: "/assets/pano/phong-tra-4k.webp",
+    },
+    poster: {
+      wide: "/assets/pano/phong-tra-poster-wide.webp",
+      tall: "/assets/pano/phong-tra-poster-tall.webp",
+      alt: "Không gian phòng kiểm định, cân đóng gói và bàn trà thẩm định chất lượng tại Thanh Huyền Trà",
+    },
+    start: { yaw: "-10deg", pitch: "-14deg", zoom: 45 },
+    spots: [
+      {
+        id: "chung-nhan-treo",
+        title: "Chứng nhận VietGAP & ATTP niêm yết công khai",
+        text: "Giấy chứng nhận VietGAP và hồ sơ đủ điều kiện an toàn thực phẩm được đóng khung niêm yết trực tiếp trên tường khu vực đón khách và đóng gói.",
+        href: "/chung-nhan",
+        cta: "Đối chiếu bản chụp chứng nhận gốc",
+        icon: "shield-check",
+        yaw: "-24deg",
+        pitch: "-8deg",
+      },
+      {
+        id: "ban-can",
+        title: "Bàn cân điện tử & đóng gói hút chân không",
+        text: "Từng gói trà vàng/xanh trước khi xuất xưởng đều được cân định lượng chính xác trên bàn cân điện tử, hàn kín hút chân không để khóa trọn hương cốm.",
+        href: "/san-pham",
+        cta: "Xem quy cách đóng gói từng dòng trà",
+        icon: "scale",
+        yaw: "-28deg",
+        pitch: "-32deg",
+      },
+      {
+        id: "ban-tham-dinh",
+        title: "Bàn trà thẩm định chất lượng thực tế",
+        text: "Đội ngũ Lam Trà trực tiếp ngồi thẩm định sắc nước, hương cốm và hậu ngọt của từng mẻ trà mới sao cùng nghệ nhân trước khi đưa vào phân phối.",
+        href: "/lien-he",
+        cta: "Đặt lịch ghé thưởng trà tại xưởng",
+        icon: "circle-check",
+        yaw: "28deg",
+        pitch: "-26deg",
+      },
+      {
+        id: "ke-thanh-pham",
+        title: "Kệ lưu mẫu & trưng bày minh bạch phân hạng",
+        text: "Mỗi dòng Trà Đinh, Nõn Tôm, Móc Câu và hộp quà đều được phân khu rõ ràng, ghi minh bạch khối lượng, vùng nguyên liệu và ngày đóng gói trên bao bì.",
+        href: "/huong-dan",
+        cta: "Xem hướng dẫn pha & bảo quản trà",
+        icon: "package",
+        yaw: "125deg",
+        pitch: "-6deg",
       },
     ],
   },
 };
 
-const SCENE_LIST: SceneConfig[] = [SCENES["xuong-che"], SCENES["nuong-che"]];
+const SCENE_LIST: PillarSceneConfig[] = [
+  PANO_SCENES["nguon-goc"],
+  PANO_SCENES["quy-trinh"],
+  PANO_SCENES["minh-bach"],
+];
 
 const SPOT_HTML = '<span class="lt-pano-spot" aria-hidden="true"><span></span></span>';
 
 type Status = "poster" | "loading" | "ready" | "error";
 
 export function TeaFieldPanorama({
-  defaultScene = "xuong-che",
+  defaultScene = "nguon-goc",
   compact = false,
+  id = "khong-gian-360",
 }: {
   defaultScene?: SceneId;
   compact?: boolean;
+  id?: string;
 }) {
   const [sceneId, setSceneId] = useState<SceneId>(defaultScene);
-  const scene = SCENES[sceneId];
+  const scene = PANO_SCENES[sceneId];
 
+  const viewportWrapRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<Viewer | null>(null);
   const markersRef = useRef<MarkersPlugin | null>(null);
@@ -171,15 +256,15 @@ export function TeaFieldPanorama({
     void import("@photo-sphere-viewer/markers-plugin");
   }, []);
 
-  const goTo = useCallback((id: string, currentSpots: Spot[]) => {
-    const s = currentSpots.find((x) => x.id === id);
+  const goTo = useCallback((spotId: string, currentSpots: Spot[]) => {
+    const s = currentSpots.find((x) => x.id === spotId);
     const viewer = viewerRef.current;
     if (!s || !viewer) return;
     setSpot(s);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       viewer.rotate({ yaw: s.yaw, pitch: s.pitch });
     } else {
-      void markersRef.current?.gotoMarker(id, 1000);
+      void markersRef.current?.gotoMarker(spotId, 1000);
     }
   }, []);
 
@@ -205,7 +290,7 @@ export function TeaFieldPanorama({
 
   const open = useCallback(
     async (spotId?: string, targetSceneId?: SceneId) => {
-      const activeScene = SCENES[targetSceneId ?? sceneId];
+      const activeScene = PANO_SCENES[targetSceneId ?? sceneId];
       openerRef.current = document.activeElement as HTMLElement | null;
       const small = window.matchMedia("(max-width: 719px)").matches;
       if (small) setSheet(true);
@@ -281,7 +366,7 @@ export function TeaFieldPanorama({
         const markers = viewer.getPlugin<MarkersPlugin>(MarkersPlugin);
         markersRef.current = markers;
         markers.addEventListener("select-marker", ({ marker }) => {
-          const current = SCENES[sceneIdRef.current];
+          const current = PANO_SCENES[sceneIdRef.current];
           goTo(marker.id, current.spots);
         });
         viewer.addEventListener("panorama-error", () => setStatus("error"));
@@ -309,17 +394,30 @@ export function TeaFieldPanorama({
     sceneIdRef.current = sceneId;
   }, [sceneId]);
 
-  const switchScene = useCallback(
-    (nextId: SceneId) => {
-      if (nextId === sceneId) return;
-      setSceneId(nextId);
-      setSpot(null);
-      setTouched(false);
-      if (viewerRef.current) {
-        void open(undefined, nextId);
+  const selectPillar = useCallback(
+    (nextId: SceneId, autoOpen = false) => {
+      const changed = nextId !== sceneId;
+      if (changed) {
+        setSceneId(nextId);
+        setSpot(null);
+        setTouched(false);
+      }
+      if (viewerRef.current || autoOpen) {
+        void open(PANO_SCENES[nextId].spots[0]?.id, nextId);
       }
     },
     [open, sceneId],
+  );
+
+  const stepSpot = useCallback(
+    (delta: number) => {
+      const spots = scene.spots;
+      if (!spots.length) return;
+      const idx = spot ? spots.findIndex((s) => s.id === spot.id) : -1;
+      const nextIdx = (idx + delta + spots.length) % spots.length;
+      void open(spots[nextIdx].id);
+    },
+    [open, scene.spots, spot],
   );
 
   const closeSheet = useCallback(() => {
@@ -347,196 +445,285 @@ export function TeaFieldPanorama({
   const live = status === "loading" || status === "ready";
 
   return (
-    <section className={`lt-pano-section${compact ? " is-compact" : ""}`} aria-labelledby="lt-pano-heading">
+    <section
+      id={id}
+      className={`lt-pano-section${compact ? " is-compact" : ""}`}
+      aria-labelledby={`${id}-heading`}
+    >
       <div className="lt-container">
-        {/* Header & Scene Switcher */}
-        <div className="lt-pano-header">
-          <div className="lt-pano-title-group">
-            <div className="lt-pano-eyebrow">
-              <span className="lt-pano-live-dot" aria-hidden="true" />
-              <span>Trải nghiệm thực tế 360° · HTX Chè Thanh Huyền Trà</span>
-            </div>
-            <h2 id="lt-pano-heading" className="lt-pano-heading">
-              Từ <span>nương chè</span> đến <span>xưởng sao</span>
-            </h2>
-            <p className="lt-pano-desc">{scene.subtitle}</p>
+        {/* Centered Header (theo phong cách Công nghệ số Tân Trà) */}
+        <header className="lt-pano-center-head">
+          <div className="lt-pano-flanked-kicker">
+            <span className="lt-pano-kicker-line" aria-hidden="true" />
+            <span>TRẢI NGHIỆM THỰC TẾ 360°</span>
+            <span className="lt-pano-kicker-line" aria-hidden="true" />
           </div>
+          <h2 id={`${id}-heading`} className="lt-pano-center-title">
+            KHÔNG GIAN 360° <span>LAM TRÀ</span>
+          </h2>
+          <p className="lt-pano-center-lead">
+            Ghi hình thực tế 360° tại vùng trồng, nhà máy chế biến và phòng kiểm định của HTX Chè Thanh Huyền Trà —
+            kể trọn câu chuyện chất lượng qua 3 điểm tựa cốt lõi để giữ vững niềm tin trong từng chén trà.
+          </p>
+        </header>
 
-          <div className="lt-pano-tabs" role="tablist" aria-label="Chọn không gian 360°">
-            {SCENE_LIST.map((item) => {
-              const active = item.id === sceneId;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={active}
-                  className={`lt-pano-tab${active ? " is-active" : ""}`}
-                  onClick={() => switchScene(item.id)}
-                  onPointerEnter={prefetch}
-                >
-                  <span className="lt-pano-tab-badge">{item.id === "xuong-che" ? "01" : "02"}</span>
-                  <span className="lt-pano-tab-text">
-                    <strong>{item.title}</strong>
-                    <small>{item.id === "xuong-che" ? "4 điểm thuyết minh" : "2 điểm thuyết minh"}</small>
+        {/* 3 Thẻ Điểm Tựa (Visual Frame ở trên + Thanh nền xanh đậm ở dưới như mẫu Tân Trà) */}
+        <div
+          className="lt-pano-showcase-grid"
+          role="tablist"
+          aria-label="Ba điểm chính trong câu chuyện chất lượng 360°"
+        >
+          {SCENE_LIST.map((item) => {
+            const active = item.id === sceneId;
+            return (
+              <div
+                key={item.id}
+                role="tab"
+                tabIndex={0}
+                aria-selected={active}
+                className={`lt-pano-showcase-card${active ? " is-active" : ""}`}
+                onClick={() => selectPillar(item.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    selectPillar(item.id);
+                  }
+                }}
+                onPointerEnter={prefetch}
+              >
+                {/* Khung hình minh hoạ 360° phía trên */}
+                <div className="lt-pano-showcase-visual">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.poster.wide}
+                    alt={item.poster.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span className="lt-pano-showcase-step">
+                    Điểm {item.step} · 360°
                   </span>
-                </button>
-              );
-            })}
-          </div>
+                  <div className="lt-pano-showcase-tags" aria-hidden="true">
+                    {item.callouts.map((tag) => (
+                      <span key={tag} className="lt-pano-showcase-tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    className="lt-pano-showcase-play"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      selectPillar(item.id, true);
+                      viewportWrapRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <ellipse cx="12" cy="12" rx="10" ry="4" />
+                    </svg>
+                    <span>{active && live ? "Đang mở 360°" : "Xoay 360°"}</span>
+                  </button>
+                </div>
+
+                {/* Chân thẻ màu xanh rừng đậm (#0C2B1E) đồng bộ mẫu Tân Trà */}
+                <div className="lt-pano-showcase-body">
+                  <div className="lt-pano-showcase-title-row">
+                    <strong>{item.pillarTitle}</strong>
+                    <span className="lt-pano-showcase-state">
+                      {active ? "Đang chọn" : "Xem góc này →"}
+                    </span>
+                  </div>
+                  <p>{item.pillarCaption}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Main 360 Viewport Frame */}
-        <div
-          className={`lt-pano-frame${sheet ? " is-sheet" : ""}`}
-          data-status={status}
-          role={sheet ? "dialog" : undefined}
-          aria-modal={sheet || undefined}
-          aria-label={sheet ? `Ảnh 360° ${scene.title}` : undefined}
-          onPointerEnter={prefetch}
-        >
+        {/* Khung Trình Xem 360° Tương Tác Trực Tiếp */}
+        <div ref={viewportWrapRef} className="lt-pano-stage-shell">
           <div
-            ref={stageRef}
-            className="lt-pano-stage"
-            tabIndex={status === "ready" ? 0 : -1}
-            aria-label={`Không gian 360° ${scene.title}. Dùng chuột kéo hoặc phím mũi tên để xoay góc nhìn.`}
-            onFocus={() => viewerRef.current?.startKeyboardControl()}
-            onBlur={() => viewerRef.current?.stopKeyboardControl()}
-            onPointerDown={() => setTouched(true)}
-          />
-
-          <picture className="lt-pano-poster" aria-hidden={live}>
-            <source media="(max-width: 719px)" srcSet={scene.poster.tall} />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={scene.poster.wide}
-              alt={scene.poster.alt}
-              width={2400}
-              height={1028}
-              loading="lazy"
-              decoding="async"
+            className={`lt-pano-frame${sheet ? " is-sheet" : ""}`}
+            data-status={status}
+            role={sheet ? "dialog" : undefined}
+            aria-modal={sheet || undefined}
+            aria-label={sheet ? `Ảnh 360° ${scene.spaceName}` : undefined}
+            onPointerEnter={prefetch}
+          >
+            <div
+              ref={stageRef}
+              className="lt-pano-stage"
+              tabIndex={status === "ready" ? 0 : -1}
+              aria-label={`Không gian 360° ${scene.spaceName}. Dùng chuột kéo hoặc phím mũi tên để tự do quan sát mọi góc độ.`}
+              onFocus={() => viewerRef.current?.startKeyboardControl()}
+              onBlur={() => viewerRef.current?.stopKeyboardControl()}
+              onPointerDown={() => setTouched(true)}
             />
-          </picture>
 
-          {/* Top Bar inside Frame */}
-          <div className="lt-pano-topbar">
-            <span className="lt-pano-scene-pill">
-              <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <ellipse cx="12" cy="12" rx="10" ry="4" />
-                <path d="M12 2v20" opacity="0.5" />
-              </svg>
-              {scene.badge}: <strong>{scene.title}</strong>
-            </span>
+            <picture className="lt-pano-poster" aria-hidden={live}>
+              <source media="(max-width: 719px)" srcSet={scene.poster.tall} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={scene.poster.wide}
+                alt={scene.poster.alt}
+                width={2400}
+                height={1028}
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
 
-            {live && (
-              <button
-                type="button"
-                className="lt-pano-reset-btn"
-                onClick={() => {
-                  setSpot(null);
-                  viewerRef.current?.animate({
-                    yaw: scene.start.yaw,
-                    pitch: scene.start.pitch,
-                    zoom: scene.start.zoom,
-                    speed: "2rpm",
-                  });
-                }}
-              >
-                <Icon name="rotate-ccw" size={14} />
-                <span>Góc nhìn chuẩn</span>
+            {/* Thanh trạng thái phía trên khung 360° */}
+            <div className="lt-pano-topbar">
+              <span className="lt-pano-scene-pill">
+                <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <ellipse cx="12" cy="12" rx="10" ry="4" />
+                  <path d="M12 2v20" opacity="0.5" />
+                </svg>
+                <span>Điểm {scene.step} · {scene.pillarTitle}:</span>
+                <strong>{scene.spaceName}</strong>
+              </span>
+
+              <div className="lt-pano-top-actions">
+                {live && (
+                  <>
+                    <button
+                      type="button"
+                      className="lt-pano-reset-btn"
+                      onClick={() => stepSpot(1)}
+                      title="Chuyển sang điểm thuyết minh tiếp theo"
+                    >
+                      <span>Điểm tiếp theo</span>
+                      <Icon name="arrow-right" size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      className="lt-pano-reset-btn"
+                      onClick={() => {
+                        setSpot(null);
+                        viewerRef.current?.animate({
+                          yaw: scene.start.yaw,
+                          pitch: scene.start.pitch,
+                          zoom: scene.start.zoom,
+                          speed: "2rpm",
+                        });
+                      }}
+                    >
+                      <Icon name="rotate-ccw" size={14} />
+                      <span>Góc nhìn chuẩn</span>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {!live && (
+              <div className="lt-pano-cta">
+                <button type="button" className="lt-pano-open" onClick={() => open()} onFocus={prefetch}>
+                  <span className="lt-pano-open-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <ellipse cx="12" cy="12" rx="10" ry="4.2" />
+                      <path d="M12 3.5v17" opacity=".55" />
+                      <path d="m17.5 14.6 2.4 1.1-1.3 2.3" />
+                    </svg>
+                  </span>
+                  <span className="lt-pano-open-copy">
+                    <strong>Bấm để xoay 360° · {scene.pillarTitle}</strong>
+                    <small>Tự do quan sát mọi góc độ tại {scene.spaceName}</small>
+                  </span>
+                </button>
+                {status === "error" && (
+                  <p className="lt-pano-error" role="alert">
+                    Không tải được ảnh 360°. Vui lòng thử bấm lại nút trên.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {status === "ready" && !touched && !spot && (
+              <p className="lt-pano-hint" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+                Kéo chuột 360° để tự do quan sát mọi góc độ thực tế
+              </p>
+            )}
+
+            {spot && (
+              <div className="lt-pano-card" role="region" aria-live="polite" aria-label={spot.title}>
+                <div className="lt-pano-card-head">
+                  <span className="lt-pano-card-icon">
+                    <Icon name={spot.icon} size={16} />
+                  </span>
+                  <div>
+                    <span className="lt-pano-card-kicker">Điểm {scene.step} · {scene.pillarTitle}</span>
+                    <h3>{spot.title}</h3>
+                  </div>
+                </div>
+                <p>{spot.text}</p>
+                <div className="lt-pano-card-actions">
+                  <Link href={spot.href} className="lt-pano-card-link">
+                    <span>{spot.cta}</span>
+                    <Icon name="arrow-right" size={15} />
+                  </Link>
+                  <div className="lt-pano-card-stepper">
+                    <button type="button" onClick={() => stepSpot(-1)} aria-label="Điểm trước">
+                      <Icon name="chevron-left" size={15} />
+                    </button>
+                    <button type="button" onClick={() => stepSpot(1)} aria-label="Điểm tiếp theo">
+                      <Icon name="chevron-right" size={15} />
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="lt-pano-card-close"
+                  aria-label="Đóng thông tin"
+                  onClick={() => setSpot(null)}
+                >
+                  <Icon name="x" size={16} />
+                </button>
+              </div>
+            )}
+
+            {sheet && (
+              <button ref={closeRef} type="button" className="lt-pano-sheet-close" onClick={closeSheet}>
+                <Icon name="x" size={18} />
+                Đóng 360°
               </button>
             )}
           </div>
 
-          {!live && (
-            <div className="lt-pano-cta">
-              <button type="button" className="lt-pano-open" onClick={() => open()} onFocus={prefetch}>
-                <span className="lt-pano-open-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <ellipse cx="12" cy="12" rx="10" ry="4.2" />
-                    <path d="M12 3.5v17" opacity=".55" />
-                    <path d="m17.5 14.6 2.4 1.1-1.3 2.3" />
-                  </svg>
-                </span>
-                <span className="lt-pano-open-copy">
-                  <strong>Bước vào không gian 360°</strong>
-                  <small>Kéo xoay toàn cảnh hoặc chạm vào các điểm thuyết minh</small>
-                </span>
-              </button>
-              {status === "error" && (
-                <p className="lt-pano-error" role="alert">
-                  Không tải được ảnh 360°. Vui lòng thử bấm lại nút trên.
-                </p>
-              )}
-            </div>
-          )}
-
-          {status === "ready" && !touched && !spot && (
-            <p className="lt-pano-hint" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-              Kéo chuột hoặc vuốt ngang để xoay 360° quanh xưởng
-            </p>
-          )}
-
-          {spot && (
-            <div className="lt-pano-card" role="region" aria-live="polite" aria-label={spot.title}>
-              <div className="lt-pano-card-head">
-                <span className="lt-pano-card-icon">
-                  <Icon name={spot.icon} size={16} />
-                </span>
-                <h3>{spot.title}</h3>
-              </div>
-              <p>{spot.text}</p>
-              <Link href={spot.href} className="lt-pano-card-link">
-                <span>{spot.cta}</span>
-                <Icon name="arrow-right" size={15} />
-              </Link>
-              <button
-                type="button"
-                className="lt-pano-card-close"
-                aria-label="Đóng thông tin"
-                onClick={() => setSpot(null)}
-              >
-                <Icon name="x" size={16} />
-              </button>
-            </div>
-          )}
-
-          {sheet && (
-            <button ref={closeRef} type="button" className="lt-pano-sheet-close" onClick={closeSheet}>
-              <Icon name="x" size={18} />
-              Đóng 360°
-            </button>
-          )}
-        </div>
-
-        {/* Interactive Hotspots Bar */}
-        <div className="lt-pano-spots-wrap">
-          <span className="lt-pano-spots-label">Điểm thuyết minh trong góc nhìn này:</span>
-          <ul className="lt-pano-spots" aria-label="Các điểm thuyết minh trong ảnh 360°">
-            {scene.spots.map((s, idx) => {
-              const active = spot?.id === s.id;
-              return (
-                <li key={s.id}>
-                  <button
-                    type="button"
-                    className={active ? "is-active" : undefined}
-                    aria-pressed={active}
-                    onClick={() => open(s.id)}
-                    onPointerEnter={prefetch}
-                  >
-                    <span className="lt-pano-spot-num">0{idx + 1}</span>
-                    <Icon name={s.icon} size={16} />
-                    <span>{s.title}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          {/* Thanh chọn nhanh các điểm thuyết minh bên dưới khung 360° */}
+          <div className="lt-pano-spots-wrap">
+            <span className="lt-pano-spots-label">
+              Điểm thuyết minh trong <strong>{scene.pillarTitle}</strong>:
+            </span>
+            <ul className="lt-pano-spots" aria-label="Các điểm thuyết minh trong ảnh 360°">
+              {scene.spots.map((s, idx) => {
+                const active = spot?.id === s.id;
+                return (
+                  <li key={s.id}>
+                    <button
+                      type="button"
+                      className={active ? "is-active" : undefined}
+                      aria-pressed={active}
+                      onClick={() => open(s.id)}
+                      onPointerEnter={prefetch}
+                    >
+                      <span className="lt-pano-spot-num">0{idx + 1}</span>
+                      <Icon name={s.icon} size={16} />
+                      <span>{s.title}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
       </div>
     </section>

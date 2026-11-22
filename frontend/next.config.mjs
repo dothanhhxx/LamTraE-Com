@@ -2,6 +2,7 @@
 const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:4000";
 
 const nextConfig = {
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   async rewrites() {
     return [
       {

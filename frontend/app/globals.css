@@ -3,6 +3,8 @@
 @import "./ds/tokens/typography.css";
 @import "./ds/tokens/spacing.css";
 @import "./ds/tokens/base.css";
+@import "@photo-sphere-viewer/core/index.css";
+@import "@photo-sphere-viewer/markers-plugin/index.css";
 
 html,
 body {
@@ -6241,169 +6243,253 @@ button:hover .lt-thumb-zoom-overlay,
   }
 }
 
-/* ---------- Không gian thực tế 360° (TeaFieldPanorama — Xưởng sao & Nương chè) ---------- */
+/* ---------- Không gian thực tế 360° (TeaFieldPanorama — 3 Điểm tựa Chất lượng & Quy trình) ---------- */
 .lt-pano-section {
   position: relative;
-  padding: clamp(32px, 5vw, 64px) 0;
-  background: linear-gradient(180deg, rgba(250, 246, 238, 0.65) 0%, rgba(245, 239, 230, 0.9) 100%);
+  padding: clamp(48px, 6.5vw, 88px) 0;
+  background:
+    linear-gradient(180deg, rgba(246, 239, 226, 0.94) 0%, rgba(244, 236, 222, 0.89) 50%, rgba(246, 239, 226, 0.95) 100%),
+    url("/assets/bg/tea-hills-mist.webp") center top / cover no-repeat;
   border-top: 1px solid rgba(188, 154, 108, 0.22);
   border-bottom: 1px solid rgba(188, 154, 108, 0.22);
 }
 
 .lt-pano-section.is-compact {
-  padding: clamp(20px, 3.5vw, 40px) 0;
+  padding: clamp(24px, 4vw, 44px) 0;
   background: transparent;
   border-top: none;
   border-bottom: none;
 }
 
-.lt-pano-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px 32px;
-  margin-bottom: clamp(18px, 2.5vw, 26px);
+.lt-pano-center-head {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto clamp(24px, 3.2vw, 36px);
 }
 
-.lt-pano-title-group {
-  max-width: 640px;
-}
-
-.lt-pano-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: rgba(36, 52, 31, 0.08);
-  border: 1px solid rgba(188, 154, 108, 0.38);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--reu-700, #2A3A23);
-  margin-bottom: 10px;
-}
-
-.lt-pano-live-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #4F6B3A;
-  box-shadow: 0 0 0 3px rgba(79, 107, 58, 0.25);
-}
-
-.lt-pano-heading {
-  margin: 0 0 8px;
-  font-family: var(--font-heading);
-  font-size: clamp(24px, 3vw, 38px);
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  color: var(--reu-800, #24341F);
-}
-
-.lt-pano-heading span {
-  color: var(--tra-500, #94723F);
-}
-
-.lt-pano-desc {
-  margin: 0;
-  font-size: 14.5px;
-  line-height: 1.6;
-  color: var(--stone-700, #544B3B);
-}
-
-.lt-pano-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.lt-pano-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 52px;
-  padding: 8px 16px 8px 12px;
-  border-radius: 14px;
-  background: #FAF8F5;
-  border: 1.5px solid rgba(188, 154, 108, 0.35);
-  color: var(--reu-800, #24341F);
-  cursor: pointer;
-  text-align: left;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-}
-
-.lt-pano-tab:hover {
-  border-color: var(--tra-400, #BC9A6C);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px -10px rgba(36, 52, 31, 0.2);
-}
-
-.lt-pano-tab:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
-.lt-pano-tab.is-active {
-  background: var(--reu-800, #24341F);
-  border-color: var(--tra-400, #BC9A6C);
-  color: #FDEDD8;
-  box-shadow: 0 12px 26px -12px rgba(25, 36, 26, 0.45);
-}
-
-.lt-pano-tab-badge {
+.lt-pano-flanked-kicker {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  font-size: 13px;
-  font-weight: 700;
-  background: rgba(188, 154, 108, 0.18);
+  gap: 14px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--tra-600, #7D5F33);
-  flex-shrink: 0;
+  margin-bottom: 8px;
 }
 
-.lt-pano-tab.is-active .lt-pano-tab-badge {
-  background: var(--tra-400, #BC9A6C);
-  color: #19241A;
+.lt-pano-kicker-line {
+  width: 44px;
+  height: 1px;
+  background: rgba(188, 154, 108, 0.65);
 }
 
-.lt-pano-tab-text {
+.lt-pano-center-title {
+  margin: 0 0 12px;
+  font-family: var(--font-heading);
+  font-size: clamp(34px, 4.4vw, 54px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: #0D2D1E;
+}
+
+.lt-pano-center-title span {
+  color: #A87B43;
+}
+
+.lt-pano-center-lead {
+  margin: 0 auto;
+  max-width: 640px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--stone-700, #544B3B);
+}
+
+/* 3 Thẻ Điểm Chính (Khung ảnh minh hoạ phía trên + Thanh nền xanh rừng #0B281B phía dưới như mẫu Tân Trà) */
+.lt-pano-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 22px);
+  margin-bottom: clamp(18px, 2.4vw, 26px);
+}
+
+.lt-pano-showcase-card {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(13, 45, 30, 0.22);
+  box-shadow: 0 12px 28px -16px rgba(13, 45, 30, 0.22);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
 }
 
-.lt-pano-tab-text strong {
-  font-size: 13.5px;
+.lt-pano-showcase-card:hover {
+  transform: translateY(-3px);
+  border-color: #A87B43;
+  box-shadow: 0 18px 36px -16px rgba(13, 45, 30, 0.32);
+}
+
+.lt-pano-showcase-card:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(168, 123, 67, 0.45);
+}
+
+.lt-pano-showcase-card.is-active {
+  border-color: #BC9A6C;
+  box-shadow:
+    0 18px 38px -14px rgba(11, 40, 27, 0.42),
+    0 0 0 2px #BC9A6C;
+}
+
+.lt-pano-showcase-visual {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #F4EFE6;
+  overflow: hidden;
+}
+
+.lt-pano-showcase-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.55s ease;
+}
+
+.lt-pano-showcase-card:hover .lt-pano-showcase-visual img {
+  transform: scale(1.04);
+}
+
+.lt-pano-showcase-step {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(11, 40, 27, 0.88);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(217, 191, 148, 0.45);
+  color: #FDEDD8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.lt-pano-showcase-tags {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  right: 110px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.lt-pano-showcase-tag {
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(12, 46, 31, 0.86);
+  color: #F5EEDB;
+  font-size: 10.5px;
   font-weight: 600;
-  line-height: 1.2;
+  border-left: 2px solid #D4B06A;
 }
 
-.lt-pano-tab-text small {
-  font-size: 11.5px;
-  opacity: 0.78;
+.lt-pano-showcase-play {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #D4B06A;
+  border: none;
+  color: #0B281B;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.lt-pano-showcase-play:hover {
+  background: #E2C281;
+  transform: scale(1.03);
+}
+
+.lt-pano-showcase-body {
+  background: #0B291C;
+  color: #F5EEDB;
+  padding: 14px 16px 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 2px solid rgba(188, 154, 108, 0.35);
+}
+
+.lt-pano-showcase-card.is-active .lt-pano-showcase-body {
+  background: #082116;
+  border-top-color: #D4B06A;
+}
+
+.lt-pano-showcase-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.lt-pano-showcase-title-row strong {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #D4B06A;
+}
+
+.lt-pano-showcase-state {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(245, 238, 219, 0.72);
+}
+
+.lt-pano-showcase-card.is-active .lt-pano-showcase-state {
+  color: #D4B06A;
+}
+
+.lt-pano-showcase-body p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: rgba(245, 238, 219, 0.9);
+}
+
+.lt-pano-stage-shell {
+  position: relative;
 }
 
 .lt-pano-frame {
   position: relative;
   width: 100%;
   aspect-ratio: 21 / 9;
-  min-height: 400px;
+  min-height: 410px;
   max-height: 600px;
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
-  background: #141E15;
-  border: 1.5px solid rgba(188, 154, 108, 0.45);
+  background: #0B2419;
+  border: 1.5px solid rgba(188, 154, 108, 0.5);
   box-shadow:
-    0 24px 52px -24px rgba(25, 36, 26, 0.45),
-    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    0 24px 52px -24px rgba(11, 40, 27, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.4) inset;
 }
 
 .lt-pano-stage {
@@ -6451,8 +6537,8 @@ button:hover .lt-thumb-zoom-overlay,
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 50% 55%, rgba(20, 30, 21, 0.12) 0%, rgba(15, 24, 16, 0.58) 100%),
-    linear-gradient(180deg, rgba(15, 24, 16, 0.48) 0%, rgba(15, 24, 16, 0.08) 35%, rgba(15, 24, 16, 0.62) 100%);
+    radial-gradient(circle at 50% 55%, rgba(11, 40, 27, 0.12) 0%, rgba(8, 28, 19, 0.58) 100%),
+    linear-gradient(180deg, rgba(8, 28, 19, 0.48) 0%, rgba(8, 28, 19, 0.08) 35%, rgba(8, 28, 19, 0.62) 100%);
 }
 
 .lt-pano-topbar {
@@ -6468,6 +6554,12 @@ button:hover .lt-thumb-zoom-overlay,
   pointer-events: none;
 }
 
+.lt-pano-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .lt-pano-scene-pill {
   pointer-events: auto;
   display: inline-flex;
@@ -6475,21 +6567,21 @@ button:hover .lt-thumb-zoom-overlay,
   gap: 8px;
   padding: 7px 14px;
   border-radius: 999px;
-  background: rgba(20, 32, 22, 0.84);
+  background: rgba(11, 40, 27, 0.88);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(188, 154, 108, 0.45);
+  border: 1px solid rgba(212, 176, 106, 0.5);
   color: #FDEDD8;
   font-size: 12.5px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
 .lt-pano-scene-pill svg {
-  color: var(--tra-300, #D9BF94);
+  color: #D4B06A;
   flex-shrink: 0;
 }
 
 .lt-pano-scene-pill strong {
-  color: var(--tra-300, #D9BF94);
+  color: #D4B06A;
   font-weight: 600;
 }
 
@@ -6501,9 +6593,9 @@ button:hover .lt-thumb-zoom-overlay,
   min-height: 36px;
   padding: 6px 12px;
   border-radius: 999px;
-  background: rgba(20, 32, 22, 0.84);
+  background: rgba(11, 40, 27, 0.88);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(188, 154, 108, 0.45);
+  border: 1px solid rgba(212, 176, 106, 0.5);
   color: #FDEDD8;
   font-size: 12px;
   font-weight: 600;
@@ -6512,8 +6604,8 @@ button:hover .lt-thumb-zoom-overlay,
 }
 
 .lt-pano-reset-btn:hover {
-  background: rgba(36, 52, 31, 0.95);
-  border-color: #BC9A6C;
+  background: rgba(16, 56, 38, 0.96);
+  border-color: #D4B06A;
 }
 
 .lt-pano-cta {
@@ -6534,29 +6626,29 @@ button:hover .lt-thumb-zoom-overlay,
   gap: 14px;
   padding: 12px 22px 12px 14px;
   border-radius: 999px;
-  background: rgba(25, 36, 26, 0.88);
+  background: rgba(11, 40, 27, 0.92);
   backdrop-filter: blur(12px);
-  border: 1.5px solid var(--tra-400, #BC9A6C);
+  border: 1.5px solid #D4B06A;
   color: #FDEDD8;
   cursor: pointer;
   text-align: left;
   box-shadow:
     0 18px 40px rgba(0, 0, 0, 0.42),
-    0 0 0 6px rgba(188, 154, 108, 0.16);
+    0 0 0 6px rgba(212, 176, 106, 0.18);
   transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
 }
 
 .lt-pano-open:hover {
   transform: translateY(-2px) scale(1.01);
-  background: rgba(36, 52, 31, 0.96);
+  background: rgba(15, 52, 35, 0.98);
   box-shadow:
     0 22px 46px rgba(0, 0, 0, 0.5),
-    0 0 0 8px rgba(188, 154, 108, 0.24);
+    0 0 0 8px rgba(212, 176, 106, 0.26);
 }
 
 .lt-pano-open:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(217, 191, 148, 0.55);
+  box-shadow: 0 0 0 4px rgba(212, 176, 106, 0.55);
 }
 
 .lt-pano-open-icon {
@@ -6566,8 +6658,8 @@ button:hover .lt-thumb-zoom-overlay,
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #D9BF94 0%, #BC9A6C 100%);
-  color: #19241A;
+  background: linear-gradient(135deg, #E2C281 0%, #C69E52 100%);
+  color: #0B281B;
   flex-shrink: 0;
 }
 
@@ -6585,7 +6677,7 @@ button:hover .lt-thumb-zoom-overlay,
 
 .lt-pano-open-copy small {
   font-size: 12px;
-  color: var(--tra-300, #D9BF94);
+  color: #D4B06A;
 }
 
 .lt-pano-error {
@@ -6609,9 +6701,9 @@ button:hover .lt-thumb-zoom-overlay,
   gap: 8px;
   padding: 8px 16px;
   border-radius: 999px;
-  background: rgba(20, 32, 22, 0.82);
+  background: rgba(11, 40, 27, 0.86);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(188, 154, 108, 0.4);
+  border: 1px solid rgba(212, 176, 106, 0.45);
   color: #FDEDD8;
   font-size: 12.5px;
   font-weight: 500;
@@ -6619,7 +6711,7 @@ button:hover .lt-thumb-zoom-overlay,
   white-space: nowrap;
 }
 
-/* Marker точка trên không gian 360° */
+/* Marker điểm trên không gian 360° */
 .lt-pano-spot {
   display: flex;
   align-items: center;
@@ -6635,7 +6727,7 @@ button:hover .lt-thumb-zoom-overlay,
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #BC9A6C;
+  background: #D4B06A;
   border: 2.5px solid #FDEDD8;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
   transition: transform 0.2s ease, background 0.2s ease;
@@ -6652,7 +6744,7 @@ button:hover .lt-thumb-zoom-overlay,
 
 .lt-pano-spot:hover > span {
   transform: scale(1.2);
-  background: #D9BF94;
+  background: #E5C787;
 }
 
 @keyframes lt-pano-pulse {
@@ -6673,39 +6765,50 @@ button:hover .lt-thumb-zoom-overlay,
   left: 20px;
   bottom: 52px;
   z-index: 5;
-  width: min(380px, calc(100% - 40px));
+  width: min(400px, calc(100% - 40px));
   padding: 18px 20px;
-  border-radius: 16px;
-  background: rgba(22, 36, 24, 0.94);
+  border-radius: 14px;
+  background: rgba(11, 40, 27, 0.95);
   backdrop-filter: blur(14px);
-  border: 1.5px solid rgba(188, 154, 108, 0.55);
+  border: 1.5px solid rgba(212, 176, 106, 0.55);
   color: #FDEDD8;
   box-shadow: 0 20px 44px rgba(0, 0, 0, 0.5);
 }
 
 .lt-pano-card-head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   padding-right: 28px;
   margin-bottom: 8px;
+}
+
+.lt-pano-card-kicker {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #D4B06A;
+  margin-bottom: 2px;
 }
 
 .lt-pano-card-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
-  background: rgba(188, 154, 108, 0.22);
-  color: var(--tra-300, #D9BF94);
+  background: rgba(212, 176, 106, 0.18);
+  color: #D4B06A;
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .lt-pano-card h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 15.5px;
   font-weight: 700;
   color: #FDEDD8;
   line-height: 1.3;
@@ -6718,18 +6821,48 @@ button:hover .lt-thumb-zoom-overlay,
   color: rgba(253, 237, 216, 0.88);
 }
 
+.lt-pano-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .lt-pano-card-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--tra-300, #D9BF94);
+  color: #D4B06A;
   text-decoration: none;
 }
 
 .lt-pano-card-link:hover {
   text-decoration: underline;
+}
+
+.lt-pano-card-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lt-pano-card-stepper button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 176, 106, 0.45);
+  background: rgba(255, 255, 255, 0.08);
+  color: #FDEDD8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.lt-pano-card-stepper button:hover {
+  background: rgba(212, 176, 106, 0.28);
 }
 
 .lt-pano-card-close {
@@ -6739,7 +6872,7 @@ button:hover .lt-thumb-zoom-overlay,
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 1px solid rgba(188, 154, 108, 0.35);
+  border: 1px solid rgba(212, 176, 106, 0.35);
   background: rgba(255, 255, 255, 0.08);
   color: #FDEDD8;
   display: inline-flex;
@@ -6763,8 +6896,13 @@ button:hover .lt-thumb-zoom-overlay,
 
 .lt-pano-spots-label {
   font-size: 12.5px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--stone-600, #74684F);
+}
+
+.lt-pano-spots-label strong {
+  color: #0D2D1E;
+  font-weight: 700;
 }
 
 .lt-pano-spots {
@@ -6784,8 +6922,8 @@ button:hover .lt-thumb-zoom-overlay,
   padding: 6px 14px 6px 10px;
   border-radius: 999px;
   background: #FFFFFF;
-  border: 1px solid rgba(188, 154, 108, 0.42);
-  color: var(--reu-800, #24341F);
+  border: 1px solid rgba(188, 154, 108, 0.45);
+  color: #0D2D1E;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -6793,15 +6931,15 @@ button:hover .lt-thumb-zoom-overlay,
 }
 
 .lt-pano-spots button:hover {
-  border-color: var(--tra-500, #94723F);
+  border-color: #A87B43;
   background: #FAF6EE;
   transform: translateY(-1px);
 }
 
 .lt-pano-spots button.is-active,
 .lt-pano-spots button[aria-pressed="true"] {
-  background: var(--reu-700, #2A3A23);
-  border-color: var(--tra-400, #BC9A6C);
+  background: #0B291C;
+  border-color: #D4B06A;
   color: #FDEDD8;
 }
 
@@ -6812,16 +6950,16 @@ button:hover .lt-thumb-zoom-overlay,
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: rgba(188, 154, 108, 0.2);
-  color: var(--tra-600, #7D5F33);
+  background: rgba(188, 154, 108, 0.22);
+  color: #7D5F33;
   font-size: 11px;
   font-weight: 700;
 }
 
 .lt-pano-spots button.is-active .lt-pano-spot-num,
 .lt-pano-spots button[aria-pressed="true"] .lt-pano-spot-num {
-  background: var(--tra-400, #BC9A6C);
-  color: #19241A;
+  background: #D4B06A;
+  color: #0B291C;
 }
 
 /* Chế độ toàn màn hình trên điện thoại */
@@ -6846,15 +6984,748 @@ button:hover .lt-thumb-zoom-overlay,
   min-height: 42px;
   padding: 8px 16px;
   border-radius: 999px;
-  background: rgba(20, 32, 22, 0.9);
-  border: 1.5px solid #BC9A6C;
+  background: rgba(11, 40, 27, 0.92);
+  border: 1.5px solid #D4B06A;
   color: #FDEDD8;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
 }
 
+/* ---------- Trang Công nghệ số Lam Trà (/cong-nghe-so — Đồng bộ mẫu Tân Trà) ---------- */
+.lt-tech-page {
+  color: var(--text-body);
+  background: #F6EFE2;
+}
+
+.lt-tech-hero {
+  position: relative;
+  padding: clamp(44px, 6vw, 80px) 0 clamp(48px, 6.5vw, 84px);
+  background:
+    linear-gradient(180deg, rgba(246, 239, 226, 0.94) 0%, rgba(246, 239, 226, 0.88) 60%, rgba(246, 239, 226, 0.94) 100%),
+    url("/assets/bg/tea-hills-mist.webp") center bottom / cover no-repeat;
+  border-bottom: 1px solid rgba(188, 154, 108, 0.25);
+}
+
+.lt-tech-hero-head {
+  max-width: 680px;
+  margin-bottom: clamp(28px, 3.8vw, 44px);
+}
+
+.lt-tech-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #9A723D;
+  margin-bottom: 8px;
+}
+
+.lt-tech-eyebrow-line {
+  width: 56px;
+  height: 1px;
+  background: rgba(168, 123, 67, 0.65);
+}
+
+.lt-tech-eyebrow.is-on-dark {
+  color: #D4B06A;
+}
+
+.lt-tech-eyebrow.is-on-dark .lt-tech-eyebrow-line {
+  background: rgba(212, 176, 106, 0.55);
+}
+
+.lt-tech-main-title {
+  margin: 0 0 12px;
+  font-family: var(--font-heading);
+  font-size: clamp(38px, 5vw, 62px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: #0D2D1E;
+}
+
+.lt-tech-main-title span {
+  color: #A87B43;
+}
+
+.lt-tech-main-lead {
+  margin: 0;
+  max-width: 580px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: #4A4336;
+}
+
+/* 4 Thẻ trụ cột màu xanh đậm (#0B291C) trên nền núi mờ */
+.lt-tech-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 1.8vw, 20px);
+}
+
+.lt-tech-pillar-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: clamp(22px, 2.6vw, 32px) clamp(16px, 1.8vw, 22px);
+  border-radius: 10px;
+  background: #0B291C;
+  border: 1px solid rgba(212, 176, 106, 0.28);
+  color: #F5EEDB;
+  text-decoration: none;
+  box-shadow: 0 18px 36px -18px rgba(8, 28, 19, 0.55);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.lt-tech-pillar-card:hover {
+  transform: translateY(-4px);
+  border-color: #D4B06A;
+  color: #F5EEDB;
+  box-shadow: 0 24px 44px -18px rgba(8, 28, 19, 0.7);
+}
+
+.lt-tech-pillar-ring {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 176, 106, 0.45);
+  background: rgba(212, 176, 106, 0.08);
+  color: #D4B06A;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.lt-tech-pillar-card h2 {
+  margin: 0 0 6px;
+  font-family: var(--font-heading);
+  font-size: clamp(20px, 2vw, 25px);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #D4B06A;
+}
+
+.lt-tech-pillar-card strong {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-bottom: 8px;
+}
+
+.lt-tech-pillar-card p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: rgba(245, 238, 219, 0.78);
+}
+
+/* Dải nền xanh rừng đậm: QR & VIDEO HÀNH TRÌNH */
+.lt-tech-video-band {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(56px, 7.5vw, 96px) 0;
+  background: #0A291C;
+  color: #F5EEDB;
+}
+
+.lt-tech-wave {
+  position: absolute;
+  top: 0;
+  width: clamp(240px, 32vw, 440px);
+  height: auto;
+  color: rgba(212, 176, 106, 0.16);
+  pointer-events: none;
+}
+
+.lt-tech-wave-left {
+  left: 0;
+}
+
+.lt-tech-wave-right {
+  right: 0;
+}
+
+.lt-tech-video-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(28px, 4.5vw, 56px);
+  align-items: center;
+}
+
+.lt-tech-video-frame {
+  display: block;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(148, 162, 124, 0.25);
+  border: 1px solid rgba(212, 176, 106, 0.35);
+  box-shadow: 0 24px 50px -22px rgba(0, 0, 0, 0.55);
+  text-decoration: none;
+}
+
+.lt-tech-video-inner {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.lt-tech-video-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.lt-tech-video-frame:hover .lt-tech-video-inner img {
+  transform: scale(1.04);
+}
+
+.lt-tech-video-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(10, 41, 28, 0.88);
+  border: 2px solid #D4B06A;
+  color: #F5EEDB;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.lt-tech-video-frame:hover .lt-tech-video-play {
+  transform: translate(-50%, -50%) scale(1.08);
+  background: #D4B06A;
+  color: #0A291C;
+}
+
+.lt-tech-video-title {
+  margin: 0 0 8px;
+  font-family: var(--font-heading);
+  font-size: clamp(34px, 4.2vw, 52px);
+  font-weight: 700;
+  line-height: 1.06;
+  text-transform: uppercase;
+  color: #F5EEDB;
+}
+
+.lt-tech-video-sub {
+  margin: 0 0 14px;
+  font-size: clamp(16px, 1.5vw, 19px);
+  font-weight: 700;
+  color: #D4B06A;
+}
+
+.lt-tech-video-desc {
+  margin: 0 0 22px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(245, 238, 219, 0.84);
+}
+
+.lt-tech-video-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 20px;
+}
+
+.lt-tech-gold-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: #D4B06A;
+  color: #0A291C;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.lt-tech-gold-btn:hover {
+  background: #E2C281;
+  color: #0A291C;
+  transform: translateY(-1px);
+}
+
+.lt-tech-ghost-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #D4B06A;
+  text-decoration: none;
+}
+
+.lt-tech-ghost-link:hover {
+  text-decoration: underline;
+  color: #F5EEDB;
+}
+
+/* Mục CHATBOT AI + Truy xuất nguồn gốc + Banner kết */
+.lt-tech-ai-section {
+  position: relative;
+  padding: clamp(56px, 7.5vw, 96px) 0 clamp(64px, 8vw, 108px);
+  background:
+    linear-gradient(180deg, rgba(246, 239, 226, 0.95) 0%, rgba(246, 239, 226, 0.89) 55%, rgba(246, 239, 226, 0.95) 100%),
+    url("/assets/bg/tea-hills-mist.webp") center 40% / cover no-repeat;
+}
+
+.lt-tech-ai-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(28px, 4.5vw, 56px);
+  align-items: center;
+}
+
+.lt-tech-ai-title {
+  margin: 0 0 8px;
+  font-family: var(--font-heading);
+  font-size: clamp(36px, 4.4vw, 54px);
+  font-weight: 700;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: #0D2D1E;
+}
+
+.lt-tech-ai-sub {
+  margin: 0 0 12px;
+  font-size: clamp(16px, 1.5vw, 19px);
+  font-weight: 700;
+  color: #A87B43;
+}
+
+.lt-tech-ai-desc {
+  margin: 0 0 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #4A4336;
+}
+
+.lt-tech-ai-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.lt-tech-ai-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(168, 123, 67, 0.38);
+  color: #23201A;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.lt-tech-ai-pill:hover {
+  background: #FFFFFF;
+  border-color: #A87B43;
+  transform: translateY(-1px);
+}
+
+.lt-tech-ai-sparkle {
+  color: #A87B43;
+  font-size: 12px;
+}
+
+.lt-tech-ai-note {
+  margin: 0;
+  font-size: 12px;
+  color: #74684F;
+}
+
+.lt-tech-ai-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-left: clamp(60px, 9vw, 130px);
+}
+
+.lt-tech-ai-orbit {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(220px, 24vw, 310px);
+  height: clamp(220px, 24vw, 310px);
+  border-radius: 50%;
+  border: 1px solid rgba(168, 123, 67, 0.25);
+  pointer-events: none;
+}
+
+.lt-tech-ai-mascot {
+  position: absolute;
+  left: clamp(0px, 1.5vw, 20px);
+  bottom: 18px;
+  z-index: 2;
+  width: clamp(120px, 13vw, 168px);
+  height: auto;
+  filter: drop-shadow(0 14px 24px rgba(13, 45, 30, 0.25));
+  pointer-events: none;
+}
+
+.lt-tech-chatbox {
+  position: relative;
+  z-index: 3;
+  width: min(360px, 100%);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0C2A1D;
+  border: 1.5px solid rgba(212, 176, 106, 0.38);
+  color: #F5EEDB;
+  box-shadow: 0 26px 54px -20px rgba(8, 28, 19, 0.65);
+}
+
+.lt-tech-chatbox-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #082015;
+  border-bottom: 1px solid rgba(212, 176, 106, 0.22);
+}
+
+.lt-tech-chatbox-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lt-tech-chatbox-brand img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(212, 176, 106, 0.16);
+  border: 1px solid rgba(212, 176, 106, 0.45);
+}
+
+.lt-tech-chatbox-brand strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #F5EEDB;
+}
+
+.lt-tech-chatbox-brand span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: rgba(245, 238, 219, 0.72);
+}
+
+.lt-tech-chatbox-brand span i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #58B368;
+}
+
+.lt-tech-chatbox-reset {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: rgba(245, 238, 219, 0.72);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.lt-tech-chatbox-reset:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #F5EEDB;
+}
+
+.lt-tech-chatbox-body {
+  height: 210px;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lt-tech-chat-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.lt-tech-chat-row.is-user {
+  justify-content: flex-end;
+}
+
+.lt-tech-chat-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.lt-tech-chat-bubble {
+  max-width: 82%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 176, 106, 0.22);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #F5EEDB;
+}
+
+.lt-tech-chat-row.is-user .lt-tech-chat-bubble {
+  background: #D4B06A;
+  color: #082015;
+  border-color: #D4B06A;
+  font-weight: 500;
+}
+
+.lt-tech-chat-bubble p {
+  margin: 0;
+}
+
+.lt-tech-chat-bubble small {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  opacity: 0.65;
+  text-align: right;
+}
+
+.lt-tech-chatbox-chips {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px 6px;
+  overflow-x: auto;
+  border-top: 1px solid rgba(212, 176, 106, 0.16);
+}
+
+.lt-tech-chatbox-chips button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(212, 176, 106, 0.3);
+  color: #F5EEDB;
+  font-size: 11px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.lt-tech-chatbox-chips button:hover {
+  border-color: #D4B06A;
+  background: rgba(212, 176, 106, 0.16);
+}
+
+.lt-tech-chatbox-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 12px;
+  padding: 4px 6px 4px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.24);
+  border: 1px solid rgba(212, 176, 106, 0.28);
+}
+
+.lt-tech-chatbox-form input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #F5EEDB;
+  font-size: 12.5px;
+  font-family: inherit;
+}
+
+.lt-tech-chatbox-form input::placeholder {
+  color: rgba(245, 238, 219, 0.48);
+}
+
+.lt-tech-chatbox-form button {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(212, 176, 106, 0.25);
+  color: #D4B06A;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.lt-tech-chatbox-form button:not(:disabled):hover {
+  background: #D4B06A;
+  color: #082015;
+}
+
+.lt-tech-chatbox-foot {
+  padding: 2px 12px 10px;
+  text-align: center;
+  font-size: 10px;
+  color: rgba(245, 238, 219, 0.45);
+}
+
+/* Thanh phân cách Truy xuất nguồn gốc */
+.lt-tech-trace-bar {
+  margin: clamp(44px, 6vw, 72px) 0 clamp(28px, 4vw, 44px);
+  padding: 14px 0;
+  border-top: 1px solid rgba(168, 123, 67, 0.28);
+  border-bottom: 1px solid rgba(168, 123, 67, 0.28);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lt-tech-trace-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0D2D1E;
+}
+
+.lt-tech-trace-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #9A723D;
+  text-decoration: none;
+}
+
+.lt-tech-trace-link:hover {
+  text-decoration: underline;
+  color: #0D2D1E;
+}
+
+/* Thẻ banner kết: HÀNH TRÌNH CÔNG NGHỆ SỐ LAM TRÀ */
+.lt-tech-closing-card {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: clamp(32px, 4.5vw, 48px) clamp(24px, 4vw, 44px);
+  border-radius: 16px;
+  text-align: center;
+  background:
+    linear-gradient(180deg, rgba(10, 41, 28, 0.88) 0%, rgba(8, 32, 21, 0.95) 100%),
+    url("/assets/bg/tea-hill-thai-nguyen.webp") center / cover no-repeat;
+  border: 1.5px solid rgba(212, 176, 106, 0.38);
+  color: #F5EEDB;
+  box-shadow: 0 24px 48px -20px rgba(8, 28, 19, 0.55);
+}
+
+.lt-tech-closing-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #D4B06A;
+  margin-bottom: 8px;
+}
+
+.lt-tech-closing-card h2 {
+  margin: 0 0 10px;
+  font-family: var(--font-heading);
+  font-size: clamp(26px, 3.4vw, 38px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+}
+
+.lt-tech-closing-card p {
+  margin: 0 auto 22px;
+  max-width: 520px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: rgba(245, 238, 219, 0.84);
+}
+
+.lt-tech-closing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 18px;
+}
+
+.lt-tech-closing-secondary {
+  font-size: 13px;
+  font-weight: 600;
+  color: #D4B06A;
+  text-decoration: none;
+}
+
+.lt-tech-closing-secondary:hover {
+  text-decoration: underline;
+  color: #FFFFFF;
+}
+
+@media (max-width: 1023px) {
+  .lt-tech-pillars-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lt-pano-showcase-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lt-tech-video-grid,
+  .lt-tech-ai-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lt-tech-ai-stage {
+    justify-content: center;
+    padding-left: 40px;
+  }
+}
+
 @media (max-width: 719px) {
+  .lt-tech-pillars-grid {
+    grid-template-columns: 1fr;
+  }
+
   .lt-pano-frame:not(.is-sheet) {
     aspect-ratio: 4 / 3;
     min-height: 320px;
@@ -6868,15 +7739,16 @@ button:hover .lt-thumb-zoom-overlay,
     display: none;
   }
 
-  .lt-pano-tabs {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  .lt-pano-scene-pill > span {
+    display: none;
   }
 
-  .lt-pano-tab {
-    padding: 8px 10px;
-    gap: 8px;
+  .lt-tech-ai-mascot {
+    display: none;
+  }
+
+  .lt-tech-ai-stage {
+    padding-left: 0;
   }
 }
 

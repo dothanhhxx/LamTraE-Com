@@ -179,7 +179,7 @@ export function CoreStoryChapters({ showFullLink = false }: { showFullLink?: boo
         </div>
       </section>
 
-      <TeaFieldPanorama defaultScene="xuong-che" />
+      <TeaFieldPanorama defaultScene="nguon-goc" />
 
       <Chapter
         id="cai-ten"

@@ -197,7 +197,7 @@ export function VisitTeaRegionSection() {
         </div>
       </div>
       <div style={{ marginTop: "clamp(20px, 3.5vw, 36px)" }}>
-        <TeaFieldPanorama defaultScene="xuong-che" compact />
+        <TeaFieldPanorama defaultScene="quy-trinh" compact />
       </div>
     </section>
   );
