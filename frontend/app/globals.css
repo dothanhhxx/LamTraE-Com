@@ -6722,7 +6722,7 @@ button:hover .lt-thumb-zoom-overlay,
   cursor: pointer;
 }
 
-.lt-pano-spot > span {
+.lt-pano-spot>span {
   position: relative;
   width: 20px;
   height: 20px;
@@ -6733,7 +6733,7 @@ button:hover .lt-thumb-zoom-overlay,
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
-.lt-pano-spot > span::after {
+.lt-pano-spot>span::after {
   content: "";
   position: absolute;
   inset: -8px;
@@ -6742,7 +6742,7 @@ button:hover .lt-thumb-zoom-overlay,
   animation: lt-pano-pulse 2.2s infinite ease-out;
 }
 
-.lt-pano-spot:hover > span {
+.lt-pano-spot:hover>span {
   transform: scale(1.2);
   background: #E5C787;
 }
@@ -7739,7 +7739,7 @@ button:hover .lt-thumb-zoom-overlay,
     display: none;
   }
 
-  .lt-pano-scene-pill > span {
+  .lt-pano-scene-pill>span {
     display: none;
   }
 
@@ -7753,7 +7753,7 @@ button:hover .lt-thumb-zoom-overlay,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lt-pano-spot > span::after {
+  .lt-pano-spot>span::after {
     animation: none;
   }
 }
